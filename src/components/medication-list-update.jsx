@@ -17,7 +17,7 @@ import { navigate, useNavigate, useSearchParams } from "react-router-dom";
 import { LoadingWindow } from "./common";
 import { AiFillCheckCircle, AiFillCloseCircle } from "react-icons/ai";
 import { ToastContainer, toast } from "react-toastify";
-
+import { withPrivateRoute } from "./hocs";
 const UpdateMedication = () => {
   const navigate = useNavigate();
 
@@ -288,4 +288,4 @@ const UpdateMedication = () => {
   );
 };
 
-export default UpdateMedication;
+export default withPrivateRoute(UpdateMedication);

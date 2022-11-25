@@ -7,15 +7,16 @@ const _getPatientMedicationsByPatientUid = async (req, res) => {
   try {
     // get user id
     const tokenId = req.get("Authorization").split("Bearer ")[1];
-    const decoded = await jwt_decode(tokenId);
-    const { user_id } = decoded;
+
+    const decodedToken = await admin.auth().verifyIdToken(tokenId);
+    const userUid = decodedToken.uid;
 
     // first get their access tokens by the patient uid
-    const patientProfile = await getUserProfile(user_id);
+    const patientProfile = await getUserProfile(userUid);
 
     if (!patientProfile || !patientProfile)
       throw new Error(
-        "no insurance profile found for user with uid " + user_id
+        "no insurance profile found for user with uid " + userUid
       );
     // TODO – optimize to run in parallel.
     const results = {};

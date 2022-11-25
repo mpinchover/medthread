@@ -1,24 +1,13 @@
 import { FaPen, FaPlus, FaMinusCircle } from "react-icons/fa";
-import { AiOutlinePlus, AiOutlineSend } from "react-icons/ai";
+import { AiOutlineHistory } from "react-icons/ai";
 import { useNavigate } from "react-router-dom";
 import { useState, useContext, useEffect } from "react";
 import {
-  insuranceProvidersState,
-  addInsuranceProviderCallback,
-  getInsuranceProvidersCallback,
-  isAddingInsuranceProviderState,
-  addHealthcareProviderCallback,
-  isAddingHealthcareProviderState,
   isUpdatingProfileAccountState,
   profileAccountState,
 } from "../recoil/profile/profile";
 import { TextInput } from "./common";
-import {
-  useRecoilState,
-  useSetRecoilState,
-  useRecoilValue,
-  useRecoilCallback,
-} from "recoil";
+import { useRecoilValue } from "recoil";
 import { FaPills } from "react-icons/fa";
 import { withPrivateRoute } from "./hocs";
 import axios from "axios";
@@ -52,18 +41,10 @@ const HealthcareProvider = ({ providerName, providerEmail }) => {
   );
 };
 
-const PatientSettings = ({ insuranceProviders, healthcareProviders }) => {
+const ProviderSettings = () => {
   const navigate = useNavigate();
   const auth = getAuth();
-  const isAddingInsuranceProvider = useRecoilValue(
-    isAddingInsuranceProviderState
-  );
-  const isAddingHealthcareProvider = useRecoilValue(
-    isAddingHealthcareProviderState
-  );
-  const addInsuranceProviderCbk = useRecoilCallback(
-    addInsuranceProviderCallback
-  );
+
   const { updateAccountInformation } = useContext(FirebaseContext);
 
   const accountSettings = useRecoilValue(profileAccountState);
@@ -76,45 +57,6 @@ const PatientSettings = ({ insuranceProviders, healthcareProviders }) => {
   const isUpdatingProfileAccount = useRecoilValue(
     isUpdatingProfileAccountState
   );
-
-  // window.FlexpaLink.create({
-  //   publishableKey: "pk_test_pKDGhsAjAOiDxw6LdHuoogYupzm9VNnQh113WuCoK6I",
-  //   onSuccess: async (publicToken) => {
-  //     addInsuranceProviderCbk(publicToken);
-  //   },
-  // });
-
-  const openFlexpaLink = () => {
-    window.FlexpaLink.open();
-  };
-
-  const renderInsuranceProviders = () => {
-    return insuranceProviders.map((e, i) => {
-      return (
-        <li key={i}>
-          <InsuranceProvider providerName={e.insuranceProviderName} />
-        </li>
-      );
-    });
-  };
-
-  const handleAddHealthcareProvider = (e) => {
-    e.preventDefault();
-    navigate("/patient-authorization");
-  };
-
-  const renderHealthcareProviders = () => {
-    return healthcareProviders.map((e, i) => {
-      return (
-        <li key={i}>
-          <HealthcareProvider
-            providerEmail={e.healthcareProviderEmail}
-            providerName={e.healthcareProviderName}
-          />
-        </li>
-      );
-    });
-  };
 
   const onAccountSettingsChange = (e) => {
     e.preventDefault();
@@ -239,58 +181,20 @@ const PatientSettings = ({ insuranceProviders, healthcareProviders }) => {
         </section>
       </section>
       <section className="border rounded-sm  bg-white mb-8 p-10">
-        <div className="text-xl mb-8">Medical history</div>
+        <div className="text-xl mb-8">Patient history</div>
         <button
-          onClick={() => navigate("/medication-list-patient")}
+          onClick={() => navigate("/")}
           className=" flex flex-row items-center  text-blue-400 "
         >
-          <FaPills size={18} />
-          <span className="ml-2">View history</span>
+          <AiOutlineHistory size={18} />
+          <span className="ml-2">View previous patients</span>
         </button>
-        <div className="text-sm mb-4">
+        {/* <div className="text-sm mb-4">
           View or make updates to your medical history.
-        </div>
-        <button
-          onClick={() => navigate("/send-medications")}
-          className=" flex flex-row items-center   text-blue-400 "
-        >
-          <AiOutlineSend size={18} />
-          <span className="ml-2">Send medications</span>
-        </button>
-        <div className="text-sm">
-          Send medications to your healthcare provider.
-        </div>
+        </div> */}
       </section>
-
-      {/* <section className="border rounded-sm  bg-white mb-8 p-10">
-        <div className="text-xl mb-8">Authorized insurance providers</div>
-        {isAddingInsuranceProvider ? (
-          <button
-            disabled
-            className=" flex flex-row items-center px-6 py-1 text-white bg-blue-600 mb-1 border rounded-sm"
-          >
-            <div className="animate-spin mr-2">
-              <div className=" rounded-full border border-blue-200 border-t-blue-400  w-4 h-4"></div>
-            </div>
-            <span>Adding insurance provider...</span>
-          </button>
-        ) : (
-          <button
-            onClick={openFlexpaLink}
-            className=" flex flex-row items-center  text-blue-600 mb-1 "
-          >
-            <AiOutlinePlus size={18} />
-            <span className="ml-1">Add provider</span>
-          </button>
-        )}
-        <div className="text-sm">
-          Link your past medical history from insurance claims.
-        </div>
-
-        <ul>{renderInsuranceProviders()}</ul>
-      </section> */}
     </div>
   );
 };
 
-export default withPrivateRoute(PatientSettings);
+export default withPrivateRoute(ProviderSettings);

@@ -28,7 +28,5 @@ const Navbar = () => {
     return <ProviderNavbar />;
   }
   return <NavbarLoggedOut />;
-
-  return <div></div>;
 };
 export default Navbar;

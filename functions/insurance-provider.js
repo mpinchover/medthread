@@ -12,8 +12,9 @@ const addHealthInsuranceProvider = async (req, res) => {
 
     // get user uid
     const tokenId = req.get("Authorization").split("Bearer ")[1];
-    const decoded = await jwt_decode(tokenId);
-    const { user_id } = decoded;
+
+    const decodedToken = await admin.auth().verifyIdToken(tokenId);
+    const userUid = decodedToken.uid;
 
     // get access token
     const accessToken = await getAccessToken(publicToken);
@@ -21,7 +22,7 @@ const addHealthInsuranceProvider = async (req, res) => {
     // get publisher
     const publisher = await getMetaData(accessToken);
 
-    const patientProfile = await getUserProfile(user_id);
+    const patientProfile = await getUserProfile(userUid);
 
     let doc;
     if (!patientProfile || !patientProfile) {
@@ -29,7 +30,7 @@ const addHealthInsuranceProvider = async (req, res) => {
         .firestore()
         .collection("profiles")
         .add({
-          userUid: user_id,
+          userUid,
           insurance_providers: {
             [publisher]: {
               public_token: publicToken,
@@ -66,9 +67,8 @@ const addHealthInsuranceProvider = async (req, res) => {
     res.send({ patient_profile: doc });
   } catch (e) {
     console.log(e);
-    const { data, code } = e;
-    console.log(code);
-    console.log(data);
+    console.log(e);
+
     res.status(500).send({
       code,
       data,
@@ -96,8 +96,7 @@ const getMetaData = async (accessToken) => {
       Authorization: `Bearer ${accessToken}`,
     },
   });
-  console.log("DATA IS");
-  console.log(res.data);
+
   return res.data.publisher;
 };
 

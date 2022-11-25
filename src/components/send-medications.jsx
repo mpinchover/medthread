@@ -7,6 +7,7 @@ import { useRecoilCallback, useRecoilValue } from "recoil";
 import { useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
 import { useEffect } from "react";
+import { withPrivateRoute } from "./hocs";
 
 const SendMedications = () => {
   const navigate = useNavigate();
@@ -23,18 +24,30 @@ const SendMedications = () => {
   };
 
   const handleSendMedicationsEvent = (e) => {
-    console.log("GOT EVENT");
-
-    toast.success("Medications sent!", {
-      position: "top-right",
-      autoClose: 1000,
-      hideProgressBar: true,
-      closeOnClick: true,
-      pauseOnHover: true,
-      draggable: true,
-      progress: undefined,
-      theme: "light",
-    });
+    if (e.type === "FAILED_SEND_MEDICATIONS_EVENT") {
+      toast.error("Failed to send medications", {
+        position: "top-right",
+        autoClose: 1000,
+        hideProgressBar: true,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
+      return;
+    } else {
+      toast.success("Medications sent!", {
+        position: "top-right",
+        autoClose: 1000,
+        hideProgressBar: true,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
+    }
 
     setTimeout(() => navigate("/settings", { replace: true }), 1000);
   };
@@ -115,4 +128,4 @@ const SendMedications = () => {
   );
 };
 
-export default SendMedications;
+export default withPrivateRoute(SendMedications);

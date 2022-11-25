@@ -109,7 +109,7 @@ const ProviderSignup = () => {
             <div className="animate-spin mr-2">
               <div className=" rounded-full border border-blue-200 border-t-blue-400  w-4 h-4"></div>
             </div>
-            <span className="text-blue-400">Loggin in...</span>
+            <span className="text-blue-400">Logging in...</span>
           </div>
         ) : (
           <div className="">

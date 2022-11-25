@@ -1,11 +1,13 @@
 const jwt_decode = require("jwt-decode");
 const { getUserProfile, getDerivedMedications } = require("./repo");
-
+const admin = require("firebase-admin");
 // protect route https://github.com/firebase/functions-samples/blob/main/authorized-https-endpoint/functions/index.js
 module.exports.getMedicationsByPatientUid = async (req, res) => {
   try {
-    const { body } = req;
-    const { patientUid } = body;
+    const tokenId = req.get("Authorization").split("Bearer ")[1];
+
+    const decodedToken = await admin.auth().verifyIdToken(tokenId);
+    const patientUid = decodedToken.uid;
 
     let medications = await getDerivedMedications(patientUid);
     medications = medications.sort(

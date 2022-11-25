@@ -10,7 +10,7 @@ import { getAuth } from "firebase/auth";
 import { AiFillCheckCircle, AiFillCloseCircle } from "react-icons/ai";
 import { useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
-
+import { withPrivateRoute } from "./hocs";
 const medIdleState = {
   medicationName: "",
   dose: "",
@@ -231,4 +231,4 @@ const AddMedication = () => {
   );
 };
 
-export default AddMedication;
+export default withPrivateRoute(AddMedication);

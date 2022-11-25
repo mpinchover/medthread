@@ -34,6 +34,7 @@ import AddMedication from "./components/medication-list-add";
 import SendMedications from "./components/send-medications";
 import MedicationListProvider from "./components/medication-list-provider";
 import { ToastContainer } from "react-toastify";
+import Home from "./components/home";
 
 function App() {
   const [open, setOpen] = useState(null);
@@ -65,15 +66,14 @@ function App() {
     setAccessToken(res.data.access_token);
   };
 
-  const getMedRecords = async () => {
-    const res = await axios.get("https://api.flexpa.com/fhir/Medication", {
-      headers: {
-        Authorization: `Bearer ${accessToken}`,
-      },
-    });
-    console.log("RESULT IS:");
-    console.log(res);
-  };
+  // function requireAuth(nextState, replace) {
+  //   if (!userExists()) {
+  //     replace({
+  //       pathname: "/signin",
+  //       state: { nextPathname: nextState.location.pathname },
+  //     });
+  //   }
+  // }
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -91,7 +91,7 @@ function App() {
             <Route exact path="/patient-login" element={<PatientLogin />} />
             <Route exact path="/settings" element={<Settings />} />
             <Route exact path="/forgot-password" element={<ForgotPassword />} />
-            <Route exact path="/" element={<Homepage />} />
+            <Route exact path="/" element={<Home />} />
             <Route exact path="/update-password" element={<UpdatePassword />} />
             <Route exact path="/add-medication" element={<AddMedication />} />
             <Route

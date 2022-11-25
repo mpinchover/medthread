@@ -1,40 +1,33 @@
 const admin = require("firebase-admin");
 const jwt_decode = require("jwt-decode");
-const { getUserProfile, getDerivedMedications } = require("./repo");
+const {
+  getUserProfile,
+  getDerivedMedications,
+  getAuthorizedHealthcareProvider,
+} = require("./repo");
 
 module.exports.getPatientMedicationsForProvider = async (req, res) => {
   const { body } = req;
   const { patientUid } = body;
-
   try {
     const tokenId = req.get("Authorization").split("Bearer ")[1];
-    const decoded = await jwt_decode(tokenId);
-    const { user_id } = decoded;
 
-    const userUid = user_id;
+    const decodedToken = await admin.auth().verifyIdToken(tokenId);
+    const providerUid = decodedToken.uid;
 
-    const providerProfile = await getUserProfile(userUid);
+    const providerProfile = await getUserProfile(providerUid);
     if (providerProfile.role !== "PROVIDER")
       throw new Error("only providers can access patient medical records");
 
-    const authProfile = await admin.auth().getUser(userUid);
+    const authProfile = await admin.auth().getUser(providerUid);
     if (!authProfile.emailVerified)
       throw new Error("provider must be verified");
 
-    // check to see if the patient has added this provider as an authenticated provider.
-    const patientProfile = await getUserProfile(patientUid);
-    if (!patientProfile) throw new Error("patient profile cannot be null");
-    const { healthcareProviders } = patientProfile;
-
-    if (!healthcareProviders)
-      throw new Error("no healthcare providers given for patient");
-
-    const isAuthenticatedProvider = healthcareProviders.filter(
-      (x) => x.healthcareProviderEmail === authProfile.email
-    );
-
-    if (!isAuthenticatedProvider)
-      throw new Error("provider is not authenticated");
+    // check to see if this healthcare provider is an authorized provider for this patient
+    const authorizedHealthcareProfileDoc =
+      await getAuthorizedHealthcareProvider(patientUid, authProfile.email);
+    if (!authorizedHealthcareProfileDoc)
+      throw new Error("provider not authorized for patient");
 
     let medications = await getDerivedMedications(patientUid);
     medications = medications.sort(

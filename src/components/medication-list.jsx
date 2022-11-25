@@ -6,25 +6,21 @@ import { AiOutlinePlus } from "react-icons/ai";
 import { getAuth } from "firebase/auth";
 import { Medication, MedHeader } from "./common";
 import { useNavigate } from "react-router-dom";
+const MedicationList = ({ meds, onChange, searchTerm }) => {
+  // const [searchQuery, setSearchQuery] = useState("");
+  // const [medications, setMedications] = useState(meds);
 
-const MedicationList = ({ meds }) => {
-  const [searchQuery, setSearchQuery] = useState("");
-  const [medicationss, setMedications] = useState(meds);
-  const onChange = (e) => {
+  const handleChange = (e) => {
     const { value } = e.target;
-    setSearchQuery(value.toLowerCase());
+    onChange(value);
 
-    const filteredMeds = meds.filter((x) =>
-      x.medicationName.toLowerCase().includes(value)
-    );
-
-    setMedications(filteredMeds);
+    // setMedications(filteredMeds);
   };
 
   const renderMedicationList = () => {
     return (
       <ul>
-        {medicationss.map((e, i) => {
+        {meds.map((e, i) => {
           return (
             <li key={i}>
               <Medication e={e} />
@@ -42,8 +38,8 @@ const MedicationList = ({ meds }) => {
       <section className="bg-white border px-10 py-7 rounded-sm">
         <section className="mb-4">
           <MedHeader
-            value={searchQuery}
-            onChange={onChange}
+            value={searchTerm}
+            onChange={handleChange}
             name={"Matt Pennywheel"}
           />
         </section>

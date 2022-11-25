@@ -2,6 +2,8 @@ import { useEffect } from "react";
 import {
   derivedMedicationsState,
   getMedicationsForProviderCallback,
+  filteredDerivedMedicationsState,
+  medicationSearchTermState,
 } from "../recoil/medications/medications";
 import { useRecoilCallback, useRecoilState } from "recoil";
 import { withPrivateRoute } from "./hocs";
@@ -10,11 +12,11 @@ import { getAuth } from "firebase/auth";
 import { Medication, MedHeader } from "./common";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import MedicationList from "./medication-list";
-
 const ProviderMedList = ({ meds }) => {
   const [medicationList, setMedicationList] = useRecoilState(
-    derivedMedicationsState
+    filteredDerivedMedicationsState
   );
+  const [searchTerm, setSearchTerm] = useRecoilState(medicationSearchTermState);
   const [searchParams, setSearchParams] = useSearchParams();
 
   const patientUid = searchParams.get("patientUid");
@@ -25,9 +27,15 @@ const ProviderMedList = ({ meds }) => {
 
   useEffect(() => {
     getMedicationsForProvider(patientUid);
-  }, [patientUid]);
+  }, []);
 
-  return <MedicationList meds={medicationList} />;
+  return (
+    <MedicationList
+      searchTerm={searchTerm}
+      onChange={setSearchTerm}
+      meds={medicationList}
+    />
+  );
 };
 
 export default withPrivateRoute(ProviderMedList);

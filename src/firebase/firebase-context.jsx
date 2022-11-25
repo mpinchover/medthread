@@ -67,19 +67,10 @@ export const FirebaseProvider = ({ children }) => {
     return hydratedUser;
   };
 
-  const createHydratedUserProfile = async (params) => {
-    const db = getFirestore();
-    const profilesRef = collection(db, "profiles");
-    const docRef = await addDoc(profilesRef, params);
-    params.profileUid = docRef.id;
-    return params;
-  };
-
   useEffect(() => {
     const auth = getAuth();
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
       if (!user) {
-        localStorage.clear();
         return;
       }
 
@@ -87,6 +78,7 @@ export const FirebaseProvider = ({ children }) => {
       const idToken = await auth.currentUser.getIdToken(
         /* forceRefresh */ true
       );
+
       const authUser = {
         uid: user.uid,
         email: user.email,
@@ -136,10 +128,9 @@ export const FirebaseProvider = ({ children }) => {
     try {
       await _signIn({ email, password });
 
-      await navigate("/settings");
+      // await navigate("/");
     } catch (e) {
       console.log(e);
-      setIsLoggingInUser(false);
     }
   };
 

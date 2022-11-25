@@ -15,7 +15,6 @@ export const getMedicationsForProvider = async (patientUid) => {
     },
   });
 
-  console.log("RES");
-  console.log(res.data.medications);
+  if (!res.data.medications) return [];
   return res.data.medications;
 };

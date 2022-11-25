@@ -1,21 +1,32 @@
 const admin = require("firebase-admin");
 const nodemailer = require("nodemailer");
-const { getUserProfile } = require("./repo");
+const { getUserProfile, addAuthorizedHealthcareProvider } = require("./repo");
 
 module.exports.sendMedicationsToProvider = async (req, res) => {
   try {
+    const tokenId = req.get("Authorization").split("Bearer ")[1];
+
+    const decodedToken = await admin.auth().verifyIdToken(tokenId);
+    const patientUid = decodedToken.uid;
+
     const { body } = req;
-    const { patientUid, healthcareProviderEmail, healthcareProviderName } =
-      body;
+    const { healthcareProviderEmail, healthcareProviderName } = body;
 
     const profile = await getUserProfile(patientUid);
 
-    // add the provider to the patient profile
-    await addProviderToPatientProfile(
-      profile,
+    // create a new authorized healthcare provider doc
+    await addAuthorizedHealthcareProvider(
+      patientUid,
       healthcareProviderEmail,
       healthcareProviderName
     );
+
+    // // add the provider to the patient profile
+    // await addProviderToPatientProfile(
+    //   profile,
+    //   healthcareProviderEmail,
+    //   healthcareProviderName
+    // );
     // now sent it as a link
     await sendProviderMedicationsInEmail(healthcareProviderEmail, profile);
     res.send({ data: "success" });

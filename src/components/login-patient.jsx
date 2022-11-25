@@ -1,16 +1,20 @@
 import React, { useState, useContext } from "react";
-import { useRecoilState } from "recoil";
+import { useRecoilState, useRecoilValue } from "recoil";
 import { authorizedProfileState } from "../recoil/auth/auth";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
 import { FirebaseContext } from "../firebase/firebase-context";
+import { isLoggingInUserState } from "../recoil/profile/profile";
 
-const PatientLogin = () => {
+const PatientLogin = (props) => {
+  const location = useLocation();
+
   const navigate = useNavigate();
   const { signIn, sendResetPasswordEmail } = useContext(FirebaseContext);
   const [emailVal, setEmailVal] = useState("");
   const [passwordVal, setPasswordVal] = useState("");
-
+  const [navigationLink, setNavigationLink] = useState(location?.state?.path);
+  const isLoggingInUser = useRecoilValue(isLoggingInUserState);
   const validate = () => {
     if (!emailVal || emailVal === "") {
       alert("Email required");
@@ -30,7 +34,9 @@ const PatientLogin = () => {
     if (!v) return;
     await signIn(emailVal, passwordVal);
 
-    navigate("/settings");
+    const link = location?.state?.path ? location?.state?.path : "/";
+
+    navigate(navigationLink ? navigationLink : "/");
   };
   return (
     <div className="flex flex-col  flex-1 items-center justify-center ">
@@ -55,15 +61,25 @@ const PatientLogin = () => {
             placeholder="Password"
           />
         </div>
-        <div className="mb-4">
-          <button
-            onClick={handleSubmit}
-            className="w-full text-sm text-center border rounded-sm px-3 py-3 bg-blue-400 text-white hover:opacity-50"
-          >
-            Submit
-          </button>
-        </div>
+        {isLoggingInUser ? (
+          <div className=" flex flex-row items-center ">
+            <div className="animate-spin mr-2">
+              <div className=" rounded-full border border-blue-200 border-t-blue-400  w-4 h-4"></div>
+            </div>
+            <span className="text-blue-400">Logging in...</span>
+          </div>
+        ) : (
+          <div className="">
+            <button
+              onClick={handleSubmit}
+              className="w-72 text-sm text-center border rounded-sm px-3 py-3 bg-blue-400 text-white hover:opacity-50"
+            >
+              Submit
+            </button>
+          </div>
+        )}
       </form>
+      <div className="  w-72 border-b border-blue-400 my-4"></div>
 
       <div className="mb-4">
         <button
@@ -73,7 +89,7 @@ const PatientLogin = () => {
           Forgot password?
         </button>
       </div>
-      <div className="  w-72 border-b border-blue-400 mb-4"></div>
+
       <div className="">
         <button
           onClick={() => navigate("/patient-signup")}

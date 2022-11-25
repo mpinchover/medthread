@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-
+import { withPrivateRoute } from "./hocs";
 const EmailProvider = () => {
   const [messageSent, setMessageSet] = useState(false);
 
@@ -53,4 +53,4 @@ const EmailProvider = () => {
   );
 };
 
-export default EmailProvider;
+export default withPrivateRoute(EmailProvider);

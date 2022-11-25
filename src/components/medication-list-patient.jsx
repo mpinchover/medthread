@@ -10,9 +10,11 @@ import {
   derivedMedicationsState,
   getMedicationsForPatientCallback,
 } from "../recoil/medications/medications";
+
 import { getAuth } from "firebase/auth";
 import { LoadingMedicationData } from "./common";
 import { FirebaseContext } from "../firebase/firebase-context";
+import { withPrivateRoute } from "./hocs";
 
 const MedicationListPatient = () => {
   const { getAuthUser } = useContext(FirebaseContext);
@@ -39,4 +41,4 @@ const MedicationListPatient = () => {
   return <MedicationList meds={medicationlist} />;
 };
 
-export default MedicationListPatient;
+export default withPrivateRoute(MedicationListPatient);

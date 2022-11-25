@@ -72,9 +72,27 @@ export const isSendingMedicationsState = atom({
   default: false,
 });
 
+export const medicationSearchTermState = atom({
+  key: "medicationSearchTermState",
+  default: "",
+});
+
 export const derivedMedicationsState = atom({
   key: "derivedMedicationsState",
   default: [],
+});
+
+export const filteredDerivedMedicationsState = selector({
+  key: "filteredDerivedMedicationsState",
+  get: ({ get }) => {
+    const searchTerm = get(medicationSearchTermState);
+    let medications = get(derivedMedicationsState);
+
+    medications = medications.filter((x) =>
+      x.medicationName.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+    return medications;
+  },
 });
 
 const meds = [
@@ -145,12 +163,12 @@ export const loadMedicationListState = atom({
 
 export const getMedicationsForProviderCallback =
   ({ set, snapshot }) =>
-  async () => {
+  async (patientUid) => {
     try {
       // use this one
       set(loadingDerivedMedicationlistState, true);
 
-      const medications = await getMedicationsForProvider();
+      const medications = await getMedicationsForProvider(patientUid);
       set(derivedMedicationsState, medications);
     } catch (e) {
       console.log(e);
@@ -161,12 +179,12 @@ export const getMedicationsForProviderCallback =
 
 export const getMedicationsForPatientCallback =
   ({ set, snapshot }) =>
-  async (patientUid) => {
+  async () => {
     try {
       // use this one
       set(loadingDerivedMedicationlistState, true);
 
-      const medications = await getMedicationsForPatient(patientUid);
+      const medications = await getMedicationsForPatient();
 
       set(derivedMedicationsState, medications);
     } catch (e) {
@@ -189,6 +207,7 @@ export const sendMedicationsToProviderCallback =
 
       document.dispatchEvent(new Event("SUCCESS_SEND_MEDICATIONS_EVENT"));
     } catch (e) {
+      console.log("FAILED TO SEND MEDS");
       document.dispatchEvent(new Event("FAILED_SEND_MEDICATIONS_EVENT"));
     } finally {
       set(isSendingMedicationsState, false);
