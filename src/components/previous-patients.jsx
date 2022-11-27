@@ -8,7 +8,7 @@ import {
 import { useRecoilValue, useRecoilCallback, useRecoilState } from "recoil";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-
+import { withPrivateRoute } from "./hocs";
 const PatientItem = ({ patient }) => {
   const navigate = useNavigate();
   const link = `/medication-list-provider/?patientUid=${patient.userUid}`;
@@ -74,4 +74,4 @@ const PreviousPatients = () => {
     );
 };
 
-export default PreviousPatients;
+export default withPrivateRoute(PreviousPatients);

@@ -8,7 +8,10 @@ import {
   sendPasswordResetEmail,
   updateProfile,
   updatePassword,
+  sendSignInLinkToEmail,
+  sendEmailVerification,
   updateEmail,
+  onIdTokenChanged,
 } from "firebase/auth";
 import { useRecoilCallback, useRecoilState, useRecoilValue } from "recoil";
 import { authorizedProfileState } from "../recoil/auth/auth";
@@ -35,7 +38,7 @@ import { useNavigate } from "react-router-dom";
 export const FirebaseContext = React.createContext();
 
 export const FirebaseProvider = ({ children }) => {
-  const [_authorizedProfileState, _setAuthorizedProfileState] = useRecoilState(
+  const [authorizedProfile, setAuthorizedProfile] = useRecoilState(
     authorizedProfileState
   );
   const updateAccountSettingsCbk = useRecoilCallback(
@@ -91,9 +94,40 @@ export const FirebaseProvider = ({ children }) => {
       localStorage.setItem("med_thread_auth_user", JSON.stringify(authUser));
 
       setProfileAccount(hydratedUserProfile.account);
-      _setAuthorizedProfileState(authUser);
+      // _setAuthorizedProfileState(authUser);
+      setAuthorizedProfile(authUser);
     });
-    return unsubscribe;
+
+    const removeIdTokenListener = onIdTokenChanged(auth, async (user) => {
+      if (!user) {
+        return;
+      }
+
+      const hydratedUserProfile = await hydrateUserProfile(user.uid);
+      const idToken = await auth.currentUser.getIdToken(
+        /* forceRefresh */ true
+      );
+
+      const authUser = {
+        uid: user.uid,
+        email: user.email,
+        emailVerified: user.emailVerified,
+        providerData: user.providerData,
+        ...hydratedUserProfile,
+        idToken,
+      };
+
+      localStorage.setItem("med_thread_auth_user", JSON.stringify(authUser));
+
+      setProfileAccount(hydratedUserProfile.account);
+      // _setAuthorizedProfileState(authUser);
+      setAuthorizedProfile(authUser);
+    });
+
+    return () => {
+      removeIdTokenListener();
+      unsubscribe();
+    };
   }, []);
 
   const createProvider = async (
@@ -104,7 +138,8 @@ export const FirebaseProvider = ({ children }) => {
   ) => {
     try {
       await _createProvider({ email, password, confirmPassword, displayName });
-      navigate("/settings");
+      verifyEmailAddress();
+      navigate("/");
     } catch (e) {
       console.log(e);
     }
@@ -118,7 +153,7 @@ export const FirebaseProvider = ({ children }) => {
   ) => {
     try {
       await _createPatient({ email, password, confirmPassword, displayName });
-      navigate("/settings");
+      navigate("/");
     } catch (e) {
       console.log(e);
     }
@@ -174,6 +209,38 @@ export const FirebaseProvider = ({ children }) => {
     return JSON.parse(localStorage.getItem("med_thread_auth_user"));
   };
 
+  // todo - verify the email address exists?
+  const verifyEmailAddress = async () => {
+    try {
+      const actionCodeSettings = {
+        // URL you want to redirect back to. The domain (www.example.com) for this
+        // URL must be in the authorized domains list in the Firebase Console.
+        url: "http://localhost:3000/",
+        // This must be true.
+        handleCodeInApp: true,
+        iOS: {
+          bundleId: "com.example.ios",
+        },
+        android: {
+          packageName: "com.example.android",
+          installApp: true,
+          minimumVersion: "12",
+        },
+        dynamicLinkDomain: "/",
+      };
+      const auth = getAuth();
+      const authUser = getAuthUser();
+      const { email } = authUser;
+
+      // await sendSignInLinkToEmail(auth, email, actionCodeSettings);
+      await sendEmailVerification(auth.currentUser, {
+        url: "http://localhost:3000",
+      });
+    } catch (e) {
+      console.log(e);
+    }
+  };
+
   return (
     <FirebaseContext.Provider
       value={{
@@ -185,6 +252,7 @@ export const FirebaseProvider = ({ children }) => {
         updateAccountInformation,
         updateUserPassword,
         getAuthUser,
+        verifyEmailAddress,
       }}
     >
       {children}

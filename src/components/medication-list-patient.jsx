@@ -8,7 +8,9 @@ import {
   getDerivedMedicationListCallback,
   loadingDerivedMedicationlistState,
   derivedMedicationsState,
+  filteredDerivedMedicationsState,
   getMedicationsForPatientCallback,
+  medicationSearchTermState,
 } from "../recoil/medications/medications";
 
 import { getAuth } from "firebase/auth";
@@ -18,13 +20,17 @@ import { withPrivateRoute } from "./hocs";
 
 const MedicationListPatient = () => {
   const { getAuthUser } = useContext(FirebaseContext);
+
   const authUser = getAuthUser();
+  const role = authUser.role;
 
   const getMedications = useRecoilCallback(getMedicationsForPatientCallback);
 
-  const [medicationlist, setMedicationlist] = useRecoilState(
-    derivedMedicationsState
+  const [medicationList, setMedicationList] = useRecoilState(
+    filteredDerivedMedicationsState
   );
+
+  const [searchTerm, setSearchTerm] = useRecoilState(medicationSearchTermState);
 
   useEffect(() => {
     getMedications();
@@ -38,7 +44,14 @@ const MedicationListPatient = () => {
     return <LoadingMedicationData />;
   }
 
-  return <MedicationList meds={medicationlist} />;
+  return (
+    <MedicationList
+      role={role}
+      searchTerm={searchTerm}
+      onChange={setSearchTerm}
+      meds={medicationList}
+    />
+  );
 };
 
 export default withPrivateRoute(MedicationListPatient);

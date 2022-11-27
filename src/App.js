@@ -35,6 +35,7 @@ import SendMedications from "./components/send-medications";
 import MedicationListProvider from "./components/medication-list-provider";
 import { ToastContainer } from "react-toastify";
 import Home from "./components/home";
+import VerificationPage from "./components/verification-page";
 
 function App() {
   const [open, setOpen] = useState(null);
@@ -94,6 +95,7 @@ function App() {
             <Route exact path="/" element={<Home />} />
             <Route exact path="/update-password" element={<UpdatePassword />} />
             <Route exact path="/add-medication" element={<AddMedication />} />
+            <Route exact path="/verification" element={<VerificationPage />} />
             <Route
               exact
               path="/medication-list-provider"

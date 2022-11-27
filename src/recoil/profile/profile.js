@@ -9,10 +9,12 @@ import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
 } from "firebase/auth";
-
+import { ToastContainer, toast } from "react-toastify";
 import { createHydratedUserProfile } from "../../rpc/create-hydrated-user";
 import { useNavigate } from "react-router-dom";
 import { authorizedProfileState } from "../auth/auth";
+import { validateCreatePatient } from "../../validation/validation";
+
 export const profileAccountState = atom({
   key: "profileAccountState",
   default: {
@@ -125,6 +127,14 @@ export const createPatientCallback =
   async (params) => {
     try {
       let { email, password, confirmPassword, displayName } = params;
+
+      validateCreatePatient({
+        email,
+        password,
+        confirmPassword,
+        name: displayName,
+      });
+
       set(isLoggingInUserState, true);
       const auth = getAuth();
       const res = await createUserWithEmailAndPassword(auth, email, password);
@@ -153,8 +163,24 @@ export const createPatientCallback =
 
       localStorage.setItem("med_thread_auth_user", JSON.stringify(authUser));
       set(profileAccountState, hydratedUserProfile.account);
+      set(authorizedProfileState, authUser);
     } catch (e) {
       console.log(e);
+
+      let msg = e.message;
+      if (msg.includes("auth/email-already-in-use"))
+        msg = "Email already in use.";
+      toast.error(msg, {
+        position: "top-right",
+        autoClose: 1000,
+        hideProgressBar: true,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
+      throw e;
     } finally {
       set(isLoggingInUserState, false);
     }
@@ -186,6 +212,7 @@ export const signInCallback =
       set(profileAccountState, hydratedUserProfile.account);
       set(authorizedProfileState, authUser);
     } catch (e) {
+      console.log(e);
       throw e;
     } finally {
       set(isLoggingInUserState, false);
@@ -197,6 +224,13 @@ export const createProviderCallback =
   async (params) => {
     try {
       let { email, password, confirmPassword, displayName } = params;
+      validateCreatePatient({
+        email,
+        password,
+        confirmPassword,
+        name: displayName,
+      });
+
       set(isLoggingInUserState, true);
       const auth = getAuth();
       const res = await createUserWithEmailAndPassword(auth, email, password);
@@ -225,8 +259,23 @@ export const createProviderCallback =
 
       localStorage.setItem("med_thread_auth_user", JSON.stringify(authUser));
       set(profileAccountState, hydratedUserProfile.account);
+      set(authorizedProfileState, authUser);
     } catch (e) {
       console.log(e);
+      let msg = e.message;
+      if (msg.includes("auth/email-already-in-use"))
+        msg = "Email already in use.";
+      toast.error(msg, {
+        position: "top-right",
+        autoClose: 1000,
+        hideProgressBar: true,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
+      throw e;
     } finally {
       set(isLoggingInUserState, false);
     }

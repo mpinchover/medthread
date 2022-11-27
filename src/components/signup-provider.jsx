@@ -10,7 +10,7 @@ import { FirebaseContext } from "../firebase/firebase-context";
 import { useNavigate } from "react-router-dom";
 import { isLoggingInUserState } from "../recoil/profile/profile";
 import { useRecoilValue } from "recoil";
-
+import { withPublicRoute } from "./hocs";
 const ProviderSignup = () => {
   const navigate = useNavigate();
   const auth = getAuth();
@@ -23,37 +23,16 @@ const ProviderSignup = () => {
 
   const { createProvider } = useContext(FirebaseContext);
 
-  const validate = () => {
-    if (!emailVal || emailVal === "") {
-      alert("Email is required");
-      return false;
-    }
-    if (!passVal || passVal === "") {
-      alert("Password is required");
-      return false;
-    }
-    if (!confirmPassVal || confirmPassVal === "") {
-      alert("Confirm password is required");
-      return false;
-    }
-    if (passVal !== confirmPassVal) {
-      alert("Passwords do not match");
-      return false;
-    }
-    return true;
-  };
-
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const v = validate();
-    if (!v) return;
+
     try {
       await createProvider(emailVal, passVal, confirmPassVal, nameValue);
 
-      setEmailVal("");
-      setPassVal("");
-      setConfirmPassVal("");
-      setNameValue("");
+      // setEmailVal("");
+      // setPassVal("");
+      // setConfirmPassVal("");
+      // setNameValue("");
     } catch (e) {
       console.log(e);
     }
@@ -135,4 +114,4 @@ const ProviderSignup = () => {
   );
 };
 
-export default ProviderSignup;
+export default withPublicRoute(ProviderSignup);

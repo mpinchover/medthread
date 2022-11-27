@@ -10,6 +10,7 @@ import { useNavigate } from "react-router-dom";
 import { useRecoilValue } from "recoil";
 import { isLoggingInUserState } from "../recoil/profile/profile";
 import { authorizedProfileState } from "../recoil/auth/auth";
+import { withPublicRoute } from "./hocs";
 
 const PatientSignup = () => {
   const navigate = useNavigate();
@@ -24,32 +25,9 @@ const PatientSignup = () => {
   const isLoggingInUser = useRecoilValue(isLoggingInUserState);
   const authorizedUser = useRecoilValue(authorizedProfileState);
 
-  const validate = () => {
-    if (!emailValue || emailValue === "") {
-      alert("Email is required");
-      return false;
-    }
-    if (!passwordValue || passwordValue === "") {
-      alert("Password is required");
-      return false;
-    }
-    if (!confirmPasswordValue || confirmPasswordValue === "") {
-      alert("Confirm password is required");
-      return false;
-    }
-    if (passwordValue !== confirmPasswordValue) {
-      alert("Passwords do not match");
-      return false;
-    }
-    return true;
-  };
-
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const v = validate();
-      if (!v) return;
-
       await createPatient(
         emailValue,
         passwordValue,
@@ -57,13 +35,12 @@ const PatientSignup = () => {
         nameValue
       );
     } catch (e) {
-      alert("Error creating user");
       console.log(e);
 
-      setEmailValue("");
-      setPasswordValue("");
-      setConfirmPasswordValue("");
-      setNameValue("");
+      // setEmailValue("");
+      // setPasswordValue("");
+      // setConfirmPasswordValue("");
+      // setNameValue("");
     }
   };
 
@@ -146,4 +123,4 @@ const PatientSignup = () => {
   );
 };
 
-export default PatientSignup;
+export default withPublicRoute(PatientSignup);

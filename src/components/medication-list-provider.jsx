@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useContext } from "react";
 import {
   derivedMedicationsState,
   getMedicationsForProviderCallback,
@@ -12,7 +12,12 @@ import { getAuth } from "firebase/auth";
 import { Medication, MedHeader } from "./common";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import MedicationList from "./medication-list";
+import { FirebaseContext } from "../firebase/firebase-context";
+
 const ProviderMedList = ({ meds }) => {
+  const { getAuthUser } = useContext(FirebaseContext);
+  const authUser = getAuthUser();
+  const role = authUser.role;
   const [medicationList, setMedicationList] = useRecoilState(
     filteredDerivedMedicationsState
   );
@@ -31,6 +36,7 @@ const ProviderMedList = ({ meds }) => {
 
   return (
     <MedicationList
+      role={role}
       searchTerm={searchTerm}
       onChange={setSearchTerm}
       meds={medicationList}

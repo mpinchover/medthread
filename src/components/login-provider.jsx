@@ -4,7 +4,7 @@ import { useRecoilState, useRecoilValue } from "recoil";
 import { authorizedProfileState } from "../recoil/auth/auth";
 import { FirebaseContext } from "../firebase/firebase-context";
 import { isLoggingInUserState } from "../recoil/profile/profile";
-
+import { withPublicRoute } from "./hocs";
 const ProviderLogin = () => {
   const navigate = useNavigate();
   const location = useLocation();
@@ -99,4 +99,4 @@ const ProviderLogin = () => {
   );
 };
 
-export default ProviderLogin;
+export default withPublicRoute(ProviderLogin);

@@ -1,6 +1,7 @@
 import { useNavigate } from "react-router-dom";
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useContext, useEffect } from "react";
 import { map } from "@firebase/util";
+import { FirebaseContext } from "../firebase/firebase-context";
 
 const DisplayField = ({ label, display }) => {
   return (
@@ -12,18 +13,24 @@ const DisplayField = ({ label, display }) => {
 };
 export const Medication = ({ e }) => {
   let medValues = {};
+  const { getAuthUser } = useContext(FirebaseContext);
+
+  const authUser = getAuthUser();
+  const role = authUser.role;
 
   medValues.medicationName = e.medicationName;
-  medValues.authoredOn = e.authoredOn;
-  medValues.requesterName = e.requesterName;
+  medValues.dateStarted = e.dateStarted;
+  medValues.prescribedBy = e.prescribedBy;
   medValues.medicationType = e.medicationType;
-  medValues.medicationDoseValue = e.medicationDoseValue;
-  medValues.medicationDoseUnit = e.medicationDoseUnit;
+
+  let dose = e.medicationDoseValue + " " + e.medicationDoseUnit;
+  if (!e.medicationDoseValue && !e.medicationDoseUnit) dose = "UNKNOWN";
+  medValues.dose = dose;
   medValues.source = e.source;
   medValues.status = e.status;
 
   if (!medValues.medicationName) medValues.medicationName = "UNKNOWN";
-  if (!medValues.authoredOn) medValues.authoredOn = "UNKNOWN";
+  if (!medValues.dateStarted) medValues.dateStarted = "UNKNOWN";
   if (!medValues.requesterName) medValues.requesterName = "UNKNOWN";
   if (!medValues.medicationType) medValues.medicationType = "UNKNOWN";
   if (!medValues.medicationDoseUnit) medValues.medicationDoseUnit = "UNKNOWN";
@@ -49,22 +56,14 @@ export const Medication = ({ e }) => {
         <div className="text-xl max-w-2xl">{medValues.medicationName}</div>
       </section>
       <section className="text-gray-900">
-        <DisplayField label={"Requested on"} display={medValues.authoredOn} />
+        <DisplayField label={"Requested on"} display={medValues.dateStarted} />
 
-        <DisplayField
-          label={"Requested by"}
-          display={medValues.requesterName}
-        />
+        <DisplayField label={"Requested by"} display={medValues.prescribedBy} />
         {/* <DisplayField label={"Intent"} display={e.intent} /> */}
 
         <DisplayField label={"Type"} display={medValues.medicationType} />
 
-        <DisplayField
-          label={"Dose"}
-          display={
-            medValues.medicationDoseValue + " " + medValues.medicationDoseUnit
-          }
-        />
+        <DisplayField label={"Dose"} display={medValues.dose} />
         {/* 
         <DisplayField
           label={"Quantity dispensed"}
@@ -72,14 +71,17 @@ export const Medication = ({ e }) => {
         /> */}
         <DisplayField label={"Source"} display={medValues.source} />
       </section>
-      <section className="mt-2">
-        <button
-          onClick={() => navigate(`/update-medication?medId=${e.uid}`)}
-          className="text-md text-blue-400"
-        >
-          Update medication
-        </button>
-      </section>
+      {role === "PATIENT" ? (
+        <section className="mt-2">
+          <button
+            onClick={() => navigate(`/update-medication?medId=${e.uid}`)}
+            className="text-md text-blue-400"
+          >
+            Update medication
+          </button>
+        </section>
+      ) : null}
+
       <section
         className={`absolute top-6 right-6 ${
           medValues.status === "ACTIVE" ? "text-green-600" : "text-red-600"

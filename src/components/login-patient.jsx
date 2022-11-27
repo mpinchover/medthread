@@ -5,7 +5,7 @@ import { useNavigate, useLocation } from "react-router-dom";
 import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
 import { FirebaseContext } from "../firebase/firebase-context";
 import { isLoggingInUserState } from "../recoil/profile/profile";
-
+import { withPublicRoute } from "./hocs";
 const PatientLogin = (props) => {
   const location = useLocation();
 
@@ -102,4 +102,4 @@ const PatientLogin = (props) => {
   );
 };
 
-export default PatientLogin;
+export default withPublicRoute(PatientLogin);
