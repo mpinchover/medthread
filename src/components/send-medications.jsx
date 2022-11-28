@@ -49,7 +49,7 @@ const SendMedications = () => {
       });
     }
 
-    setTimeout(() => navigate("/settings", { replace: true }), 1000);
+    setTimeout(() => navigate(-1), 1000);
   };
 
   useEffect(() => {

@@ -107,7 +107,7 @@ const UpdateMedication = () => {
     }
 
     setTimeout(() => {
-      navigate("/medication-list-patient", { replace: true });
+      navigate(-1);
     }, 1000);
   };
 

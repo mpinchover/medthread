@@ -7,9 +7,11 @@ import {
   getFirestore,
   getDoc,
 } from "firebase/firestore";
+import { getServerConfig } from "../config/config";
 
 export const getMedicationByUid = async (uid) => {
   const db = getFirestore();
+  const config = getServerConfig();
 
   const medRef = doc(db, "medications", uid);
   const medDoc = await getDoc(medRef);

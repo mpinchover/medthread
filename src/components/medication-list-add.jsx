@@ -55,7 +55,7 @@ const AddMedication = () => {
     });
 
     setTimeout(() => {
-      navigate("/medication-list-patient", { replace: true });
+      navigate(-1);
     }, 1000);
   };
 
@@ -133,7 +133,7 @@ const AddMedication = () => {
 
   const handleCancel = (e) => {
     e.preventDefault();
-    navigate(-1, { replace: true });
+    navigate(-1);
   };
 
   const renderFooter = () => {

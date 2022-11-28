@@ -9,8 +9,11 @@ import {
   doc,
   updateDoc,
 } from "firebase/firestore";
+import { getServerConfig } from "../config/config";
 
 export const addMedication = async (params) => {
+  const config = getServerConfig();
+  
   const db = getFirestore();
 
   const medicationsRef = collection(db, "medications");

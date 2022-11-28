@@ -6,8 +6,9 @@ import {
   getFirestore,
   doc,
 } from "firebase/firestore";
-
+import { getServerConfig } from "../config/config";
 export const getPatientSourcedMedications = async (patientUid) => {
+  const config = getServerConfig();
   const db = getFirestore();
   const medications = collection(db, "medications");
   const q = query(medications, where("userUid", "==", patientUid));

@@ -46,6 +46,11 @@ const ProviderNavbar = () => {
           <AiOutlineRadiusUpleft style={{ fontSize: 26, color: "blue" }} />
           <div className="hidden md:block ml-2 font-thin text-blue-700">
             med<span className="font-normal">thread</span>
+            <span>
+              {process.env.REACT_APP_MEDTHREAD_ENV === "STAGING"
+                ? "STAGING"
+                : null}
+            </span>
           </div>
         </button>
       </div>

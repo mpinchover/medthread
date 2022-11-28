@@ -139,7 +139,7 @@ export const FirebaseProvider = ({ children }) => {
     try {
       await _createProvider({ email, password, confirmPassword, displayName });
       verifyEmailAddress();
-      navigate("/");
+      navigate("/", { replace: true });
     } catch (e) {
       console.log(e);
     }
@@ -153,7 +153,7 @@ export const FirebaseProvider = ({ children }) => {
   ) => {
     try {
       await _createPatient({ email, password, confirmPassword, displayName });
-      navigate("/");
+      navigate("/", { replace: true });
     } catch (e) {
       console.log(e);
     }
@@ -178,7 +178,7 @@ export const FirebaseProvider = ({ children }) => {
     try {
       const auth = getAuth();
       sendPasswordResetEmail(auth, email);
-      navigate("/");
+      navigate("/", { replace: true });
     } catch (e) {
       console.log(e);
       alert("Failed to reset password");

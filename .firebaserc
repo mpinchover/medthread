@@ -1,5 +1,8 @@
 {
   "projects": {
-    "default": "healthcare-f57e8"
-  }
+    "default": "healthcare-f57e8",
+    "staging": "healthcare-staging-81e75"
+  },
+  "targets": {},
+  "etags": {}
 }

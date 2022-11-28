@@ -43,7 +43,7 @@ const UpdatePassword = () => {
 
       await updateUserPassword(passwordValue);
 
-      navigate("/settings");
+      navigate("/settings", { replace: true });
     } catch (e) {
       alert("Error creating user");
       console.log(e);

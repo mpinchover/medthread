@@ -6,10 +6,12 @@ import {
   getDoc,
   updateDoc,
 } from "firebase/firestore";
+import { getServerConfig } from "../config/config";
 
 export const updateAccountSettings = async (params) => {
   const authUser = JSON.parse(localStorage.getItem("med_thread_auth_user"));
   const { profileUid } = authUser;
+  const config = getServerConfig();
 
   const db = getFirestore();
   const userProfileRef = doc(db, "profiles", profileUid);

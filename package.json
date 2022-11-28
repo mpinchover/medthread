@@ -24,9 +24,9 @@
     "web-vitals": "^2.1.4"
   },
   "scripts": {
-    "start-dev": "dotenv -e .env.config react-scripts start",
+    "start-dev": "dotenv -e .env.staging react-scripts start",
     "start": "react-scripts start",
-    "build": "react-scripts build",
+    "build": "dotenv -e .env.production react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },

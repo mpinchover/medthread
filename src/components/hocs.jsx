@@ -4,14 +4,6 @@ import { useEffect } from "react";
 import { Navigate, useLocation } from "react-router-dom";
 import { useRecoilState, useRecoilValue } from "recoil";
 import { authorizedProfileState } from "../recoil/auth/auth";
-export const PrivateRoute = ({ children }) => {
-  const [auth, setAuth] = useRecoilState(authorizedProfileState);
-
-  if (!auth || auth.user === "NOT_AUTHORIZED") {
-    return <Navigate to="/patient-login" />;
-  }
-  return <>{children}</>;
-};
 
 export const withPublicRoute = (Component) => {
   const WrappedComponent = (props) => {
@@ -58,7 +50,7 @@ export const withPrivateRoute = (Component) => {
       authorizedProfile.role === "PROVIDER" &&
       !authorizedProfile.emailVerified
     ) {
-      return <Navigate to="/verification" />;
+      return <Navigate to="/verification" replace={true} />;
     }
 
     if (!authorizedProfile) {
