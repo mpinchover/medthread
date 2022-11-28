@@ -36,7 +36,7 @@ const ProviderMedList = ({ meds }) => {
 
   return (
     <MedicationList
-      role={role}
+      authUser={authUser}
       searchTerm={searchTerm}
       onChange={setSearchTerm}
       meds={medicationList}

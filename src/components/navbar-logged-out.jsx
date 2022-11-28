@@ -44,7 +44,7 @@ const NavbarLoggedOut = () => {
   return (
     <div
       id="navbar"
-      className="shadow-sm py-7 px-2 md:px-28 flex flex-row sticky top-0 z-50 bg-white"
+      className="shadow-sm py-7 px-2 md:px-28 flex flex-row sticky top-0 z-50 bg-white "
     >
       <div className="flex-1 flex flex-row">
         <button onClick={() => navigate("/")} className="flex flex-row">

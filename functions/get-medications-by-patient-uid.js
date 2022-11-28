@@ -1,5 +1,4 @@
-const jwt_decode = require("jwt-decode");
-const { getUserProfile, getDerivedMedications } = require("./repo");
+const { getDerivedMedications } = require("./repo");
 const admin = require("firebase-admin");
 // protect route https://github.com/firebase/functions-samples/blob/main/authorized-https-endpoint/functions/index.js
 module.exports.getMedicationsByPatientUid = async (req, res) => {

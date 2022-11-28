@@ -1,14 +1,10 @@
 const functions = require("firebase-functions");
-const jwt_decode = require("jwt-decode");
 const admin = require("firebase-admin");
-const { isRouteErrorResponse } = require("react-router-dom");
 admin.initializeApp();
 require("dotenv").config();
-
+const { hello } = require("./get-previous-patients");
 const cors = require("cors")({ origin: true });
-const axios = require("axios");
 const express = require("express");
-const { getUserProfile } = require("./repo");
 const { addHealthInsuranceProvider } = require("./insurance-provider");
 const { sendMedicationsToProvider } = require("./send-medications");
 const {
@@ -27,12 +23,13 @@ app.get("/hello", (req, res) => {
   // @ts-ignore
   res.send(`Hello there`);
 });
+app.get("/hello-app", hello);
 
 app.get("/get-previous-patients", getPreviousPatients);
 app.get("/get-medications-by-patient-uid", getMedicationsByPatientUid);
 app.post("/get-medications-for-provider", getPatientMedicationsForProvider);
 
-app.post("/store-health-insurance-tokens", cors, addHealthInsuranceProvider);
+app.post("/store-health-insurance-tokens", addHealthInsuranceProvider);
 app.post("/send-medications-to-provider", sendMedicationsToProvider);
 
 exports.app = functions.https.onRequest(app);

@@ -1,5 +1,4 @@
 const admin = require("firebase-admin");
-const jwt_decode = require("jwt-decode");
 const axios = require("axios");
 const { getUserProfile } = require("./repo");
 

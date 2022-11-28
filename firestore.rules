@@ -4,6 +4,14 @@ service cloud.firestore {
     match /{document=**} {
       allow read, write: if
           request.time < timestamp.date(2023, 12, 19);
-    }
+      }
+
+      match /medications/{medication} {
+        allow read, write, update, delete: if request.auth != null && request.resource.data.userUid == request.auth.uid;
+      }
+
+      match /profiles/{profile} {
+        allow read, write, update, delete: if request.auth != null &&  request.resource.data.userUid == request.auth.uid;
+      }
   }
 }

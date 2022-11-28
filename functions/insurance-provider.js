@@ -1,4 +1,3 @@
-const jwt_decode = require("jwt-decode");
 const admin = require("firebase-admin");
 const axios = require("axios");
 const { getUserProfile } = require("./repo");

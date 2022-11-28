@@ -16,3 +16,11 @@ module.exports.getPreviousPatients = async (req, res) => {
     res.status(500).send({ error: e });
   }
 };
+
+module.exports.hello = async (requ, res) => {
+  try {
+    res.send({ data: "HELLO FROM APP" });
+  } catch (e) {
+    res.status(500).send({ error: e });
+  }
+};

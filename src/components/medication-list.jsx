@@ -6,15 +6,13 @@ import { AiOutlinePlus } from "react-icons/ai";
 import { getAuth } from "firebase/auth";
 import { Medication, MedHeader } from "./common";
 import { useNavigate } from "react-router-dom";
-const MedicationList = ({ meds, onChange, searchTerm, role }) => {
-  // const [searchQuery, setSearchQuery] = useState("");
-  // const [medications, setMedications] = useState(meds);
+const MedicationList = ({ meds, onChange, searchTerm, authUser }) => {
+  const { role, account } = authUser;
+  const { displayName } = account;
 
   const handleChange = (e) => {
     const { value } = e.target;
     onChange(value);
-
-    // setMedications(filteredMeds);
   };
 
   const renderMedicationList = () => {
@@ -33,9 +31,6 @@ const MedicationList = ({ meds, onChange, searchTerm, role }) => {
 
   const navigate = useNavigate();
 
-  console.log("MEDS ARE ");
-  console.log(meds);
-
   return (
     <div className="flex-1 px-28 py-10 bg-gray-100 ">
       <section className="bg-white border px-10 py-7 rounded-sm">
@@ -43,7 +38,7 @@ const MedicationList = ({ meds, onChange, searchTerm, role }) => {
           <MedHeader
             value={searchTerm}
             onChange={handleChange}
-            name={"Matt Pennywheel"}
+            name={displayName}
           />
         </section>
         {role === "PATIENT" ? (
