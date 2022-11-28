@@ -74,7 +74,7 @@ const SendMedications = () => {
     };
   }, []);
   return (
-    <div className="px-28 py-10 flex flex-1 flex-col bg-gray-100 items-center justify-center">
+    <div className="px-2 md:px-28 py-2 md:py-10 flex flex-1 flex-col bg-gray-100 items-center justify-center">
       <div className="border bg-white p-10">
         <div className="mb-2">
           <div className="  w-72 text-center  text-gray-600 ">

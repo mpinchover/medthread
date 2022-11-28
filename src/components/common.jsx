@@ -113,7 +113,7 @@ export const TextInput = ({
         id={id}
         name={name}
         type={type}
-        className="px-2 border  rounded-sm py-2  w-96"
+        className="px-2 border  rounded-sm py-2  w-full md:w-96"
         value={value}
         placeholder={placeholder}
       />
@@ -123,7 +123,7 @@ export const TextInput = ({
 
 export const DatePicker = ({ label, onChange, name, value, disabled }) => {
   return (
-    <div className="w-96 flex flex-col ">
+    <div className="w-full md:w-96 flex flex-col ">
       <label className="text-xs mb-1">{label}</label>
       <input
         className="border w-full p-2"
@@ -184,7 +184,10 @@ export const DropDown = ({
     setIsOpen(!isOpen);
   };
   return (
-    <div ref={dropDownRef} className="flex flex-col  relative w-96   ">
+    <div
+      ref={dropDownRef}
+      className="flex flex-col  relative w-full md:w-96   "
+    >
       <label className="text-xs mb-1">{label}</label>
 
       <button

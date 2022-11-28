@@ -36,11 +36,6 @@ const PatientSignup = () => {
       );
     } catch (e) {
       console.log(e);
-
-      // setEmailValue("");
-      // setPasswordValue("");
-      // setConfirmPasswordValue("");
-      // setNameValue("");
     }
   };
 

@@ -95,9 +95,9 @@ const ProviderSettings = () => {
   };
 
   return (
-    <div className="px-28 py-10 flex flex-1 flex-col bg-gray-100">
-      <section className="border rounded-sm mb-8  p-10 bg-white ">
-        <div className="text-xl mb-8">Personal information</div>
+    <div className="px-2 md:px-28 py-2 md:py-10 flex flex-1 flex-col bg-gray-100">
+      <section className="border rounded-sm mb-8  p-4 md:p-10 bg-white ">
+        <div className="text-xl mb-8 ">Personal information</div>
 
         <section className="">
           <section className="mb-4">
@@ -180,7 +180,7 @@ const ProviderSettings = () => {
           </button>
         </section>
       </section>
-      <section className="border rounded-sm  bg-white mb-8 p-10">
+      <section className="border rounded-sm  bg-white mb-8 p-4 md:p-10">
         <div className="text-xl mb-8">Patient history</div>
         <button
           onClick={() => navigate("/")}

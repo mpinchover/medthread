@@ -32,8 +32,8 @@ const MedicationList = ({ meds, onChange, searchTerm, authUser }) => {
   const navigate = useNavigate();
 
   return (
-    <div className="flex-1 px-28 py-10 bg-gray-100 ">
-      <section className="bg-white border px-10 py-7 rounded-sm">
+    <div className="flex-1 px-2 md:px-28 py-2 md:py-10 bg-gray-100 ">
+      <section className="bg-white border p-4 md:px-10 md:py-7 rounded-sm">
         <section className="mb-4">
           <MedHeader
             value={searchTerm}

@@ -9,6 +9,7 @@ import { useRecoilValue, useRecoilCallback, useRecoilState } from "recoil";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { withPrivateRoute } from "./hocs";
+
 const PatientItem = ({ patient }) => {
   const navigate = useNavigate();
   const link = `/medication-list-provider/?patientUid=${patient.userUid}`;
@@ -49,8 +50,8 @@ const PreviousPatients = () => {
 
   if (filteredPreviousPatients)
     return (
-      <div className="flex-1  px-28 py-10 bg-gray-100 ">
-        <div className="bg-white border px-10 py-7 rounded-sm">
+      <div className="flex-1 p-2 md:px-28 md:py-10 bg-gray-100 ">
+        <div className="bg-white border p-4 md:px-10 md:py-7 rounded-sm">
           <div className="mb-4">
             <section className="text-xl mb-4">{"Previous patients"}</section>
             <input

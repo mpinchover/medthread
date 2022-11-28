@@ -222,11 +222,11 @@ const UpdateMedication = () => {
     return <LoadingWindow display={"Getting medication..."} />;
 
   return (
-    <div className="flex-1  px-28 py-10 bg-gray-100 ">
-      <div className="bg-white p-10 rounded-sm border">
+    <div className="flex-1 p-2 md:px-28 md:py-10 bg-gray-100 ">
+      <div className="bg-white p-4 md:p-10 rounded-sm border">
         <div className="text-xl">Update medication</div>
         <div className="border border-b-0 my-4"></div>
-        <div className="grid grid-cols-2  gap-y-6">
+        <div className="grid grid-cols-1 md:grid-cols-2  gap-y-6">
           <TextInput
             disabled={disabled}
             name="medicationName"
