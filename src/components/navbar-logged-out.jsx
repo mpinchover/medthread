@@ -35,7 +35,7 @@ const NavbarLoggedOut = () => {
   }, [location]);
 
   const handleClick = (e) => {
-    _setActiveTab(e.target.id);
+    _setActiveTab(e.target.name);
   };
 
   const _setActiveTab = (tab) => {
@@ -53,8 +53,8 @@ const NavbarLoggedOut = () => {
       setActiveTab("provider_login");
       navigate("/provider-login");
     } else if (tab === "patient_login") {
-      navigate("/patient-login");
       setActiveTab("patient_login");
+      navigate("/patient-login");
     }
 
     const navbar = document.getElementById("navbar");
@@ -108,7 +108,7 @@ const NavbarLoggedOut = () => {
 
       <div className="hidden md:block">
         <button
-          id="patient_login"
+          name="patient_login"
           onClick={handleClick}
           className={`${
             activeTab === "patient_login" ? "black" : "text-gray-400"
@@ -117,7 +117,7 @@ const NavbarLoggedOut = () => {
           Patient Login
         </button>
         <button
-          id="provider_login"
+          name="provider_login"
           onClick={handleClick}
           className={`${
             activeTab === "provider_login" ? "black" : "text-gray-400"
@@ -126,7 +126,7 @@ const NavbarLoggedOut = () => {
           Provider Login
         </button>
         <button
-          id="contact"
+          name="contact"
           onClick={handleClick}
           className={`${
             activeTab === "contact" ? "black" : "text-gray-400"

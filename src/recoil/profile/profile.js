@@ -150,7 +150,19 @@ export const createPatientCallback =
         },
       };
 
-      const hydratedUserProfile = await createHydratedUserProfile(newUser);
+      let hydratedUserProfile;
+      try {
+        hydratedUserProfile = await createHydratedUserProfile(newUser);
+      } catch (e) {
+        console.log(e);
+        let msg = e.message;
+        if (
+          !msg.toLowerCase().includes("document already exists") ||
+          !msg.toLowerCase().includes("entity already exists")
+        ) {
+          throw e;
+        }
+      }
 
       const authUser = {
         uid: res.user.uid,
@@ -166,8 +178,8 @@ export const createPatientCallback =
       set(authorizedProfileState, authUser);
     } catch (e) {
       console.log(e);
-
       let msg = e.message;
+
       if (msg.includes("auth/email-already-in-use"))
         msg = "Email already in use.";
       toast.error(msg, {
@@ -246,7 +258,19 @@ export const createProviderCallback =
         },
       };
 
-      const hydratedUserProfile = await createHydratedUserProfile(newUser);
+      let hydratedUserProfile;
+      try {
+        hydratedUserProfile = await createHydratedUserProfile(newUser);
+      } catch (e) {
+        console.log(e);
+        let msg = e.message;
+        if (
+          !msg.toLowerCase().includes("document already exists") ||
+          !msg.toLowerCase().includes("entity already exists")
+        ) {
+          throw e;
+        }
+      }
 
       const authUser = {
         uid: res.user.uid,
@@ -263,6 +287,7 @@ export const createProviderCallback =
     } catch (e) {
       console.log(e);
       let msg = e.message;
+
       if (msg.includes("auth/email-already-in-use"))
         msg = "Email already in use.";
       toast.error(msg, {

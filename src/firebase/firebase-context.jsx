@@ -200,6 +200,7 @@ export const FirebaseProvider = ({ children }) => {
       const auth = getAuth();
       await signOut(auth);
       localStorage.clear();
+      setAuthorizedProfile(null);
     } catch (e) {
       console.log(e);
     }
