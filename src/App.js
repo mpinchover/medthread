@@ -3,18 +3,14 @@ import "react-toastify/dist/ReactToastify.css";
 
 import app from "./firebase/firebase";
 import { getFirestore } from "firebase/firestore";
-import { doc, setDoc } from "firebase/firestore";
 import { collection, addDoc } from "firebase/firestore";
-import TextComponent from "./components/test-component";
 import { useEffect, useState } from "react";
 import axios from "axios";
 
 import { FirebaseProvider } from "./firebase/firebase-context";
-import { Suspense } from "react";
 import Navbar from "./components/navbar";
 import RecordsFeed from "./components/active-patient";
 import PatientFeed from "./components/patient-feed";
-import EmailProvider from "./components/email-provider";
 import ProviderLogin from "./components/login-provider";
 import PatientLogin from "./components/login-patient";
 // import PatientSignup from "./components/patient-signup";
@@ -24,11 +20,9 @@ import PatientAuthorizationPage from "./components/patient-authorization-page";
 import PatientSignup from "./components/signup-patient";
 import ForgotPassword from "./components/forgot-password";
 import Settings from "./components/settings";
-import Homepage from "./screens/homepage";
 import PatientMedicationList from "./components/medication-list-patient";
 import UpdatePassword from "./components/settings-password-update";
 import { BrowserRouter as Router, Route, Link, Routes } from "react-router-dom";
-import Login from "./components/login";
 import UpdateMedication from "./components/medication-list-update";
 import AddMedication from "./components/medication-list-add";
 import SendMedications from "./components/send-medications";
@@ -99,8 +93,7 @@ function App() {
           <Routes className="">
             <Route exact path="/previous-patients" element={<PatientFeed />} />
             <Route exact path="/active-patient" element={<RecordsFeed />} />
-            <Route exact path="/email-provider" element={<EmailProvider />} />
-            <Route exact path="/email-provider" element={<EmailProvider />} />
+
             <Route exact path="/provider-login" element={<ProviderLogin />} />
             <Route exact path="/provider-signup" element={<ProviderSignup />} />
             <Route exact path="/patient-signup" element={<PatientSignup />} />

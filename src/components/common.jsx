@@ -138,6 +138,65 @@ export const DatePicker = ({ label, onChange, name, value, disabled }) => {
   );
 };
 
+export const HeadlessDropdown = ({
+  options,
+  onClick,
+  toggleOpen,
+  isOpen,
+  mainDropdownRefBtn,
+}) => {
+  const dropDownRef = useRef(null);
+  const handleClickOutside = (event) => {
+    if (
+      mainDropdownRefBtn.current &&
+      !mainDropdownRefBtn.current.contains(event.target) &&
+      dropDownRef.current &&
+      !dropDownRef.current.contains(event.target)
+    ) {
+      toggleOpen(false);
+    }
+  };
+
+  const handleClick = (e) => {
+    toggleOpen(false);
+    if (onClick) onClick(e);
+  };
+
+  useEffect(() => {
+    document.addEventListener("mousedown", handleClickOutside);
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
+
+  return (
+    <ul
+      ref={dropDownRef}
+      className={`${
+        isOpen ? "flex" : "hidden"
+      } absolute top-full w-52 bg-white shadow-md flex-col right-0 `}
+    >
+      {options.map((e, i) => {
+        return (
+          <li
+            key={i}
+            className="p-2 border border-t-0 last:border-b-0 hover:opacity-50"
+          >
+            <button
+              className="text-left w-full"
+              name={e.name}
+              onClick={handleClick}
+            >
+              {e.display}
+            </button>
+          </li>
+        );
+      })}
+    </ul>
+  );
+};
+
 export const DropDown = ({
   label,
   options,

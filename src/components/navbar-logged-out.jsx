@@ -1,18 +1,37 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { AiOutlineRadiusUpleft, AiOutlineMenu } from "react-icons/ai";
+import { HeadlessDropdown } from "./common";
 const NavbarLoggedOut = () => {
   const navigate = useNavigate();
 
   const location = useLocation();
   const pathname = location.pathname;
   const [activeTab, setActiveTab] = useState(null);
+  const [isOpen, toggleOpen] = useState(false);
 
+  const onDropdownClick = (e) => {
+    const name = e.target.name;
+    if (name === "PROVIDER_LOGIN") navigate("/provider-login");
+    if (name === "PATIENT_LOGIN") navigate("/patient-login");
+  };
+  const mainDropdownRefBtn = useRef(null);
+
+  const onResize = () => {
+    const { innerWidth, innerHeight } = window;
+    if (innerWidth >= 768) toggleOpen(false);
+  };
   useEffect(() => {
     let regex = /\//;
     let result = pathname.replace(regex, "");
     result = result.replace("-", "_");
     if (result !== activeTab) _setActiveTab(result);
+
+    window.addEventListener("resize", onResize);
+
+    return () => {
+      document.removeEventListener("resize", onResize);
+    };
   }, [location]);
 
   const handleClick = (e) => {
@@ -41,6 +60,17 @@ const NavbarLoggedOut = () => {
     const navbar = document.getElementById("navbar");
   };
 
+  const navbarDropdownMenuOptions = [
+    { name: "PROVIDER_LOGIN", display: "Provider login" },
+    { name: "PATIENT_LOGIN", display: "Patient login login" },
+    { name: "CONTACT", display: "Contact" },
+  ];
+
+  const handleToggleOpen = (e) => {
+    e.preventDefault();
+    toggleOpen(!isOpen);
+  };
+
   return (
     <div
       id="navbar"
@@ -59,10 +89,23 @@ const NavbarLoggedOut = () => {
           </div>
         </button>
       </div>
+      <div className=" relative">
+        <button
+          ref={mainDropdownRefBtn}
+          onClick={handleToggleOpen}
+          className="md:hidden "
+        >
+          <AiOutlineMenu style={{ fontSize: 26, color: "grey" }} />
+        </button>
+        <HeadlessDropdown
+          options={navbarDropdownMenuOptions}
+          isOpen={isOpen}
+          onClick={onDropdownClick}
+          toggleOpen={toggleOpen}
+          mainDropdownRefBtn={mainDropdownRefBtn}
+        />
+      </div>
 
-      <button className="md:hidden">
-        <AiOutlineMenu style={{ fontSize: 26, color: "grey" }} />
-      </button>
       <div className="hidden md:block">
         <button
           id="patient_login"
