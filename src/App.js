@@ -75,9 +75,24 @@ function App() {
   //     });
   //   }
   // }
+  function resetHeight() {
+    // reset the body height to that of the inner browser
+    document.body.style.minHeight = window.innerHeight + "px";
+    document.getElementById("root").style.minHeight = window.innerHeight + "px";
+  }
+  useEffect(() => {
+    // reset the height whenever the window's resized
+    window.addEventListener("resize", resetHeight);
+
+    // called to initially set the height.
+    return () => {
+      window.removeEventListener("resize", resetHeight);
+    };
+  }, []);
+  resetHeight();
 
   return (
-    <div className="min-h-screen flex flex-col">
+    <div className="flex-1 flex flex-col">
       <Router>
         <FirebaseProvider>
           <Navbar />
