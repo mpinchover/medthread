@@ -6,7 +6,13 @@ import { AiOutlinePlus } from "react-icons/ai";
 import { getAuth } from "firebase/auth";
 import { Medication, MedHeader } from "./common";
 import { useNavigate } from "react-router-dom";
-const MedicationList = ({ meds, onChange, searchTerm, authUser }) => {
+const MedicationList = ({
+  meds,
+  onChange,
+  searchTerm,
+  authUser,
+  activePatient,
+}) => {
   const { role, account } = authUser;
   const { displayName } = account;
 
@@ -38,7 +44,11 @@ const MedicationList = ({ meds, onChange, searchTerm, authUser }) => {
           <MedHeader
             value={searchTerm}
             onChange={handleChange}
-            name={displayName}
+            name={
+              activePatient?.account?.displayName
+                ? activePatient?.account?.displayName
+                : displayName
+            }
           />
         </section>
         {role === "PATIENT" ? (

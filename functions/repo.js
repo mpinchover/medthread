@@ -111,6 +111,9 @@ const getPatientsByProviderUid = async (providerUid) => {
     .get();
   const patientUids = snapshot.docs.map((doc) => doc.data().patientUid);
 
+  if (patientUids.length == 0) {
+    return [];
+  }
   // now get patient names
   const profilesRef = await admin.firestore().collection("profiles");
   snapshot = await profilesRef.where("userUid", "in", patientUids).get();

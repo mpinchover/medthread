@@ -5,7 +5,8 @@ import {
   filteredDerivedMedicationsState,
   medicationSearchTermState,
 } from "../recoil/medications/medications";
-import { useRecoilCallback, useRecoilState } from "recoil";
+import { activePatientState } from "../recoil/provider/provider";
+import { useRecoilCallback, useRecoilState, useRecoilValue } from "recoil";
 import { withPrivateRoute } from "./hocs";
 import { AiOutlinePlus } from "react-icons/ai";
 import { getAuth } from "firebase/auth";
@@ -25,6 +26,7 @@ const ProviderMedList = ({ meds }) => {
   const [searchParams, setSearchParams] = useSearchParams();
 
   const patientUid = searchParams.get("patientUid");
+  const activePatient = useRecoilValue(activePatientState);
 
   const getMedicationsForProvider = useRecoilCallback(
     getMedicationsForProviderCallback
@@ -36,6 +38,7 @@ const ProviderMedList = ({ meds }) => {
 
   return (
     <MedicationList
+      activePatient={activePatient}
       authUser={authUser}
       searchTerm={searchTerm}
       onChange={setSearchTerm}

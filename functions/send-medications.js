@@ -57,7 +57,7 @@ const sendProviderMedicationsInEmail = async (
     from: ``,
     to: healthcareProviderEmail,
     subject: `${displayName} medical records authorization.`,
-    html: `<p>${displayName} has authorized you to view their medical records. Click <a href="http://localhost:3000/medication-list?patientUid=${userUid}">here</a> to see them.</p>`,
+    html: `<p>${displayName} has authorized you to view their medical records. Click <a href="${process.env.BASE_URL}/medication-list-provider?patientUid=${userUid}">here</a> to see them.</p>`,
   };
 
   const res = await transporter.sendMail(mailOptions);

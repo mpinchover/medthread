@@ -3,6 +3,7 @@ const admin = require("firebase-admin");
 // protect route https://github.com/firebase/functions-samples/blob/main/authorized-https-endpoint/functions/index.js
 module.exports.getMedicationsByPatientUid = async (req, res) => {
   try {
+    console.log("MADE IT HERE");
     const tokenId = req.get("Authorization").split("Bearer ")[1];
 
     const decodedToken = await admin.auth().verifyIdToken(tokenId);

@@ -34,6 +34,11 @@ export const filteredPreviousPatientsState = selector({
   },
 });
 
+export const activePatientState = atom({
+  key: "activePatientState",
+  default: null,
+});
+
 export const getPreviousPatientsCallback =
   ({ set, snapshot }) =>
   async () => {

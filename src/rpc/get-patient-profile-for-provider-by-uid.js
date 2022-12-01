@@ -1,20 +1,20 @@
 import axios from "axios";
 import { getServerConfig } from "../config/config";
 
-// patient is making this call
-export const getMedicationsForPatient = async () => {
+export const getPatientProfileForProviderByUid = async (patientUid) => {
   const authUser = JSON.parse(localStorage.getItem("med_thread_auth_user"));
-  const { idToken, uid } = authUser;
+  const { idToken } = authUser;
   const config = getServerConfig();
+
   const res = await axios({
-    method: "get",
-    url: `${config.baseUrl}/get-medications-by-patient-uid`,
+    method: "post",
+    url: `${config.baseUrl}/get-patient-profile-for-provider-by-uid`,
+    data: {
+      patientUid,
+    },
     headers: {
       Authorization: `Bearer ${idToken}`,
     },
   });
-
-  const { data } = res;
-  if (!data.medications) return [];
-  return data.medications;
+  return res.data.patient;
 };

@@ -10,16 +10,20 @@ import { getAuth, onAuthStateChanged } from "firebase/auth";
 const Navbar = () => {
   const [_authUser, _setAuthUser] = useState(null);
   const { getAuthUser } = useContext(FirebaseContext);
-  const v = useRecoilValue(authorizedProfileState);
-  const auth = getAuth();
+  const [authorizedProfile, setAuthorizedProfile] = useRecoilState(
+    authorizedProfileState
+  );
+
+  // const auth = getAuth();
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, async (user) => {
-      _setAuthUser(user);
-    });
-    return unsubscribe;
+    // const unsubscribe = onAuthStateChanged(auth, async (user) => {
+    // _setAuthUser(user);
+    // });
+    // return unsubscribe;
   }, []);
 
-  const authUser = getAuthUser();
+  // const authUser = getAuthUser();
+  const authUser = authorizedProfile;
 
   if (authUser && authUser.role === "PATIENT") {
     return <PatientNavbar />;

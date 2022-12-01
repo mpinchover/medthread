@@ -146,20 +146,18 @@ export const createPatientCallback =
         role: "PATIENT",
         userUid: res.user.uid,
         account: {
-          displayName: params.displayName,
+          displayName,
         },
       };
 
       let hydratedUserProfile;
       try {
+        console.log("CREATING A PATIENT");
         hydratedUserProfile = await createHydratedUserProfile(newUser);
       } catch (e) {
         console.log(e);
         let msg = e.message;
-        if (
-          !msg.toLowerCase().includes("document already exists") ||
-          !msg.toLowerCase().includes("entity already exists")
-        ) {
+        if (!msg.toLowerCase().includes("already exists")) {
           throw e;
         }
       }
@@ -174,7 +172,8 @@ export const createPatientCallback =
       };
 
       localStorage.setItem("med_thread_auth_user", JSON.stringify(authUser));
-      set(profileAccountState, hydratedUserProfile.account);
+      if (hydratedUserProfile && hydratedUserProfile.account)
+        set(profileAccountState, hydratedUserProfile.account);
       set(authorizedProfileState, authUser);
     } catch (e) {
       console.log(e);
@@ -221,10 +220,21 @@ export const signInCallback =
 
       localStorage.setItem("med_thread_auth_user", JSON.stringify(authUser));
       // setProfileAccount(hydratedUserProfile.account);
-      set(profileAccountState, hydratedUserProfile.account);
+      if (hydratedUserProfile?.account)
+        set(profileAccountState, hydratedUserProfile.account);
       set(authorizedProfileState, authUser);
     } catch (e) {
       console.log(e);
+      toast.error("Incorrect email/password", {
+        position: "top-right",
+        autoClose: 1000,
+        hideProgressBar: true,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
       throw e;
     } finally {
       set(isLoggingInUserState, false);
@@ -254,7 +264,7 @@ export const createProviderCallback =
         role: "PROVIDER",
         userUid: res.user.uid,
         account: {
-          displayName: params.displayName,
+          displayName,
         },
       };
 
@@ -264,10 +274,7 @@ export const createProviderCallback =
       } catch (e) {
         console.log(e);
         let msg = e.message;
-        if (
-          !msg.toLowerCase().includes("document already exists") ||
-          !msg.toLowerCase().includes("entity already exists")
-        ) {
+        if (!msg.toLowerCase().includes("already exists")) {
           throw e;
         }
       }
@@ -282,7 +289,8 @@ export const createProviderCallback =
       };
 
       localStorage.setItem("med_thread_auth_user", JSON.stringify(authUser));
-      set(profileAccountState, hydratedUserProfile.account);
+      if (hydratedUserProfile?.account)
+        set(profileAccountState, hydratedUserProfile.account);
       set(authorizedProfileState, authUser);
     } catch (e) {
       console.log(e);

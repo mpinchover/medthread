@@ -4,6 +4,7 @@ import {
   previousPatientsState,
   filteredPreviousPatientsState,
   previousPatientsSearchTermState,
+  activePatientState,
 } from "../recoil/provider/provider";
 import { useRecoilValue, useRecoilCallback, useRecoilState } from "recoil";
 import { useEffect, useState } from "react";
@@ -38,6 +39,8 @@ const PreviousPatients = () => {
   const [searchQuery, setSearchQuery] = useRecoilState(
     previousPatientsSearchTermState
   );
+
+
 
   useEffect(() => {
     getPreviousPatients();

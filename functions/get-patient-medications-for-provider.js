@@ -22,6 +22,7 @@ module.exports.getPatientMedicationsForProvider = async (req, res) => {
     if (!authProfile.emailVerified)
       throw new Error("provider must be verified");
 
+    console.log(authProfile.email, patientUid);
     // check to see if this healthcare provider is an authorized provider for this patient
     const authorizedHealthcareProfileDoc =
       await getAuthorizedHealthcareProvider(patientUid, authProfile.email);

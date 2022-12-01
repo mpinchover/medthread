@@ -10,6 +10,8 @@ import { removeMedication } from "../../rpc/remove-medication";
 import { sendMedicationsToProvider } from "../../rpc/send-medications";
 import { getMedicationsForProvider } from "../../rpc/get-medications-for-provider";
 import { getMedicationsForPatient } from "../../rpc/get-medications-by-patient-uid";
+import { activePatientState } from "../provider/provider";
+import { getPatientProfileForProviderByUid } from "../../rpc/get-patient-profile-for-provider-by-uid";
 export const patientSourcedMedicationListState = atom({
   key: "patientSourcedMedicationListState",
   default: [],
@@ -170,6 +172,11 @@ export const getMedicationsForProviderCallback =
 
       const medications = await getMedicationsForProvider(patientUid);
       set(derivedMedicationsState, medications);
+
+      const patientProfile = await getPatientProfileForProviderByUid(
+        patientUid
+      );
+      set(activePatientState, patientProfile);
     } catch (e) {
       console.log(e);
     } finally {

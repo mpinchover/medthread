@@ -100,6 +100,7 @@ export const FirebaseProvider = ({ children }) => {
 
     const removeIdTokenListener = onIdTokenChanged(auth, async (user) => {
       if (!user) {
+        signOutUser(); // possibly need to remove
         return;
       }
 
@@ -213,29 +214,25 @@ export const FirebaseProvider = ({ children }) => {
   // todo - verify the email address exists?
   const verifyEmailAddress = async () => {
     try {
-      const actionCodeSettings = {
-        // URL you want to redirect back to. The domain (www.example.com) for this
-        // URL must be in the authorized domains list in the Firebase Console.
-        url: "http://localhost:3000/",
-        // This must be true.
-        handleCodeInApp: true,
-        iOS: {
-          bundleId: "com.example.ios",
-        },
-        android: {
-          packageName: "com.example.android",
-          installApp: true,
-          minimumVersion: "12",
-        },
-        dynamicLinkDomain: "/",
-      };
+      let url = "";
+      if (process.env.REACT_APP_MEDTHREAD_ENV === "PRODUCTION") {
+        url = "https://usemedthread.com";
+      } else if (process.env.REACT_APP_MEDTHREAD_ENV === "STAGING") {
+        url = "https://staging.usemedthread.com";
+      } else {
+        url = "http://localhost:3000";
+      }
+
+      console.log("THE URL IS");
+      console.log(url);
+
       const auth = getAuth();
       const authUser = getAuthUser();
       const { email } = authUser;
 
       // await sendSignInLinkToEmail(auth, email, actionCodeSettings);
       await sendEmailVerification(auth.currentUser, {
-        url: "http://localhost:3000",
+        url,
       });
     } catch (e) {
       console.log(e);

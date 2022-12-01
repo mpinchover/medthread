@@ -56,7 +56,7 @@ const ProviderNavbar = () => {
       </div>
 
       <div className="">
-        <button
+        {/* <button
           id="previous_patients"
           onClick={handleClick}
           className={`${
@@ -64,7 +64,7 @@ const ProviderNavbar = () => {
           } hover:opacity-50 cursor-pointer mr-4 `}
         >
           Previous Patients
-        </button>
+        </button> */}
 
         <button
           id="logout"

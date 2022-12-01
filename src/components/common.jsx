@@ -15,6 +15,7 @@ export const Medication = ({ e }) => {
   let medValues = {};
   const { getAuthUser } = useContext(FirebaseContext);
 
+  console.log(e.dose);
   const authUser = getAuthUser();
   const role = authUser.role;
 
@@ -22,13 +23,11 @@ export const Medication = ({ e }) => {
   medValues.dateStarted = e.dateStarted;
   medValues.prescribedBy = e.prescribedBy;
   medValues.medicationType = e.medicationType;
-
-  let dose = e.medicationDoseValue + " " + e.medicationDoseUnit;
-  if (!e.medicationDoseValue && !e.medicationDoseUnit) dose = "UNKNOWN";
-  medValues.dose = dose;
+  medValues.dose = e.dose;
   medValues.source = e.source;
   medValues.status = e.status;
 
+  if (!medValues.dose) medValues.dose = "UNKNOWN";
   if (!medValues.medicationName) medValues.medicationName = "UNKNOWN";
   if (!medValues.dateStarted) medValues.dateStarted = "UNKNOWN";
   if (!medValues.requesterName) medValues.requesterName = "UNKNOWN";
@@ -69,7 +68,7 @@ export const Medication = ({ e }) => {
           label={"Quantity dispensed"}
           display={e.medicationDispensedQuantity}
         /> */}
-        <DisplayField label={"Source"} display={medValues.source} />
+        {/* <DisplayField label={"Source"} display={medValues.source} /> */}
       </section>
       {role === "PATIENT" ? (
         <section className="mt-2">

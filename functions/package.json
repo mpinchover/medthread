@@ -7,7 +7,9 @@
     "start": "npm run shell",
     "deploy": "firebase deploy --only functions",
     "logs": "firebase functions:log",
-    "test": "mocha tests/**/*.test.js"
+    "test": "mocha tests/**/*.test.js",
+    "build-tsc": "npm run-script build",
+    "start-dev": "npm run build -- --watch | firebase emulators:start"
   },
   "engines": {
     "node": "16"

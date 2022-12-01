@@ -11,17 +11,18 @@ const VerificationPage = () => {
     authorizedProfileState
   );
 
-  const { email } = authorizedProfile;
-
   const { verifyEmailAddress } = useContext(FirebaseContext);
   const navigate = useNavigate();
   useEffect(() => {
     const auth = getAuth();
   }, []);
 
-  if (authorizedProfile.emailVerified) {
+  if (!authorizedProfile || authorizedProfile?.emailVerified) {
+    console.log(authorizedProfile);
     return <Navigate to="/" replace={true} />;
   }
+
+  const { email } = authorizedProfile;
 
   return (
     <div className="flex flex-col  flex-1 items-center justify-center ">
