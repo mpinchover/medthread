@@ -2,6 +2,13 @@ import { useNavigate } from "react-router-dom";
 import { useState, useRef, useContext, useEffect } from "react";
 import { map } from "@firebase/util";
 import { FirebaseContext } from "../firebase/firebase-context";
+import {
+  FaPen,
+  FaSyringe,
+  FaDiagnoses,
+  FaProcedures,
+  FaAllergies,
+} from "react-icons/fa";
 
 const DisplayField = ({ label, display }) => {
   return (
@@ -19,7 +26,7 @@ export const Medication = ({ e }) => {
   const authUser = getAuthUser();
   const role = authUser.role;
 
-  medValues.medicationName = e.medicationName;
+  medValues.itemName = e.itemName;
   medValues.dateStarted = e.dateStarted;
   medValues.prescribedBy = e.prescribedBy;
   medValues.medicationType = e.medicationType;
@@ -28,7 +35,7 @@ export const Medication = ({ e }) => {
   medValues.status = e.status;
 
   if (!medValues.dose) medValues.dose = "UNKNOWN";
-  if (!medValues.medicationName) medValues.medicationName = "UNKNOWN";
+  if (!medValues.itemName) medValues.itemName = "UNKNOWN";
   if (!medValues.dateStarted) medValues.dateStarted = "UNKNOWN";
   if (!medValues.requesterName) medValues.requesterName = "UNKNOWN";
   if (!medValues.medicationType) medValues.medicationType = "UNKNOWN";
@@ -52,7 +59,7 @@ export const Medication = ({ e }) => {
   return (
     <div className="shadow-md border mb-6  p-6 relative rounded-sm">
       <section className="mb-4">
-        <div className="text-xl max-w-2xl">{medValues.medicationName}</div>
+        <div className="text-xl max-w-2xl">{medValues.itemName}</div>
       </section>
       <section className="text-gray-900">
         <DisplayField label={"Requested on"} display={medValues.dateStarted} />
@@ -137,6 +144,333 @@ export const DatePicker = ({ label, onChange, name, value, disabled }) => {
   );
 };
 
+const activeColorMap = {
+  MEDICATIONS: "text-blue-600",
+  IMMUNIZATIONS: "text-purple-600",
+  PROCEDURES: "text-orange-600",
+  DIAGNOSES: "text-yellow-600",
+  ALLERGIES: "text-green-600",
+};
+
+export const FilterItem = ({ label, icon, name, handleClick, active }) => {
+  return (
+    <button
+      onClick={handleClick}
+      name={name}
+      className={`inline-block  last:mr-0 ${
+        active ? activeColorMap[name] : "text-gray-400"
+      }`}
+    >
+      <div className="flex flex-col items-center  ">
+        {icon}
+        <div className="text-xs mt-2">{label}</div>
+      </div>
+    </button>
+  );
+};
+
+function getMonthShortName(monthNo) {
+  const date = new Date();
+  date.setMonth(monthNo);
+
+  return date.toLocaleString("en-US", { month: "short" });
+}
+
+const getFormattedDate = (date) => {
+  if (!date) return null;
+  const dateObj = new Date(date);
+
+  const month = getMonthShortName(dateObj.getMonth());
+  const day = dateObj.getDate();
+  const year = dateObj.getFullYear();
+
+  const formattedDate = `${month}, ${day}, ${year}`;
+  return formattedDate;
+};
+
+const bgMedMap = {
+  MEDICATIONS: "bg-blue-200",
+  IMMUNIZATIONS: "bg-purple-200",
+  PROCEDURES: "bg-orange-200",
+  DIAGNOSES: "bg-yellow-200",
+  ALLERGIES: "bg-green-200",
+};
+
+const borderMedMap = {
+  MEDICATIONS: "border-blue-200",
+  IMMUNIZATIONS: "border-purple-200",
+  PROCEDURES: "border-orange-200",
+  DIAGNOSES: "border-yellow-200",
+  ALLERGIES: "border-green-200",
+};
+
+/*
+  {
+    itemType: "ALLERGIES",
+    itemName: "BACTRIM",
+    date: "2021-03-06",
+    dateStarted: "2021-03-06",
+    performer: "DR. JOSEPH THOMAS",
+    reaction: "Swelling",
+    status:"ACTIVE"
+  },
+   */
+
+export const Allergy = ({ e, role }) => {
+  const {
+    itemType,
+    date,
+    dateStarted,
+
+    status,
+    reaction,
+    performer,
+    source,
+    itemName,
+  } = e;
+
+  let _status = "Active";
+  if (status === "NOT_ACTIVE") _status = "Not active";
+
+  let backgroundColor = `${bgMedMap[itemType]}`;
+  let borderColor = `${borderMedMap[itemType]}`;
+
+  const formattedDateStarted = getFormattedDate(date);
+  const _dateStarted = getFormattedDate(dateStarted);
+
+  return (
+    // <div className="border w-full flex items-center justify-center ">
+    <div className={`border ${borderColor} rounded-lg overflow-hidden`}>
+      <div className={`flex flex-row justify-between ${backgroundColor} p-6`}>
+        <div>{itemName}</div>
+        <div>{formattedDateStarted}</div>
+      </div>
+      <div className="p-6 text-sm grid grid-cols-2 border-b h-32">
+        <div className="">
+          <div className="mb-1">First recorded on {_dateStarted}</div>
+          <div className="mb-1">Manifestation: {reaction}</div>
+        </div>
+        <div>
+          <div className="mb-1">{performer}</div>
+          {status === "ACTIVE" ? (
+            <div className="text-green-600">Active</div>
+          ) : (
+            <div className="text-red-600">Not Active</div>
+          )}
+        </div>
+      </div>
+      <div className="p-6 ">
+        <div className="text-sm font-bold mb-1">{source}</div>
+        {role === "PATIENT" ? (
+          <button className="text-blue-600 flex flex-row items-center">
+            <FaPen size={12} />
+            <span className="ml-1 text-sm">Update allergy</span>
+          </button>
+        ) : null}
+      </div>
+    </div>
+    // </div>
+  );
+};
+
+export const Procedure = ({ e, role }) => {
+  const {
+    itemType,
+    itemName,
+    date,
+    source,
+    performer,
+    status,
+    diagnosisSource,
+    encounterSummary,
+  } = e;
+
+  let backgroundColor = `${bgMedMap[itemType]}`;
+  let borderColor = `${borderMedMap[itemType]}`;
+
+  const formattedDateStarted = getFormattedDate(date);
+
+  return (
+    <div className={`border ${borderColor} rounded-lg overflow-hidden`}>
+      <div className={`flex flex-row justify-between ${backgroundColor} p-6`}>
+        <div>{itemName}</div>
+        <div>{formattedDateStarted}</div>
+      </div>
+      <div className="p-6 text-sm  border-b h-32">
+        <div className="mb-1">Performed by {performer}</div>
+      </div>
+
+      <div className="p-6 ">
+        <div className="text-sm font-bold mb-1">{source}</div>
+        <button className="text-blue-600 flex flex-row items-center">
+          {role === "PATIENT" ? (
+            <button className="text-blue-600 flex flex-row items-center">
+              <FaPen size={12} />
+              <span className="ml-1 text-sm">Update Procedure</span>
+            </button>
+          ) : null}
+        </button>
+      </div>
+    </div>
+  );
+};
+
+export const Diagnosis = ({ e, role }) => {
+  const {
+    itemType,
+    itemName,
+    date,
+    source,
+    performer,
+    status,
+    diagnosisSource,
+    encounterSummary,
+  } = e;
+
+  let backgroundColor = `${bgMedMap[itemType]}`;
+  let borderColor = `${borderMedMap[itemType]}`;
+
+  const formattedDateStarted = getFormattedDate(date);
+
+  return (
+    <div className={`border ${borderColor} rounded-lg overflow-hidden`}>
+      <div className={`flex flex-row justify-between ${backgroundColor} p-6`}>
+        <div>{itemName}</div>
+        <div>{formattedDateStarted}</div>
+      </div>
+      <div className="p-6 text-sm border-b h-32">
+        <div className="grid grid-cols-2 mb-1 ">
+          <div>Source from {diagnosisSource}</div>
+          {/* {status === "ACTIVE" ? (
+            <div className="text-green-600">Active</div>
+          ) : (
+            <div className="text-red-600">Not Active</div>
+          )} */}
+        </div>
+        <div className="mb-1">Summary: {encounterSummary}</div>
+
+        <div className="mb-1">Ordered by {performer}</div>
+      </div>
+
+      <div className="p-6 ">
+        <div className="text-sm font-bold mb-1">{source}</div>
+        {role === "PATIENT" ? (
+          <button className="text-blue-600 flex flex-row items-center">
+            <FaPen size={12} />
+            <span className="ml-1 text-sm">Update Diagnosis</span>
+          </button>
+        ) : null}
+      </div>
+    </div>
+  );
+};
+
+export const Immunization = ({
+  medValues,
+  handleUpdateMedication,
+  e,
+  role,
+}) => {
+  const { itemType, itemName, date, source, status, performer } = e;
+
+  let backgroundColor = `${bgMedMap[itemType]}`;
+  let borderColor = `${borderMedMap[itemType]}`;
+
+  const formattedDateStarted = getFormattedDate(date);
+
+  // const onClick = () => {
+  //   handleUpdateMedication(medValues);
+  // };
+  return (
+    // <div className="border w-full flex items-center justify-center ">
+    <div className={`border ${borderColor} rounded-lg overflow-hidden`}>
+      <div className={`flex flex-row justify-between ${backgroundColor} p-6`}>
+        <div>{itemName}</div>
+        <div>{formattedDateStarted}</div>
+      </div>
+      <div className="p-6 text-sm  border-b h-32">Performed by {performer}</div>
+
+      <div className="p-6 ">
+        <div className="text-sm font-bold mb-1">{source}</div>
+        {role === "PATIENT" ? (
+          <button className="text-blue-600 flex flex-row items-center">
+            <FaPen size={12} />
+            <span className="ml-1 text-sm">Update immunization</span>
+          </button>
+        ) : null}
+      </div>
+    </div>
+    // </div>
+  );
+};
+
+export const Med = ({ medValues, handleUpdateMedication, role }) => {
+  const {
+    itemType,
+    date,
+    medicationType,
+    dose,
+    quantityDispensed,
+    status,
+    lastRefil,
+    prescribedBy,
+    source,
+    itemName,
+    lastRefill,
+  } = medValues;
+
+  let _status = "Active";
+  if (status === "NOT_ACTIVE") _status = "Not active";
+
+  let backgroundColor = `${bgMedMap[itemType]}`;
+  let borderColor = `${borderMedMap[itemType]}`;
+
+  const formattedDateStarted = getFormattedDate(date);
+  const refillDate = getFormattedDate(lastRefill);
+
+  const onClick = () => {
+    handleUpdateMedication(medValues);
+  };
+  return (
+    // <div className="border w-full flex items-center justify-center ">
+    <div className={`border ${borderColor} rounded-lg overflow-hidden`}>
+      <div className={`flex flex-row justify-between ${backgroundColor} p-6`}>
+        <div>{itemName}</div>
+        <div>{formattedDateStarted}</div>
+      </div>
+      <div className="p-6 text-sm grid grid-cols-2 border-b h-32">
+        <div className="">
+          {lastRefill ? (
+            <div className="mb-1">Last refill on {refillDate}</div>
+          ) : null}
+          <div className="mb-1">Dose is {dose}</div>
+        </div>
+        <div>
+          <div className="mb-1">{prescribedBy}</div>
+          {status === "ACTIVE" ? (
+            <div className="text-green-600">Active</div>
+          ) : (
+            <div className="text-red-600">Not Active</div>
+          )}
+        </div>
+      </div>
+      <div className="p-6 ">
+        <div className="text-sm font-bold mb-1">{source}</div>
+        {role === "PATIENT" ? (
+          <button
+            onClick={onClick}
+            className="text-blue-600 flex flex-row items-center"
+          >
+            <FaPen size={12} />
+            <span className="ml-1 text-sm">Update medication</span>
+          </button>
+        ) : null}
+      </div>
+    </div>
+    // </div>
+  );
+};
+
 export const HeadlessDropdown = ({
   options,
   onClick,
@@ -145,6 +479,7 @@ export const HeadlessDropdown = ({
   mainDropdownRefBtn,
 }) => {
   const dropDownRef = useRef(null);
+
   const handleClickOutside = (event) => {
     if (
       mainDropdownRefBtn.current &&
@@ -174,16 +509,16 @@ export const HeadlessDropdown = ({
       ref={dropDownRef}
       className={`${
         isOpen ? "flex" : "hidden"
-      } absolute top-full w-52 bg-white shadow-md flex-col right-0 `}
+      } absolute top-full shadow-lg mt-2  w-52 bg-white flex-col right-0  `}
     >
       {options.map((e, i) => {
         return (
           <li
             key={i}
-            className="p-2 border border-t-0 last:border-b-0 hover:opacity-50"
+            className="p-4 border border-t-0 last:border-b-0 hover:opacity-50"
           >
             <button
-              className="text-left w-full"
+              className="text-left w-full text-sm"
               name={e.name}
               onClick={handleClick}
             >

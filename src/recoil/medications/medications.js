@@ -30,7 +30,7 @@ export const medicationBeingUpdatedState = atom({
 export const medicationBeingUpdatedValuesState = atom({
   key: "medicationBeingUpdatedValuesState",
   default: {
-    medicationName: "",
+    itemName: "",
     dose: "",
     prescribedBy: "",
     dateStarted: "",
@@ -91,7 +91,7 @@ export const filteredDerivedMedicationsState = selector({
     let medications = get(derivedMedicationsState);
 
     medications = medications.filter((x) =>
-      x.medicationName.toLowerCase().includes(searchTerm.toLowerCase())
+      x.itemName.toLowerCase().includes(searchTerm.toLowerCase())
     );
     return medications;
   },
@@ -99,7 +99,7 @@ export const filteredDerivedMedicationsState = selector({
 
 const meds = [
   {
-    medicationName: "Horizant ER 600 mg tablet,extended release",
+    itemName: "Horizant ER 600 mg tablet,extended release",
     requesterName: "DR. CHRISTOPHER WIETING, DPM",
     medicationType: "TABLET, EXTENDED RELEASE",
     medicationDoseValue: 600,
@@ -110,7 +110,7 @@ const meds = [
     status: "active",
   },
   {
-    medicationName: "Horizant ER 600 mg tablet,extended release",
+    itemName: "Horizant ER 600 mg tablet,extended release",
     requesterName: "DR. KATHLEEN HUDSON, MD",
     medicationType: "TABLET, EXTENDED RELEASE",
     medicationDoseValue: 600,
@@ -121,7 +121,7 @@ const meds = [
     status: "active",
   },
   {
-    medicationName:
+    itemName:
       "Salad incentivize Tuna copy convergence sky blue Georgia Industrial synthesizing Views",
     requesterName: "quantify Unbranded Plastic Tuna",
     medicationType:
@@ -134,7 +134,7 @@ const meds = [
     status: "cancelled",
   },
   {
-    medicationName: "Mektovi 15 mg tablet",
+    itemName: "Mektovi 15 mg tablet",
     requesterName: "DR. EVAN BACHNER, M.D.",
     medicationType: "TABLET",
     medicationDoseValue: 15,
@@ -191,8 +191,8 @@ export const getMedicationsForPatientCallback =
       // use this one
       set(loadingDerivedMedicationlistState, true);
 
-      const medications = await getMedicationsForPatient();
-
+      // const medications = await getMedicationsForPatient();
+      const medications = [];
       set(derivedMedicationsState, medications);
     } catch (e) {
       console.log(e);

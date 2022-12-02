@@ -40,8 +40,6 @@ const PreviousPatients = () => {
     previousPatientsSearchTermState
   );
 
-
-
   useEffect(() => {
     getPreviousPatients();
   }, []);

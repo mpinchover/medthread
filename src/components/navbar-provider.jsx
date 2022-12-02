@@ -1,13 +1,41 @@
-import React, { useState, useEffect, useContext } from "react";
+import React, { useState, useEffect, useContext, useRef } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { AiOutlineRadiusUpleft } from "react-icons/ai";
 import { FirebaseContext } from "../firebase/firebase-context";
+import { AiOutlineMenu } from "react-icons/ai";
+import { HeadlessDropdown } from "./common";
+
+const navbarDropdownMenuOptions = [
+  { name: "PREVIOUS_PATIENTS", display: "Previous patients" },
+  // { name: "LOG_OUT", display: "My care providers" },
+  // { name: "LOG_OUT", display: "My insurance providers" },
+  { name: "LOG_OUT", display: "Settings" },
+
+  { name: "LOG_OUT", display: "Log out" },
+];
+
 const ProviderNavbar = () => {
   const navigate = useNavigate();
   const { signOutUser } = useContext(FirebaseContext);
   const location = useLocation();
   const pathname = location.pathname;
   const [activeTab, setActiveTab] = useState(null);
+
+  const [isOpen, toggleOpen] = useState(false);
+
+  const onDropdownClick = (e) => {
+    const name = e.target.name;
+    if (name === "PROVIDER_LOGIN") navigate("/provider-login");
+    if (name === "PATIENT_LOGIN") navigate("/patient-login");
+    if (name === "PREVIOUS_PATIENTS") navigate("/previous-patients");
+  };
+
+  const handleToggleOpen = (e) => {
+    e.preventDefault();
+    toggleOpen(!isOpen);
+  };
+
+  const mainDropdownRefBtn = useRef(null);
 
   useEffect(() => {
     let regex = /\//;
@@ -41,11 +69,14 @@ const ProviderNavbar = () => {
       id="navbar"
       className="shadow-sm py-7 px-2 md:px-28 flex flex-row sticky top-0 z-50 bg-white"
     >
-      <div className="flex-1 flex flex-row">
-        <button onClick={() => navigate("/")} className="flex flex-row">
+      <div className="flex-1 flex flex-row ">
+        <button
+          onClick={() => navigate("/")}
+          className="flex flex-row items-center"
+        >
           <AiOutlineRadiusUpleft style={{ fontSize: 26, color: "blue" }} />
-          <div className="hidden md:block ml-2 font-thin text-blue-700">
-            med<span className="font-normal">thread</span>
+          <div className="text-lg hidden md:block ml-2 font-thin text-blue-700">
+            <span className="font-bold">medthread</span>
             <span>
               {process.env.REACT_APP_MEDTHREAD_ENV === "STAGING"
                 ? "STAGING"
@@ -55,7 +86,7 @@ const ProviderNavbar = () => {
         </button>
       </div>
 
-      <div className="">
+      <div className="relative">
         {/* <button
           id="previous_patients"
           onClick={handleClick}
@@ -65,7 +96,22 @@ const ProviderNavbar = () => {
         >
           Previous Patients
         </button> */}
-
+        <button
+          onClick={handleToggleOpen}
+          ref={mainDropdownRefBtn}
+          className="rounded-full border relative flex flex-row items-center justify-center space-x-2 p-2 px-4 "
+        >
+          <AiOutlineMenu size={14} />
+          <div>KJ</div>
+        </button>
+        <HeadlessDropdown
+          options={navbarDropdownMenuOptions}
+          isOpen={isOpen}
+          onClick={onDropdownClick}
+          toggleOpen={toggleOpen}
+          mainDropdownRefBtn={mainDropdownRefBtn}
+        />
+        {/* 
         <button
           id="logout"
           onClick={handleClick}
@@ -74,7 +120,7 @@ const ProviderNavbar = () => {
           } hover:opacity-50 cursor-pointer mr-4 `}
         >
           Log out
-        </button>
+        </button> */}
       </div>
     </div>
   );

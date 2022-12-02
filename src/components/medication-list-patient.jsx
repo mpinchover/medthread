@@ -21,7 +21,13 @@ import { withPrivateRoute } from "./hocs";
 const MedicationListPatient = () => {
   const { getAuthUser } = useContext(FirebaseContext);
 
-  const authUser = getAuthUser();
+  // const authUser = getAuthUser();
+  const authUser = {
+    role: "PATIENT",
+    account: {
+      displayName: "Matt",
+    },
+  };
   const role = authUser.role;
 
   const getMedications = useRecoilCallback(getMedicationsForPatientCallback);

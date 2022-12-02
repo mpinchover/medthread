@@ -1,44 +1,57 @@
-import { useEffect, useContext } from "react";
+import MedicationList from "./medication-list";
+import { useRecoilValue, useRecoilCallback, useRecoilState } from "recoil";
+import { loadMedicationList } from "../recoil/medications/medications";
+import { useEffect, useState, useContext } from "react";
 import {
+  medicationsCallback,
+  medicationList,
+  getDerivedMedicationListCallback,
+  loadingDerivedMedicationlistState,
   derivedMedicationsState,
-  getMedicationsForProviderCallback,
   filteredDerivedMedicationsState,
+  getMedicationsForPatientCallback,
   medicationSearchTermState,
 } from "../recoil/medications/medications";
-import { activePatientState } from "../recoil/provider/provider";
-import { useRecoilCallback, useRecoilState, useRecoilValue } from "recoil";
-import { withPrivateRoute } from "./hocs";
-import { AiOutlinePlus } from "react-icons/ai";
-import { getAuth } from "firebase/auth";
-import { Medication, MedHeader } from "./common";
-import { useNavigate, useSearchParams } from "react-router-dom";
-import MedicationList from "./medication-list";
-import { FirebaseContext } from "../firebase/firebase-context";
 
-const ProviderMedList = ({ meds }) => {
+import { getAuth } from "firebase/auth";
+import { LoadingMedicationData } from "./common";
+import { FirebaseContext } from "../firebase/firebase-context";
+import { withPrivateRoute } from "./hocs";
+
+const MedicationListPatient = () => {
   const { getAuthUser } = useContext(FirebaseContext);
-  const authUser = getAuthUser();
+
+  // const authUser = getAuthUser();
+  const authUser = {
+    role: "PROVIDER",
+    account: {
+      displayName: "Matt",
+    },
+  };
   const role = authUser.role;
+
+  const getMedications = useRecoilCallback(getMedicationsForPatientCallback);
+
   const [medicationList, setMedicationList] = useRecoilState(
     filteredDerivedMedicationsState
   );
+
   const [searchTerm, setSearchTerm] = useRecoilState(medicationSearchTermState);
-  const [searchParams, setSearchParams] = useSearchParams();
-
-  const patientUid = searchParams.get("patientUid");
-  const activePatient = useRecoilValue(activePatientState);
-
-  const getMedicationsForProvider = useRecoilCallback(
-    getMedicationsForProviderCallback
-  );
 
   useEffect(() => {
-    getMedicationsForProvider(patientUid);
+    getMedications();
   }, []);
+
+  const isLoadingMedicationList = useRecoilValue(
+    loadingDerivedMedicationlistState
+  );
+
+  if (isLoadingMedicationList) {
+    return <LoadingMedicationData />;
+  }
 
   return (
     <MedicationList
-      activePatient={activePatient}
       authUser={authUser}
       searchTerm={searchTerm}
       onChange={setSearchTerm}
@@ -47,4 +60,4 @@ const ProviderMedList = ({ meds }) => {
   );
 };
 
-export default withPrivateRoute(ProviderMedList);
+export default withPrivateRoute(MedicationListPatient);

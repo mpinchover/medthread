@@ -12,7 +12,7 @@ import { useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
 import { withPrivateRoute } from "./hocs";
 const medIdleState = {
-  medicationName: "",
+  itemName: "",
   dose: "",
   prescribedBy: "",
   dateStarted: "",
@@ -175,10 +175,10 @@ const AddMedication = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-y-6">
             <TextInput
               disabled={disabled}
-              name="medicationName"
+              name="itemName"
               onChange={handleChange}
               placeholder="e.g, Tylenol"
-              value={newMed["medicationName"]}
+              value={newMed["itemName"]}
               label={"Medication name"}
             />
             <TextInput

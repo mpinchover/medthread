@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { PrivateRoute, withPrivateRoute } from "./hocs";
+import { IoIosOptions } from "react-icons/io";
 const patients = [
   {
     id: 1,
@@ -58,7 +59,7 @@ const PatientFeed = () => {
   const navigate = useNavigate();
 
   const handleClickpatient = (id) => {
-    navigate("/active-patient");
+    navigate("/medication-list-provider");
   };
 
   const [searchTerm, setSearchTerm] = useState("");
@@ -72,17 +73,25 @@ const PatientFeed = () => {
   };
 
   return (
-    <div className="px-28 py-4 flex flex-1 flex-col">
-      <div>
+    <div className="py-4 flex flex-1 flex-col">
+      <div className="py-4 px-2 md:px-28 flex flex-row relative">
         <input
           value={searchTerm}
           onChange={onChange}
-          className="text-lg focus:outline-none w-full py-2 border-b"
-          placeholder={`Search patients...`}
+          className=" focus:outline-none p-4 text-sm border rounded-full flex-1 "
+          placeholder="Search patients"
         />
+        <button
+          // onClick={handleToggleOpen}
+          // ref={mainDropdownRefBtn}
+          className=" flex flex-row border rounded-full py-4 ml-6 px-6 items-center"
+        >
+          <IoIosOptions size={20} />
+          <span className="text-xs ml-1">Filters</span>
+        </button>
       </div>
 
-      <ul>
+      <ul className="px-28">
         {filteredPatients.map((e, i) => {
           return (
             <li
@@ -91,8 +100,8 @@ const PatientFeed = () => {
               id={e.id}
               className={` text-gray-600 hover:opacity-50 cursor-pointer py-4 border-b `}
             >
-              <div className="text-lg">{e.name}</div>
-              <div className="text-sm">last seen: {e.date} </div>
+              <div className="text-md">{e.name}</div>
+              <div className="text-xs">last seen on {e.date} </div>
             </li>
           );
         })}

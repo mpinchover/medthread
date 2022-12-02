@@ -229,10 +229,10 @@ const UpdateMedication = () => {
         <div className="grid grid-cols-1 md:grid-cols-2  gap-y-6">
           <TextInput
             disabled={disabled}
-            name="medicationName"
+            name="itemName"
             onChange={handleChange}
             placeholder="e.g, Tylenol"
-            value={medUpdateValues?.medicationName}
+            value={medUpdateValues?.itemName}
             label={"Medication name"}
           />
           <TextInput
