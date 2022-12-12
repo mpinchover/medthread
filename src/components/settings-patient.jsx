@@ -77,12 +77,18 @@ const PatientSettings = ({ insuranceProviders, healthcareProviders }) => {
     isUpdatingProfileAccountState
   );
 
-  // window.FlexpaLink.create({
-  //   publishableKey: "pk_test_pKDGhsAjAOiDxw6LdHuoogYupzm9VNnQh113WuCoK6I",
-  //   onSuccess: async (publicToken) => {
-  //     addInsuranceProviderCbk(publicToken);
-  //   },
-  // });
+  useEffect(() => {
+    openFlexpaLink();
+  });
+
+  window.FlexpaLink.create({
+    publishableKey: "pk_test_pKDGhsAjAOiDxw6LdHuoogYupzm9VNnQh113WuCoK6I",
+    onSuccess: async (publicToken) => {
+      console.log("TOKEN IS");
+      console.log(publicToken);
+      // addInsuranceProviderCbk(publicToken);
+    },
+  });
 
   const openFlexpaLink = () => {
     window.FlexpaLink.open();

@@ -37,38 +37,7 @@ function App() {
   const [accessToken, setAccessToken] = useState(null);
   const [publicToken, setPublicToken] = useState(null);
 
-  const saveRecord = async () => {
-    const db = getFirestore();
-    const c = collection(db, "cities");
-    const docRef = await addDoc(c, {
-      name: "Tokyo",
-      country: "Japan",
-    });
 
-    console.log("Document written with ID: ", docRef.id);
-  };
-
-  const getAccessToken = async () => {
-    const res = await axios({
-      method: "post",
-      url: "https://api.flexpa.com/link/exchange",
-      data: {
-        public_token: publicToken,
-        secret_key: "sk_test_cs-s-ZYhDg99z6XMFUQFHAb1Lpm_Sn8zwnlJGb-rlT4",
-      },
-    });
-
-    setAccessToken(res.data.access_token);
-  };
-
-  // function requireAuth(nextState, replace) {
-  //   if (!userExists()) {
-  //     replace({
-  //       pathname: "/signin",
-  //       state: { nextPathname: nextState.location.pathname },
-  //     });
-  //   }
-  // }
   function resetHeight() {
     // reset the body height to that of the inner browser
     document.body.style.minHeight = window.innerHeight + "px";

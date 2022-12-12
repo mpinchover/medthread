@@ -8,6 +8,8 @@ export interface AuthorizedProvider {
 export interface Medication {
   uid?: string;
   dateStarted?: Date;
+  medicationName?: string;
+  source?: string;
 }
 
 export interface Profile {
@@ -24,6 +26,13 @@ export interface AuthProfile {
 export interface InsuranceProvider {
   userUid: string;
   accessToken: string;
-  publicToken: string;
   providerName: string;
+  // providerCode: string;
+  uid?: string;
+  capabilities: string[];
+}
+
+export interface InsuranceMetadata {
+  publisher: string;
+  capabilities: string[];
 }

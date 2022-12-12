@@ -53,15 +53,15 @@ export const withPrivateRoute = (Component) => {
       return <Navigate to="/verification" replace={true} />;
     }
 
-    if (!authorizedProfile) {
-      return (
-        <Navigate
-          to={loginLink}
-          replace={true}
-          state={{ path: location.pathname }}
-        />
-      );
-    }
+    // if (!authorizedProfile) {
+    //   return (
+    //     <Navigate
+    //       to={loginLink}
+    //       replace={true}
+    //       state={{ path: location.pathname }}
+    //     />
+    //   );
+    // }
     return <Component {...props} />;
   };
   return WrappedComponent;

@@ -28,9 +28,12 @@ export const getDerivedMedications = async (userUid: string) => {
   return snapshot.docs.map((e: any) => {
     const med: Medication = e.data();
     med.uid = e.id;
+    med.source = "PATIENT";
     return med;
   });
 };
+
+
 
 export const getAuthProfile = async (uid: string) => {
   const authProfile: AuthProfile = await admin.auth().getUser(uid);
@@ -47,25 +50,23 @@ export const addAuthorizedHealthcareProvider = async (
     patientUid,
     providerEmail
   );
-  if (existingHealthcareProvider) return;
+  if (existingHealthcareProvider) return existingHealthcareProvider;
 
-  const authorizedProvidersRef = admin
+  const authorizedProviderDoc = admin
     .firestore()
-    .collection("authorized_providers");
+    .collection("authorizedProviders")
+    .doc();
 
-  const authorizedProviderDoc: AuthorizedProvider = {
+  const params: AuthorizedProvider = {
     healthcareProviderEmail: providerEmail,
     patientUid,
+    uid: authorizedProviderDoc.id,
   };
 
-  if (providerName) authorizedProviderDoc.providerName = providerName;
+  if (providerName) params.providerName = providerName;
 
-  const res = await authorizedProvidersRef.add(authorizedProviderDoc);
-  return {
-    healthcareProviderEmail: providerEmail,
-    patientUid,
-    docUid: res.id,
-  };
+  await authorizedProviderDoc.set(params);
+  return params;
 };
 
 export const getAuthorizedHealthcareProvider = async (

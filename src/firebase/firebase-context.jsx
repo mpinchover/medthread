@@ -77,6 +77,9 @@ export const FirebaseProvider = ({ children }) => {
         return;
       }
 
+      console.log("USER IS");
+      console.log(user);
+
       const hydratedUserProfile = await hydrateUserProfile(user.uid);
       const idToken = await auth.currentUser.getIdToken(
         /* forceRefresh */ true
@@ -100,7 +103,7 @@ export const FirebaseProvider = ({ children }) => {
 
     const removeIdTokenListener = onIdTokenChanged(auth, async (user) => {
       if (!user) {
-        signOutUser(); // possibly need to remove
+        // signOutUser(); // possibly need to remove
         return;
       }
 

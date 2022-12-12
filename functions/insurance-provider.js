@@ -79,11 +79,16 @@ const getAccessToken = async (publicToken) => {
   const res = await axios({
     method: "post",
     url: "https://api.flexpa.com/link/exchange",
+    headers: {
+      "Content-Type": "application/json",
+      "accept-encoding": "*",
+    },
     data: {
       public_token: publicToken,
       secret_key: process.env.FLEXPA_SECRET_KEY,
     },
   });
+
 
   return res.data.access_token;
 };
