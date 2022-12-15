@@ -79,9 +79,71 @@ export const medicationSearchTermState = atom({
   default: "",
 });
 
+const fakeMeds = [
+  {
+    medicationName: "Advil",
+    dateStarted: "2020-01-02",
+    source: "CLAIMS",
+  },
+  {
+    medicationName: "Ibuprofen",
+    dateStarted: "2020-02-02",
+    source: "PATIENT",
+  },
+  {
+    medicationName: "Advil",
+    dateStarted: "2020-01-02",
+    source: "CLAIMS",
+  },
+  {
+    medicationName: "Advil",
+    dateStarted: "2020-01-02",
+    source: "CLAIMS",
+  },
+  {
+    medicationName: "Advil",
+    dateStarted: "2020-01-02",
+    source: "CLAIMS",
+  },
+  {
+    medicationName: "Ibuprofen",
+    dateStarted: "2020-02-02",
+    source: "PATIENT",
+  },
+  {
+    medicationName: "Advil",
+    dateStarted: "2020-01-02",
+    source: "CLAIMS",
+  },
+  {
+    medicationName: "Ibuprofen",
+    dateStarted: "2020-02-02",
+    source: "PATIENT",
+  },
+  {
+    medicationName: "Advil",
+    dateStarted: "2020-01-02",
+    source: "CLAIMS",
+  },
+  {
+    medicationName: "Advil",
+    dateStarted: "2020-01-02",
+    source: "CLAIMS",
+  },
+  {
+    medicationName: "Advil",
+    dateStarted: "2020-01-02",
+    source: "CLAIMS",
+  },
+  {
+    medicationName: "Ibuprofen",
+    dateStarted: "2020-02-02",
+    source: "PATIENT",
+  },
+];
 export const derivedMedicationsState = atom({
   key: "derivedMedicationsState",
-  default: [],
+  default: fakeMeds,
 });
 
 export const filteredDerivedMedicationsState = selector({
@@ -97,65 +159,65 @@ export const filteredDerivedMedicationsState = selector({
   },
 });
 
-const meds = [
-  {
-    medicationName: "Horizant ER 600 mg tablet,extended release",
-    requesterName: "DR. CHRISTOPHER WIETING, DPM",
-    medicationType: "TABLET, EXTENDED RELEASE",
-    medicationDoseValue: 600,
-    medicationDoseUnit: "EA",
-    medicationDispensedQuantity: 30,
-    authoredOn: "2020-05-28",
-    intent: "order",
-    status: "active",
-  },
-  {
-    medicationName: "Horizant ER 600 mg tablet,extended release",
-    requesterName: "DR. KATHLEEN HUDSON, MD",
-    medicationType: "TABLET, EXTENDED RELEASE",
-    medicationDoseValue: 600,
-    medicationDoseUnit: "EA",
-    medicationDispensedQuantity: 30,
-    authoredOn: "2020-05-28",
-    intent: "order",
-    status: "active",
-  },
-  {
-    medicationName:
-      "Salad incentivize Tuna copy convergence sky blue Georgia Industrial synthesizing Views",
-    requesterName: "quantify Unbranded Plastic Tuna",
-    medicationType:
-      "Lempira payment New York tangible Mississippi embrace Developer synthesizing hard drive Robust",
-    medicationDoseValue: 4,
-    medicationDoseUnit: "{tbl}",
-    medicationDispensedQuantity: 3,
-    authoredOn: "2019-06-25",
-    intent: "order",
-    status: "cancelled",
-  },
-  {
-    medicationName: "Mektovi 15 mg tablet",
-    requesterName: "DR. EVAN BACHNER, M.D.",
-    medicationType: "TABLET",
-    medicationDoseValue: 15,
-    medicationDoseUnit: "EA",
-    medicationDispensedQuantity: 30,
-    authoredOn: "2018-10-28",
-    intent: "order",
-    status: "active",
-  },
-  {
-    medicationName: "Mektovi 15 mg tablet",
-    requesterName: "DR. HEATHER SNYDER, D.P.M.",
-    medicationType: "TABLET",
-    medicationDoseValue: 15,
-    medicationDoseUnit: "EA",
-    medicationDispensedQuantity: 30,
-    authoredOn: "2018-10-28",
-    intent: "order",
-    status: "active",
-  },
-];
+// const meds = [
+//   {
+//     medicationName: "Horizant ER 600 mg tablet,extended release",
+//     requesterName: "DR. CHRISTOPHER WIETING, DPM",
+//     medicationType: "TABLET, EXTENDED RELEASE",
+//     medicationDoseValue: 600,
+//     medicationDoseUnit: "EA",
+//     medicationDispensedQuantity: 30,
+//     authoredOn: "2020-05-28",
+//     intent: "order",
+//     status: "active",
+//   },
+//   {
+//     medicationName: "Horizant ER 600 mg tablet,extended release",
+//     requesterName: "DR. KATHLEEN HUDSON, MD",
+//     medicationType: "TABLET, EXTENDED RELEASE",
+//     medicationDoseValue: 600,
+//     medicationDoseUnit: "EA",
+//     medicationDispensedQuantity: 30,
+//     authoredOn: "2020-05-28",
+//     intent: "order",
+//     status: "active",
+//   },
+//   {
+//     medicationName:
+//       "Salad incentivize Tuna copy convergence sky blue Georgia Industrial synthesizing Views",
+//     requesterName: "quantify Unbranded Plastic Tuna",
+//     medicationType:
+//       "Lempira payment New York tangible Mississippi embrace Developer synthesizing hard drive Robust",
+//     medicationDoseValue: 4,
+//     medicationDoseUnit: "{tbl}",
+//     medicationDispensedQuantity: 3,
+//     authoredOn: "2019-06-25",
+//     intent: "order",
+//     status: "cancelled",
+//   },
+//   {
+//     medicationName: "Mektovi 15 mg tablet",
+//     requesterName: "DR. EVAN BACHNER, M.D.",
+//     medicationType: "TABLET",
+//     medicationDoseValue: 15,
+//     medicationDoseUnit: "EA",
+//     medicationDispensedQuantity: 30,
+//     authoredOn: "2018-10-28",
+//     intent: "order",
+//     status: "active",
+//   },
+//   {
+//     medicationName: "Mektovi 15 mg tablet",
+//     requesterName: "DR. HEATHER SNYDER, D.P.M.",
+//     medicationType: "TABLET",
+//     medicationDoseValue: 15,
+//     medicationDoseUnit: "EA",
+//     medicationDispensedQuantity: 30,
+//     authoredOn: "2018-10-28",
+//     intent: "order",
+//     status: "active",
+//   },
+// ];
 
 // depreicate this
 export const loadMedicationListState = atom({
@@ -343,7 +405,7 @@ export const medicationsCallback =
         },
       });
 
-      set(medicationListState, meds);
+      set(medicationListState, fakeMeds);
     } catch (e) {
       console.log(e);
     } finally {

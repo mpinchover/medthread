@@ -49,6 +49,8 @@ export const FirebaseProvider = ({ children }) => {
   const [isLoggingInUser, setIsLoggingInUser] =
     useRecoilState(isLoggingInUserState);
 
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
   const _createPatient = useRecoilCallback(createPatientCallback);
   const _createProvider = useRecoilCallback(createProviderCallback);
   const _signIn = useRecoilCallback(signInCallback);
@@ -254,6 +256,8 @@ export const FirebaseProvider = ({ children }) => {
         updateUserPassword,
         getAuthUser,
         verifyEmailAddress,
+        isModalOpen,
+        setIsModalOpen,
       }}
     >
       {children}

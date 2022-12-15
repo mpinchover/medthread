@@ -4,7 +4,7 @@ import "react-toastify/dist/ReactToastify.css";
 import app from "./firebase/firebase";
 import { getFirestore } from "firebase/firestore";
 import { collection, addDoc } from "firebase/firestore";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useContext } from "react";
 import axios from "axios";
 
 import { FirebaseProvider } from "./firebase/firebase-context";
@@ -23,13 +23,29 @@ import Settings from "./components/settings";
 import PatientMedicationList from "./components/medication-list-patient";
 import UpdatePassword from "./components/settings-password-update";
 import { BrowserRouter as Router, Route, Link, Routes } from "react-router-dom";
-import UpdateMedication from "./components/medication-list-update";
-import AddMedication from "./components/medication-list-add";
 import SendMedications from "./components/send-medications";
 import MedicationListProvider from "./components/medication-list-provider";
 import { ToastContainer } from "react-toastify";
 import Home from "./components/home";
 import VerificationPage from "./components/verification-page";
+import { FirebaseContext } from "./firebase/firebase-context";
+
+const ModalShadow = () => {
+  const { isModalOpen } = useContext(FirebaseContext);
+
+  let style = {};
+  if (isModalOpen) {
+    style = {
+      background: "rgba(0, 0, 0, 0.5)",
+    };
+  }
+  return (
+    <div
+      style={style}
+      className={`${isModalOpen ? "absolute" : "hidden "} h-full w-full z-20`}
+    ></div>
+  );
+};
 
 function App() {
   const [open, setOpen] = useState(null);
@@ -37,6 +53,11 @@ function App() {
   const [accessToken, setAccessToken] = useState(null);
   const [publicToken, setPublicToken] = useState(null);
 
+  const handleClickDown = (e) => {
+    console.log("CLICKED ON");
+    console.log(e.target);
+    console.log(e.currentTarget);
+  };
 
   function resetHeight() {
     // reset the body height to that of the inner browser
@@ -46,18 +67,21 @@ function App() {
   useEffect(() => {
     // reset the height whenever the window's resized
     window.addEventListener("resize", resetHeight);
+    document.body.addEventListener("click", handleClickDown);
 
     // called to initially set the height.
     return () => {
       window.removeEventListener("resize", resetHeight);
+      document.body.removeEventListener("click", handleClickDown);
     };
   }, []);
   resetHeight();
 
   return (
-    <div className="flex-1 flex flex-col">
+    <div className="flex-1 flex flex-col relative">
       <Router>
         <FirebaseProvider>
+          <ModalShadow />
           <Navbar />
           <Routes className="">
             <Route exact path="/previous-patients" element={<PatientFeed />} />
@@ -71,18 +95,14 @@ function App() {
             <Route exact path="/forgot-password" element={<ForgotPassword />} />
             <Route exact path="/" element={<Home />} />
             <Route exact path="/update-password" element={<UpdatePassword />} />
-            <Route exact path="/add-medication" element={<AddMedication />} />
+
             <Route exact path="/verification" element={<VerificationPage />} />
             <Route
               exact
               path="/medication-list-provider"
               element={<MedicationListProvider />}
             />
-            <Route
-              exact
-              path="/update-medication"
-              element={<UpdateMedication />}
-            />
+
             <Route
               exact
               path="/patient-homepage"
@@ -95,7 +115,7 @@ function App() {
             />
             <Route
               exact
-              path="/medication-list-patient"
+              path="/medication-list"
               element={<PatientMedicationList />}
             />
             <Route

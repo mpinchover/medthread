@@ -28,9 +28,9 @@ const Settings = () => {
 
   if (isLoadingSettings) return <LoadingSettingsData />;
 
-  if (authUser.role === "PROVIDER") {
-    return <ProviderSettings />;
-  }
+  // if (authUser.role === "PROVIDER") {
+  //   return <ProviderSettings />;
+  // }
   return (
     <PatientSettings
       healthcareProviders={healthcareProviders}

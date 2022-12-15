@@ -1,52 +1,77 @@
-import React, { useState, useEffect, useContext } from "react";
+import React, { useState, useEffect, useContext, useRef } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { AiOutlineRadiusUpleft } from "react-icons/ai";
 import { FirebaseContext } from "../firebase/firebase-context";
+import { AiOutlineMenu, AiOutlineMail } from "react-icons/ai";
+import { HeadlessDropdown } from "./common";
+import { TbPill } from "react-icons/tb";
+import { MdAccountCircle } from "react-icons/md";
+import { FiLogOut } from "react-icons/fi";
+import { RiSendPlaneFill } from "react-icons/ri";
+import { AiOutlinePlus } from "react-icons/ai";
 
-const PatientNavbar = () => {
+const navbarDropdownMenuOptions = [
+  { name: "MEDICATIONS", display: "Medications", icon: TbPill },
+
+  { name: "ACCOUNT", display: "Account", icon: MdAccountCircle },
+  { name: "CONTACT", display: "Contact", icon: AiOutlineMail },
+  { name: "LOGOUT", display: "Log out", icon: FiLogOut },
+];
+
+const NavbarLoggedOut = () => {
   const navigate = useNavigate();
   const { signOutUser } = useContext(FirebaseContext);
   const location = useLocation();
   const pathname = location.pathname;
   const [activeTab, setActiveTab] = useState(null);
 
-  useEffect(() => {
-    let regex = /\//;
-    let result = pathname.replace(regex, "");
-    result = result.replace("-", "_");
+  const [isOpen, toggleOpen] = useState(false);
 
-    if (result !== activeTab) _setActiveTab(result);
-  }, [location]);
-
-  const handleClick = (e) => {
-    _setActiveTab(e.target.id);
+  const onDropdownClick = (e) => {
+    const name = e.currentTarget.name;
+    if (name === "PROVIDER_LOGIN") navigate("/provider-login");
+    if (name === "PATIENT_LOGIN") navigate("/patient-login");
+    if (name === "PREVIOUS_PATIENTS") navigate("/previous-patients");
+    if (name === "ACCOUNT") navigate("/settings");
+    if (name === "INSURANCE") {
+      console.log("CLICKED");
+      openFlexpaLink();
+    }
   };
 
-  const _setActiveTab = async (tab) => {
-    if (tab === "logout") {
-      await signOutUser();
-      navigate("/");
-    } else if (tab === "previous_patients") {
-      setActiveTab("previous_patients");
-      navigate("/previous-patients");
-    } else if (tab === "contact") {
-      setActiveTab("contact");
-    } else if (tab === "active_patient") {
-      setActiveTab("active_patient");
-      navigate("/active-patient");
-    }
+  const handleToggleOpen = (e) => {
+    e.preventDefault();
+    toggleOpen(!isOpen);
+  };
+
+  const mainDropdownRefBtn = useRef(null);
+
+  window.FlexpaLink.create({
+    publishableKey: "pk_test_pKDGhsAjAOiDxw6LdHuoogYupzm9VNnQh113WuCoK6I",
+    onSuccess: async (publicToken) => {
+      console.log("TOKEN IS");
+      console.log(publicToken);
+      // addInsuranceProviderCbk(publicToken);
+    },
+  });
+
+  const openFlexpaLink = () => {
+    window.FlexpaLink.open();
   };
 
   return (
     <div
       id="navbar"
-      className="shadow-sm py-7 px-2 md:px-28 flex flex-row sticky top-0 z-50 bg-white"
+      className="shadow-sm py-7 px-2 md:px-28 flex flex-row sticky top-0 z-10 bg-white"
     >
-      <div className="flex-1 flex flex-row">
-        <button onClick={() => navigate("/")} className="flex flex-row">
+      <div className="flex-1 flex flex-row ">
+        <button
+          onClick={() => navigate("/")}
+          className="flex flex-row items-center"
+        >
           <AiOutlineRadiusUpleft style={{ fontSize: 26, color: "blue" }} />
-          <div className="hidden md:block ml-2 font-thin text-blue-700">
-            med<span className="font-normal">thread</span>
+          <div className="text-lg hidden md:block ml-2 font-thin text-blue-700">
+            <span className="font-bold">medthread</span>
             <span>
               {process.env.REACT_APP_MEDTHREAD_ENV === "STAGING"
                 ? "STAGING"
@@ -56,7 +81,23 @@ const PatientNavbar = () => {
         </button>
       </div>
 
-      <div className="">
+      <div className="relative">
+        <button
+          onClick={handleToggleOpen}
+          ref={mainDropdownRefBtn}
+          className="rounded-full border relative flex flex-row items-center justify-center space-x-2 p-2 px-4 "
+        >
+          <AiOutlineMenu size={16} />
+          <div>M.P</div>
+        </button>
+        <HeadlessDropdown
+          options={navbarDropdownMenuOptions}
+          isOpen={isOpen}
+          onClick={onDropdownClick}
+          toggleOpen={toggleOpen}
+          mainDropdownRefBtn={mainDropdownRefBtn}
+        />
+        {/* 
         <button
           id="logout"
           onClick={handleClick}
@@ -65,10 +106,10 @@ const PatientNavbar = () => {
           } hover:opacity-50 cursor-pointer mr-4 `}
         >
           Log out
-        </button>
+        </button> */}
       </div>
     </div>
   );
 };
 
-export default PatientNavbar;
+export default NavbarLoggedOut;

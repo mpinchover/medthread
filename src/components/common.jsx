@@ -2,6 +2,7 @@ import { useNavigate } from "react-router-dom";
 import { useState, useRef, useContext, useEffect } from "react";
 import { map } from "@firebase/util";
 import { FirebaseContext } from "../firebase/firebase-context";
+import { FaPen, FaCheck } from "react-icons/fa";
 
 const DisplayField = ({ label, display }) => {
   return (
@@ -91,48 +92,109 @@ export const Medication = ({ e }) => {
     </div>
   );
 };
-
-export const TextInput = ({
-  value,
+export const TextInputWithEdit = ({
   label,
-  type,
-  id,
-  onChange,
-  disabled,
   placeholder,
   name,
+  type,
+  value,
+  onChange,
+  onSave,
 }) => {
-  return (
-    <div className="flex flex-col ">
-      <label className="text-xs mb-1">{label}</label>
+  const [status, setStatus] = useState("IDLE");
 
+  const handleClick = (e) => {
+    setStatus("SAVING");
+    onSave(e);
+  };
+  return (
+    <div className="relative mb-4 last:mb-0 w-96">
       <input
-        disabled={disabled}
-        onChange={onChange}
-        id={id}
         name={name}
-        type={type}
-        className="px-2 border  rounded-sm py-2  w-full md:w-96"
         value={value}
-        placeholder={placeholder}
+        onChange={onChange}
+        className="w-full pt-7 pb-2 pl-4 pr-16  border rounded-md"
+        placeholder="Enter medication name"
       />
+      {status === "IDLE" ? (
+        <button
+          onClick={handleClick}
+          className="absolute  top-1/2 -translate-y-1/2  right-5 bg-gray-100 rounded-sm p-2"
+        >
+          <FaPen />
+        </button>
+      ) : status === "EDIT" ? (
+        <button
+          onClick={handleClick}
+          className="absolute  top-1/2 -translate-y-1/2  right-5 bg-gray-100 rounded-sm p-2"
+        >
+          <FaCheck />
+        </button>
+      ) : (
+        <button
+          disabled
+          className="absolute  top-1/2 -translate-y-1/2  right-5 bg-gray-100 rounded-sm p-2"
+        >
+          <div className="animate-spin ">
+            <div className=" rounded-full border border-black border-t-0 w-4 h-4"></div>
+          </div>
+        </button>
+      )}
+
+      <label className="text-xs font-bold absolute left-4 top-3 ">
+        {label}
+      </label>
     </div>
   );
 };
 
-export const DatePicker = ({ label, onChange, name, value, disabled }) => {
+export const TextInput = ({
+  label,
+  placeholder,
+  name,
+  type,
+  value,
+  onChange,
+  info,
+}) => {
   return (
-    <div className="w-full md:w-96 flex flex-col ">
-      <label className="text-xs mb-1">{label}</label>
+    <div className="relative mb-6 last:mb-0 w-96">
       <input
-        className="border w-full p-2"
-        type="date"
-        placeholder="CHOOSE DATE"
-        onChange={onChange}
         name={name}
         value={value}
-        disabled={disabled}
+        onChange={onChange}
+        className="w-full pt-7 pb-2 px-4 border rounded-md"
+        placeholder={placeholder}
       />
+      <label className="text-xs font-bold absolute left-4 top-3 ">
+        {label}
+      </label>
+      <div className="text-xs font-semibold mt-2">{info}</div>
+    </div>
+  );
+};
+
+export const DatePicker = ({
+  label,
+  placeholder,
+  name,
+  type,
+  value,
+  onChange,
+}) => {
+  return (
+    <div className="relative mb-2 last:mb-0">
+      <input
+        name={name}
+        value={value}
+        onChange={onChange}
+        type="date"
+        className="w-full pt-7 pb-2 px-4 border rounded-md"
+        placeholder="Enter medication name"
+      />
+      <label className="text-xs font-bold absolute left-4 top-3 ">
+        {label}
+      </label>
     </div>
   );
 };
@@ -174,20 +236,23 @@ export const HeadlessDropdown = ({
       ref={dropDownRef}
       className={`${
         isOpen ? "flex" : "hidden"
-      } absolute top-full w-52 bg-white shadow-md flex-col right-0 `}
+      } absolute top-full w-72 bg-white shadow-md flex-col right-0 `}
     >
       {options.map((e, i) => {
         return (
           <li
             key={i}
-            className="p-2 border border-t-0 last:border-b-0 hover:opacity-50"
+            className="border border-t-0 last:border-b-0 hover:opacity-50"
           >
             <button
-              className="text-left w-full"
+              className="text-left w-full p-6"
               name={e.name}
               onClick={handleClick}
             >
-              {e.display}
+              <div className="flex flex-row items-center">
+                {e.icon ? <div className="mr-2">{<e.icon />}</div> : null}
+                <div>{e.display}</div>
+              </div>
             </button>
           </li>
         );

@@ -104,7 +104,7 @@ const SendMedications = () => {
             />
           </div>
 
-          <div className="mb-4">
+          <div className="mb-6">
             {isSendingMedications ? (
               <div className=" flex flex-row items-center ">
                 <div className="animate-spin mr-2">
