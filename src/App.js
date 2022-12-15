@@ -29,6 +29,7 @@ import { ToastContainer } from "react-toastify";
 import Home from "./components/home";
 import VerificationPage from "./components/verification-page";
 import { FirebaseContext } from "./firebase/firebase-context";
+import MedicationListPatient from "./components/medication-list-patient";
 
 const ModalShadow = () => {
   const { isModalOpen } = useContext(FirebaseContext);
@@ -93,36 +94,10 @@ function App() {
             <Route exact path="/patient-login" element={<PatientLogin />} />
             <Route exact path="/settings" element={<Settings />} />
             <Route exact path="/forgot-password" element={<ForgotPassword />} />
-            <Route exact path="/" element={<Home />} />
-            <Route exact path="/update-password" element={<UpdatePassword />} />
+            <Route exact path="/" element={<MedicationListPatient />} />
+            {/* <Route exact path="/update-password" element={<UpdatePassword />} /> */}
 
-            <Route exact path="/verification" element={<VerificationPage />} />
-            <Route
-              exact
-              path="/medication-list-provider"
-              element={<MedicationListProvider />}
-            />
-
-            <Route
-              exact
-              path="/patient-homepage"
-              element={<PatientHomepage />}
-            />
-            <Route
-              exact
-              path="/patient-authorization"
-              element={<PatientAuthorizationPage />}
-            />
-            <Route
-              exact
-              path="/medication-list"
-              element={<PatientMedicationList />}
-            />
-            <Route
-              exact
-              path="/send-medications"
-              element={<SendMedications />}
-            />
+            {/* <Route exact path="/verification" element={<VerificationPage />} /> */}
           </Routes>
 
           <ToastContainer />

@@ -12,7 +12,6 @@ import { AiOutlinePlus } from "react-icons/ai";
 
 const navbarDropdownMenuOptions = [
   { name: "MEDICATIONS", display: "Medications", icon: TbPill },
-
   { name: "ACCOUNT", display: "Account", icon: MdAccountCircle },
   { name: "CONTACT", display: "Contact", icon: AiOutlineMail },
   { name: "LOGOUT", display: "Log out", icon: FiLogOut },
@@ -33,6 +32,9 @@ const NavbarLoggedOut = () => {
     if (name === "PATIENT_LOGIN") navigate("/patient-login");
     if (name === "PREVIOUS_PATIENTS") navigate("/previous-patients");
     if (name === "ACCOUNT") navigate("/settings");
+    if (name === "MEDICATIONS") {
+      navigate("/");
+    }
     if (name === "INSURANCE") {
       console.log("CLICKED");
       openFlexpaLink();

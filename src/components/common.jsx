@@ -156,10 +156,12 @@ export const TextInput = ({
   value,
   onChange,
   info,
+  disabled,
 }) => {
   return (
-    <div className="relative mb-6 last:mb-0 w-96">
+    <div className="relative  w-96">
       <input
+        disabled={disabled}
         name={name}
         value={value}
         onChange={onChange}
@@ -169,7 +171,7 @@ export const TextInput = ({
       <label className="text-xs font-bold absolute left-4 top-3 ">
         {label}
       </label>
-      <div className="text-xs font-semibold mt-2">{info}</div>
+      {info ? <div className="text-xs font-semibold mt-2">{info}</div> : null}
     </div>
   );
 };

@@ -159,66 +159,6 @@ export const filteredDerivedMedicationsState = selector({
   },
 });
 
-// const meds = [
-//   {
-//     medicationName: "Horizant ER 600 mg tablet,extended release",
-//     requesterName: "DR. CHRISTOPHER WIETING, DPM",
-//     medicationType: "TABLET, EXTENDED RELEASE",
-//     medicationDoseValue: 600,
-//     medicationDoseUnit: "EA",
-//     medicationDispensedQuantity: 30,
-//     authoredOn: "2020-05-28",
-//     intent: "order",
-//     status: "active",
-//   },
-//   {
-//     medicationName: "Horizant ER 600 mg tablet,extended release",
-//     requesterName: "DR. KATHLEEN HUDSON, MD",
-//     medicationType: "TABLET, EXTENDED RELEASE",
-//     medicationDoseValue: 600,
-//     medicationDoseUnit: "EA",
-//     medicationDispensedQuantity: 30,
-//     authoredOn: "2020-05-28",
-//     intent: "order",
-//     status: "active",
-//   },
-//   {
-//     medicationName:
-//       "Salad incentivize Tuna copy convergence sky blue Georgia Industrial synthesizing Views",
-//     requesterName: "quantify Unbranded Plastic Tuna",
-//     medicationType:
-//       "Lempira payment New York tangible Mississippi embrace Developer synthesizing hard drive Robust",
-//     medicationDoseValue: 4,
-//     medicationDoseUnit: "{tbl}",
-//     medicationDispensedQuantity: 3,
-//     authoredOn: "2019-06-25",
-//     intent: "order",
-//     status: "cancelled",
-//   },
-//   {
-//     medicationName: "Mektovi 15 mg tablet",
-//     requesterName: "DR. EVAN BACHNER, M.D.",
-//     medicationType: "TABLET",
-//     medicationDoseValue: 15,
-//     medicationDoseUnit: "EA",
-//     medicationDispensedQuantity: 30,
-//     authoredOn: "2018-10-28",
-//     intent: "order",
-//     status: "active",
-//   },
-//   {
-//     medicationName: "Mektovi 15 mg tablet",
-//     requesterName: "DR. HEATHER SNYDER, D.P.M.",
-//     medicationType: "TABLET",
-//     medicationDoseValue: 15,
-//     medicationDoseUnit: "EA",
-//     medicationDispensedQuantity: 30,
-//     authoredOn: "2018-10-28",
-//     intent: "order",
-//     status: "active",
-//   },
-// ];
-
 // depreicate this
 export const loadMedicationListState = atom({
   key: "loadMedicationListState",
@@ -250,7 +190,6 @@ export const getMedicationsForPatientCallback =
   ({ set, snapshot }) =>
   async () => {
     try {
-      // use this one
       set(loadingDerivedMedicationlistState, true);
 
       const medications = await getMedicationsForPatient();
