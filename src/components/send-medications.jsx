@@ -1,6 +1,6 @@
 import { useState } from "react";
 import {
-  sendMedicationsToProviderCallback,
+  sendMedicationsToCareProviderCallback,
   isSendingMedicationsState,
 } from "../recoil/medications/medications";
 import { useRecoilCallback, useRecoilValue } from "recoil";
@@ -14,7 +14,7 @@ const SendMedications = () => {
   const [healthcareProviderEmail, setHealthcareProviderEmail] = useState("");
   const [healthcareProviderName, setHealthcareProviderName] = useState("");
   const sendMedicationsToProvider = useRecoilCallback(
-    sendMedicationsToProviderCallback
+    sendMedicationsToCareProviderCallback
   );
   const isSendingMedications = useRecoilValue(isSendingMedicationsState);
 

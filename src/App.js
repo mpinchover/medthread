@@ -55,9 +55,9 @@ function App() {
   const [publicToken, setPublicToken] = useState(null);
 
   const handleClickDown = (e) => {
-    console.log("CLICKED ON");
-    console.log(e.target);
-    console.log(e.currentTarget);
+    // console.log("CLICKED ON");
+    // console.log(e.target);
+    // console.log(e.currentTarget);
   };
 
   function resetHeight() {
@@ -68,12 +68,12 @@ function App() {
   useEffect(() => {
     // reset the height whenever the window's resized
     window.addEventListener("resize", resetHeight);
-    document.body.addEventListener("click", handleClickDown);
+    // document.body.addEventListener("click", handleClickDown);
 
     // called to initially set the height.
     return () => {
       window.removeEventListener("resize", resetHeight);
-      document.body.removeEventListener("click", handleClickDown);
+      // document.body.removeEventListener("click", handleClickDown);
     };
   }, []);
   resetHeight();

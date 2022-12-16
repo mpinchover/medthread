@@ -1,19 +1,22 @@
 import axios from "axios";
 import { getServerConfig } from "../config/config";
-export const sendMedicationsToProvider = async (healthcareProviderEmail) => {
+
+export const addHealthInsuranceProvider = async (publicToken) => {
+  const config = getServerConfig();
   const authUser = JSON.parse(localStorage.getItem("med_thread_auth_user"));
   const { idToken } = authUser;
-  const config = getServerConfig();
 
-  // validation – coudl not get the uid
   const res = await axios({
     method: "post",
-    url: `${config.baseUrl}/send-medications-to-provider`,
+    url: `${config.baseUrl}/add-health-insurance-provider`,
     data: {
-      healthcareProviderEmail,
+      publicToken,
     },
     headers: {
       Authorization: `Bearer ${idToken}`,
     },
   });
+
+  // should we get the medications from this provider?
 };
+// needs server side for pulling meds, getting capabilites, etc

@@ -35,10 +35,6 @@ const NavbarLoggedOut = () => {
     if (name === "MEDICATIONS") {
       navigate("/");
     }
-    if (name === "INSURANCE") {
-      console.log("CLICKED");
-      openFlexpaLink();
-    }
   };
 
   const handleToggleOpen = (e) => {
@@ -48,18 +44,18 @@ const NavbarLoggedOut = () => {
 
   const mainDropdownRefBtn = useRef(null);
 
-  window.FlexpaLink.create({
-    publishableKey: "pk_test_pKDGhsAjAOiDxw6LdHuoogYupzm9VNnQh113WuCoK6I",
-    onSuccess: async (publicToken) => {
-      console.log("TOKEN IS");
-      console.log(publicToken);
-      // addInsuranceProviderCbk(publicToken);
-    },
-  });
+  // // window.FlexpaLink.create({
+  // //   publishableKey: "pk_test_pKDGhsAjAOiDxw6LdHuoogYupzm9VNnQh113WuCoK6I",
+  // //   onSuccess: async (publicToken) => {
+  // //     console.log("TOKEN IS");
+  // //     console.log(publicToken);
+  // //     // addInsuranceProviderCbk(publicToken);
+  // //   },
+  // // });
 
-  const openFlexpaLink = () => {
-    window.FlexpaLink.open();
-  };
+  // const openFlexpaLink = () => {
+  //   window.FlexpaLink.open();
+  // };
 
   return (
     <div

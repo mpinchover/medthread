@@ -17,12 +17,12 @@ import { useRecoilCallback, useRecoilState, useRecoilValue } from "recoil";
 import { authorizedProfileState } from "../recoil/auth/auth";
 import {
   profileAccountState,
-  updateAccountSettingsCallback,
   createPatientCallback,
   createProviderCallback,
   isLoggingInUserState,
   signInCallback,
 } from "../recoil/profile/profile";
+import { updateEmailCallback, updatePasswordCallback } from "../recoil/account/account";
 import {
   collection,
   query,
@@ -41,9 +41,7 @@ export const FirebaseProvider = ({ children }) => {
   const [authorizedProfile, setAuthorizedProfile] = useRecoilState(
     authorizedProfileState
   );
-  const updateAccountSettingsCbk = useRecoilCallback(
-    updateAccountSettingsCallback
-  );
+  const updateEmailCbk = useRecoilCallback(updateEmailCallback);
   const [profileAccount, setProfileAccount] =
     useRecoilState(profileAccountState);
   const [isLoggingInUser, setIsLoggingInUser] =
@@ -175,9 +173,14 @@ export const FirebaseProvider = ({ children }) => {
     }
   };
 
-  const updateAccountInformation = async (params) => {
+  // const updateAccountInformation = async (params) => {
+  //   const auth = getAuth();
+  //   updateAccountSettingsCbk(auth, params);
+  // };
+
+  const updateUserEmail = async (email) => {
     const auth = getAuth();
-    updateAccountSettingsCbk(auth, params);
+    updateEmailCbk(auth, email);
   };
 
   const sendResetPasswordEmail = (email) => {
@@ -194,7 +197,7 @@ export const FirebaseProvider = ({ children }) => {
   const updateUserPassword = async (password) => {
     try {
       const auth = getAuth();
-      await updatePassword(auth.currentUser, password);
+      await updatePasswordCallback(auth.currentUser, password);
     } catch (e) {
       console.log(e);
       alert("Failed to update password");
@@ -252,7 +255,7 @@ export const FirebaseProvider = ({ children }) => {
         createPatient,
         createProvider,
         sendResetPasswordEmail,
-        updateAccountInformation,
+        updateUserEmail,
         updateUserPassword,
         getAuthUser,
         verifyEmailAddress,

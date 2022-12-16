@@ -71,7 +71,7 @@ const AddMedicationModal = ({ isOpen, onSave, onClose, medToBeUpdated }) => {
         </div>
       </div>
       <div className="px-6 py-8  ">
-        <form className="">
+        <form className="flex flex-col space-y-6">
           <TextInput
             onChange={onChange}
             name="itemName"

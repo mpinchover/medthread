@@ -20,7 +20,7 @@ const Settings = () => {
   const getPatientProfileCbk = useRecoilCallback(getPatientProfileCallback);
 
   useEffect(() => {
-    getPatientProfileCbk();
+    // getPatientProfileCbk();
   }, []);
 
   const authUser = getAuthUser();

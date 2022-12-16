@@ -3,6 +3,12 @@ import { AiOutlineCloseCircle } from "react-icons/ai";
 import previousPatients from "./previous-patients";
 import { TextInput, DatePicker } from "./common";
 import { FaTrash } from "react-icons/fa";
+import {
+  sendMedicationsToCareProviderCallback,
+  removeCareProviderEmailCallback,
+} from "../recoil/medications/medications";
+import { useRecoilCallback } from "recoil";
+
 const prevProviders = [
   {
     providerEmail: "drkumanah@nycdoctors.com",
@@ -25,6 +31,13 @@ const prevProviders = [
 const SendMedicationsModal = ({ isOpen, onSend, onClose, medToBeUpdated }) => {
   const [email, setEmail] = useState("");
 
+  const sendMedicationsToCareProvider = useRecoilCallback(
+    sendMedicationsToCareProviderCallback
+  );
+  const removeCareProviderEmail = useRecoilCallback(
+    removeCareProviderEmailCallback
+  );
+
   useEffect(() => {
     document.addEventListener("mousedown", handleClickOutside);
 
@@ -40,10 +53,17 @@ const SendMedicationsModal = ({ isOpen, onSend, onClose, medToBeUpdated }) => {
   };
 
   const modalRef = useRef(null);
+
   const handleClickOutside = (event) => {
     if (modalRef.current && !modalRef.current.contains(event.target)) {
       onClose();
     }
+  };
+
+  const handleSend = (e) => {
+    e.preventDefault();
+    sendMedicationsToCareProvider(email);
+    onClose();
   };
 
   return (
@@ -100,7 +120,7 @@ const SendMedicationsModal = ({ isOpen, onSend, onClose, medToBeUpdated }) => {
         <div className="flex flex-row justify-end p-6 py-4 border-t">
           <button
             type="submit"
-            onClick={onSend}
+            onClick={handleSend}
             className="p-3 px-8 font-bold border rounded-lg bg-black text-white"
           >
             Send

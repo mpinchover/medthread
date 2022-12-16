@@ -10,7 +10,9 @@ import { removeMedication } from "../../rpc/remove-medication";
 import { sendMedicationsToProvider } from "../../rpc/send-medications";
 import { getMedicationsForProvider } from "../../rpc/get-medications-for-provider";
 import { getMedicationsForPatient } from "../../rpc/get-medications-by-patient-uid";
+import { removeHealthcareProvider } from "../../rpc/remove-healthcare-provider";
 import { activePatientState } from "../provider/provider";
+
 import { getPatientProfileForProviderByUid } from "../../rpc/get-patient-profile-for-provider-by-uid";
 export const patientSourcedMedicationListState = atom({
   key: "patientSourcedMedicationListState",
@@ -61,6 +63,11 @@ export const isUpdatingMedicationState = atom({
 
 export const isRemovingMedicationState = atom({
   key: "isRemovingMedicationState",
+  default: false,
+});
+
+export const isRemovingCareProviderState = atom({
+  key: "isRemovingCareProviderState",
   default: false,
 });
 
@@ -202,16 +209,13 @@ export const getMedicationsForPatientCallback =
     }
   };
 
-export const sendMedicationsToProviderCallback =
+export const sendMedicationsToCareProviderCallback =
   ({ set, snapshot }) =>
-  async (healthcareProviderEmail, healthcareProviderName) => {
+  async (healthcareProviderEmail) => {
     try {
       set(isSendingMedicationsState, true);
 
-      await sendMedicationsToProvider(
-        healthcareProviderEmail,
-        healthcareProviderName
-      );
+      await sendMedicationsToProvider(healthcareProviderEmail);
 
       document.dispatchEvent(new Event("SUCCESS_SEND_MEDICATIONS_EVENT"));
     } catch (e) {
@@ -219,6 +223,22 @@ export const sendMedicationsToProviderCallback =
       document.dispatchEvent(new Event("FAILED_SEND_MEDICATIONS_EVENT"));
     } finally {
       set(isSendingMedicationsState, false);
+    }
+  };
+
+export const removeCareProviderEmailCallback =
+  ({ set, snapshot }) =>
+  async (heathcareProviderUid) => {
+    try {
+      set(isRemovingCareProviderState, true);
+
+      await removeHealthcareProvider(heathcareProviderUid);
+
+      // document.dispatchEvent(new Event("SUCCESS_SEND_MEDICATIONS_EVENT"));
+    } catch (e) {
+      // document.dispatchEvent(new Event("FAILED_SEND_MEDICATIONS_EVENT"));
+    } finally {
+      set(isRemovingCareProviderState, false);
     }
   };
 

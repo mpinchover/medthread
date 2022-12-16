@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { useState, useContext, useEffect } from "react";
 import {
   insuranceProvidersState,
-  addInsuranceProviderCallback,
+  // addInsuranceProviderCallback,
   getInsuranceProvidersCallback,
   isAddingInsuranceProviderState,
   addHealthcareProviderCallback,
@@ -24,48 +24,78 @@ import axios from "axios";
 import { getAuth } from "firebase/auth";
 import { FirebaseContext } from "../firebase/firebase-context";
 import { TextInput, DatePicker } from "./common";
+import {
+  accountState,
+  addInsuranceProviderCallback,
+  removeInsuranceProviderCallback,
+} from "../recoil/account/account";
 
-const idleState = {
-  isUpdatingPassword: false,
-  isUpdatingEmail: false,
-};
 const PatientSettings = ({}) => {
   const navigate = useNavigate();
   const auth = getAuth();
+  const { updateUserPassword, updateUserEmail } = useContext(FirebaseContext);
 
-  const [accountUpdates, setAccountUpdates] = useState(idleState);
+  const [accountUpdates, setAccountUpdates] = useRecoilState(accountState);
+
+  const [passwordValue, setPasswordValue] = useState("");
+  const [email, setEmail] = useState("");
+
+  const addInsuranceProvider = useRecoilCallback(addInsuranceProviderCallback);
+  const removeInsuranceProvider = useRecoilCallback(
+    removeInsuranceProviderCallback
+  );
+
+  useEffect(() => {
+    // set the eamil from the auth profile state
+    // make dependencies on email
+  });
+
+  // window.FlexpaLink.create({
+  //   publishableKey: "pk_test_pKDGhsAjAOiDxw6LdHuoogYupzm9VNnQh113WuCoK6I",
+  //   onSuccess: async (publicToken) => {
+  //     console.log("TOKEN IS");
+  //     console.log(publicToken);
+  //     // addInsuranceProvider(publicToken);
+  //   },
+  // });
+
+  const openFlexpaLink = () => {
+    window.FlexpaLink.open();
+  };
 
   const handleClick = (e) => {
     const name = e.target.name;
+    const val = e.target.value;
 
     if (name === "EDIT_EMAIL") {
       setAccountUpdates({
-        ...idleState,
+        ...accountUpdates,
         isUpdatingEmail: true,
       });
     } else if (name === "CANCEL_EMAIL") {
       setAccountUpdates({
-        ...idleState,
+        ...accountUpdates,
         isUpdatingEmail: false,
       });
+    } else if (name === "SAVE_EMAIL") {
+      updateUserEmail(email);
     } else if (name === "EDIT_PASSWORD") {
       setAccountUpdates({
-        ...idleState,
+        ...accountUpdates,
         isUpdatingPassword: true,
       });
     } else if (name === "CANCEL_PASSWORD") {
+      setPasswordValue("");
       setAccountUpdates({
-        ...idleState,
+        ...accountUpdates,
         isUpdatingPassword: false,
       });
+    } else if (name === "SAVE_PASSWORD") {
+      if (!passwordValue || passwordValue === "")
+        alert("Password cannot be empty");
+      updateUserPassword(passwordValue);
+      setPasswordValue("");
     }
-  };
-  useEffect(() => {
-    // openFlexpaLink();
-  });
-
-  const openFlexpaLink = () => {
-    window.FlexpaLink.open();
   };
 
   const providers = [{}, {}, {}];
@@ -103,7 +133,11 @@ const PatientSettings = ({}) => {
 
           {accountUpdates.isUpdatingEmail ? (
             <section className="">
-              <button className=" p-3 px-6 font-bold border rounded-lg bg-black text-white">
+              <button
+                name="SAVE_EMAIL"
+                onClick={handleClick}
+                className=" p-3 px-6 font-bold border rounded-lg bg-black text-white"
+              >
                 Save
               </button>
             </section>
@@ -115,10 +149,10 @@ const PatientSettings = ({}) => {
           <section className="flex flex-row justify-between">
             {accountUpdates.isUpdatingPassword ? (
               <TextInput
-                // onChange={onChange}
+                onChange={(e) => setPasswordValue(e.target.value)}
                 name="password"
                 type="password"
-                // value={medAttrs.medicationName}
+                value={passwordValue}
                 label="New password"
               />
             ) : (
@@ -142,7 +176,11 @@ const PatientSettings = ({}) => {
           </section>
           {accountUpdates.isUpdatingPassword ? (
             <section>
-              <button className=" p-3 px-6 font-bold border rounded-lg bg-black text-white">
+              <button
+                name="SAVE_PASSWORD"
+                onClick={handleClick}
+                className=" p-3 px-6 font-bold border rounded-lg bg-black text-white"
+              >
                 Save
               </button>
             </section>

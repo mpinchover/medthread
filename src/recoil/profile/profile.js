@@ -80,48 +80,6 @@ export const addHealthcareProviderCallback =
     set(isAddingHealthcareProviderState, false);
   };
 
-export const updateAccountSettingsCallback =
-  ({ set, get }) =>
-  async (auth, params) => {
-    // validation?
-
-    // update the loading state
-    set(isUpdatingProfileAccountState, true);
-
-    const { email, displayName, mobile } = params;
-
-    if (email) {
-      await updateEmail(auth.currentUser, email);
-    }
-
-    const newUpdateValues = {};
-    if (displayName) {
-      newUpdateValues.displayName = displayName;
-    }
-
-    if (mobile) {
-      newUpdateValues.mobile = mobile;
-    }
-
-    if (Object.keys(newUpdateValues).length > 0) {
-      const updatedAccountSettings = await updateAccountSettings(
-        newUpdateValues
-      );
-
-      // update state
-      set(profileAccountState, updatedAccountSettings);
-    }
-
-    set(isUpdatingProfileAccountState, false);
-    try {
-    } catch (e) {
-      alert("Failed to update settings");
-      console.log(e);
-      throw e;
-    }
-    set(isUpdatingProfileAccountState, false);
-  };
-
 export const createPatientCallback =
   ({ set, snapshot }) =>
   async (params) => {

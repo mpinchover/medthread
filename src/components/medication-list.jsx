@@ -178,10 +178,8 @@ const MedicationList = ({
       <div className="py-4  w-full text-md px-2 md:px-28 ">
         <div className="flex flex-row">
           <div className="flex-1 font-bold">Medication</div>
-          <div className="w-48 font-bold">Dose</div>
-          <div className="w-48 font-bold">Qty</div>
-          <div className="w-48 font-bold">First refill</div>
-          <div className="w-48 font-bold">Last refill</div>
+
+          <div className="w-48 font-bold">Date requested</div>
           <div className="w-16 font-bold">Source</div>
         </div>
         <div className="flex flex-row">{renderMedicationList()}</div>
