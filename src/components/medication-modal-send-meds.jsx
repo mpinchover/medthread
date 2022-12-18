@@ -95,7 +95,7 @@ const SendMedicationsModal = ({ isOpen, onSend, onClose, medToBeUpdated }) => {
                   name={e.providerEmail}
                   className=""
                 >
-                  drkumanah@nycdoctors.com
+                  sinaiconstructions@sinai.com
                 </button>
                 <button>
                   <FaTrash />

@@ -4,8 +4,10 @@ import { InsuranceMetadata, InsuranceProvider } from "./types";
 
 export const addHealthInsuranceProvider = async (req: any, res: any) => {
   try {
-    const { body } = req;
-    const { publicToken, userUid } = body;
+    const { body, user } = req;
+    const { publicToken } = body;
+
+    const userUid = user.user_id;
 
     const accessToken = await getAccessToken(publicToken);
     const metadata: InsuranceMetadata = await getMetadata(accessToken);
@@ -38,4 +40,4 @@ export const addHealthInsuranceProvider = async (req: any, res: any) => {
     res.status(501).send({ error: e });
   }
 };
-// next up, get medications
+// // next up, get medications

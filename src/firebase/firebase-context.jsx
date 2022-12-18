@@ -22,7 +22,10 @@ import {
   isLoggingInUserState,
   signInCallback,
 } from "../recoil/profile/profile";
-import { updateEmailCallback, updatePasswordCallback } from "../recoil/account/account";
+import {
+  updateEmailCallback,
+  updatePasswordCallback,
+} from "../recoil/account/account";
 import {
   collection,
   query,
@@ -51,6 +54,7 @@ export const FirebaseProvider = ({ children }) => {
 
   const _createPatient = useRecoilCallback(createPatientCallback);
   const _createProvider = useRecoilCallback(createProviderCallback);
+  const _updateUserPasswordCallback = useRecoilCallback(updatePasswordCallback);
   const _signIn = useRecoilCallback(signInCallback);
   const navigate = useNavigate();
 
@@ -74,11 +78,15 @@ export const FirebaseProvider = ({ children }) => {
     const auth = getAuth();
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
       if (!user) {
+        const curAuthUserCache = getAuthUser();
+        if (curAuthUserCache?.uid !== user?.uid) {
+          localStorage.clear();
+          setAuthorizedProfile(null);
+        }
         return;
       }
 
-      console.log("USER IS");
-      console.log(user);
+      // might be this
 
       const hydratedUserProfile = await hydrateUserProfile(user.uid);
       const idToken = await auth.currentUser.getIdToken(
@@ -104,7 +112,17 @@ export const FirebaseProvider = ({ children }) => {
     const removeIdTokenListener = onIdTokenChanged(auth, async (user) => {
       if (!user) {
         // signOutUser(); // possibly need to remove
+        const curAuthUserCache = getAuthUser();
+        if (curAuthUserCache?.uid !== user?.uid) {
+          localStorage.clear();
+        }
         return;
+      }
+      // might be this
+      const curAuthUserCache = getAuthUser();
+      if (curAuthUserCache?.uid !== user.uid) {
+        localStorage.clear();
+        setAuthorizedProfile(null);
       }
 
       const hydratedUserProfile = await hydrateUserProfile(user.uid);
@@ -197,7 +215,7 @@ export const FirebaseProvider = ({ children }) => {
   const updateUserPassword = async (password) => {
     try {
       const auth = getAuth();
-      await updatePasswordCallback(auth.currentUser, password);
+      await _updateUserPasswordCallback(auth.currentUser, password);
     } catch (e) {
       console.log(e);
       alert("Failed to update password");

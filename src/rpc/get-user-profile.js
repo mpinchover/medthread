@@ -9,7 +9,6 @@ import { getServerConfig } from "../config/config";
 export const getUserProfile = async (uid) => {
   const db = getFirestore();
   const config = getServerConfig();
-  
 
   const profiles = collection(db, "profiles");
 

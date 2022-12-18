@@ -41,7 +41,7 @@ const HealthcareProvider = ({ providerName, providerEmail }) => {
   );
 };
 
-const ProviderSettings = () => {
+const ProviderSettings = ({ authProfile }) => {
   const navigate = useNavigate();
   const auth = getAuth();
 

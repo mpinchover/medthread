@@ -1,20 +1,20 @@
 import axios from "axios";
+import { getAuth } from "firebase/auth";
 import { getServerConfig } from "../config/config";
 
-export const removeHealthInsuranceProvider = async (insuranceProviderUid) => {
+export const getAccountSettings = async (uid) => {
   const config = getServerConfig();
   const authUser = JSON.parse(localStorage.getItem("med_thread_auth_user"));
   const { idToken } = authUser;
 
-  console.log("PUSHING HERE");
   const res = await axios({
-    method: "post",
-    url: `${config.baseUrl}/remove-health-insurance-provider`,
-    data: {
-      insuranceProviderUid,
-    },
+    method: "get",
+    url: `${config.baseUrl}/get-user-account`,
+
     headers: {
       Authorization: `Bearer ${idToken}`,
     },
   });
+
+  return res?.data?.account;
 };

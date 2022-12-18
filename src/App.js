@@ -90,8 +90,8 @@ function App() {
 
             <Route exact path="/provider-login" element={<ProviderLogin />} />
             <Route exact path="/provider-signup" element={<ProviderSignup />} />
-            <Route exact path="/patient-signup" element={<PatientSignup />} />
-            <Route exact path="/patient-login" element={<PatientLogin />} />
+            <Route exact path="/signup" element={<PatientSignup />} />
+            <Route exact path="/login" element={<PatientLogin />} />
             <Route exact path="/settings" element={<Settings />} />
             <Route exact path="/forgot-password" element={<ForgotPassword />} />
             <Route exact path="/" element={<MedicationListPatient />} />

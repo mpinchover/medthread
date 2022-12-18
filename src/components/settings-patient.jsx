@@ -23,22 +23,25 @@ import { withPrivateRoute } from "./hocs";
 import axios from "axios";
 import { getAuth } from "firebase/auth";
 import { FirebaseContext } from "../firebase/firebase-context";
-import { TextInput, DatePicker } from "./common";
+import { TextInput, DatePicker, LoadingWindow } from "./common";
 import {
-  accountState,
+  accountUpdateState,
   addInsuranceProviderCallback,
   removeInsuranceProviderCallback,
+  isAccountLoadingState,
 } from "../recoil/account/account";
 
-const PatientSettings = ({}) => {
+const PatientSettings = ({ authProfile, accountSettings }) => {
   const navigate = useNavigate();
   const auth = getAuth();
   const { updateUserPassword, updateUserEmail } = useContext(FirebaseContext);
-
-  const [accountUpdates, setAccountUpdates] = useRecoilState(accountState);
+  const isAccountLoading = useRecoilValue(isAccountLoadingState);
+  const [accountUpdates, setAccountUpdates] =
+    useRecoilState(accountUpdateState);
 
   const [passwordValue, setPasswordValue] = useState("");
-  const [email, setEmail] = useState("");
+  const [email, setEmail] = useState(authProfile.email);
+  const [activeRemoveInsuranceUid, setActiveRemoveInsuranceUid] = useState("");
 
   const addInsuranceProvider = useRecoilCallback(addInsuranceProviderCallback);
   const removeInsuranceProvider = useRecoilCallback(
@@ -50,17 +53,24 @@ const PatientSettings = ({}) => {
     // make dependencies on email
   });
 
-  // window.FlexpaLink.create({
-  //   publishableKey: "pk_test_pKDGhsAjAOiDxw6LdHuoogYupzm9VNnQh113WuCoK6I",
-  //   onSuccess: async (publicToken) => {
-  //     console.log("TOKEN IS");
-  //     console.log(publicToken);
-  //     // addInsuranceProvider(publicToken);
-  //   },
-  // });
+  window.FlexpaLink.create({
+    publishableKey: "pk_test_pKDGhsAjAOiDxw6LdHuoogYupzm9VNnQh113WuCoK6I",
+    onSuccess: async (publicToken) => {
+      addInsuranceProvider(publicToken);
+    },
+  });
 
   const openFlexpaLink = () => {
     window.FlexpaLink.open();
+  };
+
+  const handleSaveEmail = (e) => {
+    updateUserEmail(email);
+  };
+
+  const handleSavePassword = (e) => {
+    updateUserPassword(passwordValue);
+    setPasswordValue("");
   };
 
   const handleClick = (e) => {
@@ -77,8 +87,7 @@ const PatientSettings = ({}) => {
         ...accountUpdates,
         isUpdatingEmail: false,
       });
-    } else if (name === "SAVE_EMAIL") {
-      updateUserEmail(email);
+      setEmail(authProfile.email);
     } else if (name === "EDIT_PASSWORD") {
       setAccountUpdates({
         ...accountUpdates,
@@ -90,15 +99,18 @@ const PatientSettings = ({}) => {
         ...accountUpdates,
         isUpdatingPassword: false,
       });
-    } else if (name === "SAVE_PASSWORD") {
-      if (!passwordValue || passwordValue === "")
-        alert("Password cannot be empty");
-      updateUserPassword(passwordValue);
-      setPasswordValue("");
     }
   };
 
-  const providers = [{}, {}, {}];
+  const handleRemoveInsuranceProvider = (insuranceProvider) => {
+    removeInsuranceProvider(insuranceProvider.uid);
+    setActiveRemoveInsuranceUid(null);
+  };
+
+  if (isAccountLoading) {
+    return <LoadingWindow display={"Loading..."} />;
+  }
+
   return (
     <div className="px-2 md:px-28 p-2 md:py-10 flex flex-1 flex-col">
       <section className="mb-16">
@@ -107,9 +119,9 @@ const PatientSettings = ({}) => {
           <section className="m-0 flex flex-row justify-between items-center">
             <TextInput
               disabled={!accountUpdates.isUpdatingEmail}
-              // onChange={onChange}
+              onChange={(e) => setEmail(e.target.value)}
               name="email"
-              // value={medAttrs.medicationName}
+              value={email}
               label="Email"
             />
             {accountUpdates.isUpdatingEmail ? (
@@ -135,7 +147,7 @@ const PatientSettings = ({}) => {
             <section className="">
               <button
                 name="SAVE_EMAIL"
-                onClick={handleClick}
+                onClick={handleSaveEmail}
                 className=" p-3 px-6 font-bold border rounded-lg bg-black text-white"
               >
                 Save
@@ -178,7 +190,7 @@ const PatientSettings = ({}) => {
             <section>
               <button
                 name="SAVE_PASSWORD"
-                onClick={handleClick}
+                onClick={handleSavePassword}
                 className=" p-3 px-6 font-bold border rounded-lg bg-black text-white"
               >
                 Save
@@ -190,15 +202,42 @@ const PatientSettings = ({}) => {
       <section className="mb-6">
         <div className="text-3xl font-bold mb-6">Insurance providers</div>
         <section>
-          {providers.map((e, i) => {
+          {accountSettings?.insuranceProviders?.map((element, i) => {
             return (
-              <div className=" border-b ">
+              <div key={i} className=" border-b ">
                 <div
                   key={i}
-                  className="flex flex-row items-center justify-between my-6 "
+                  className="relative flex flex-row items-center justify-between my-6 "
                 >
-                  <div>United healthcare</div>
-                  <button className="font-bold">Remove</button>
+                  <div>
+                    {element.providerName ? element.providerName : "UNKNOWN"}
+                  </div>
+                  <div>
+                    {activeRemoveInsuranceUid === element.uid ? (
+                      <>
+                        <button
+                          onClick={() => handleRemoveInsuranceProvider(element)}
+                          className=" font-bold"
+                        >
+                          Yes
+                        </button>
+                        <span className="mx-2">|</span>
+                        <button
+                          onClick={() => setActiveRemoveInsuranceUid(null)}
+                          className="font-bold"
+                        >
+                          Cancel
+                        </button>
+                      </>
+                    ) : (
+                      <button
+                        onClick={() => setActiveRemoveInsuranceUid(element.uid)}
+                        className="font-bold"
+                      >
+                        Remove
+                      </button>
+                    )}
+                  </div>
                 </div>
               </div>
             );
@@ -206,7 +245,10 @@ const PatientSettings = ({}) => {
         </section>
       </section>
       <section>
-        <button className="p-3 px-6 font-bold border rounded-lg bg-black text-white">
+        <button
+          onClick={openFlexpaLink}
+          className="p-3 px-6 font-bold border rounded-lg bg-black text-white"
+        >
           Add insurance provider
         </button>
       </section>

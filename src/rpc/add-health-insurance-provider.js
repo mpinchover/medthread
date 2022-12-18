@@ -16,7 +16,7 @@ export const addHealthInsuranceProvider = async (publicToken) => {
       Authorization: `Bearer ${idToken}`,
     },
   });
-
+  return res.data.newProvider;
   // should we get the medications from this provider?
 };
 // needs server side for pulling meds, getting capabilites, etc

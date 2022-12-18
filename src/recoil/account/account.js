@@ -2,6 +2,7 @@ import { atom } from "recoil";
 import { getAuth, updateEmail, updatePassword } from "firebase/auth";
 import { removeHealthInsuranceProvider } from "../../rpc/remove-insurance-provider";
 import { addHealthInsuranceProvider } from "../../rpc/add-health-insurance-provider";
+import { getAccountSettings } from "../../rpc/get-account-settings";
 
 const idleState = {
   isEditingPassword: false,
@@ -12,9 +13,17 @@ const idleState = {
   isSavingInsuranceProvider: false,
 };
 
-export const accountState = atom({
-  key: "accountState",
+export const accountUpdateState = atom({
+  key: "accountUpdateState",
   default: idleState,
+});
+
+const defaultAccountSettingsState = {
+  insuranceProviders: [],
+};
+export const accountSettingsState = atom({
+  key: "accountSettingsState",
+  default: defaultAccountSettingsState,
 });
 
 export const isAccountLoadingState = atom({
@@ -30,8 +39,11 @@ export const updateEmailCallback =
       set(isAccountLoadingState, true);
       await updateEmail(auth.currentUser, email);
 
-      //   const medications = await getMedicationsForPatient();
-      //   set(derivedMedicationsState, medications);
+      const newAccountUpdateState = {
+        ...idleState,
+        isEditingEmail: false,
+      };
+      set(accountUpdateState, newAccountUpdateState);
     } catch (e) {
       console.log(e);
     } finally {
@@ -41,11 +53,18 @@ export const updateEmailCallback =
 
 export const updatePasswordCallback =
   ({ set, snapshot }) =>
-  async (auth, password) => {
+  async (authUser, password) => {
     try {
       if (!password) alert("Password required for update");
       set(isAccountLoadingState, true);
-      await updatePassword(auth.currentUser, password);
+
+      await updatePassword(authUser, password);
+
+      const newAccountUpdateState = {
+        ...idleState,
+        isEditingPassword: false,
+      };
+      set(accountUpdateState, newAccountUpdateState);
     } catch (e) {
       console.log(e);
     } finally {
@@ -59,6 +78,20 @@ export const removeInsuranceProviderCallback =
     try {
       set(isAccountLoadingState, true);
       await removeHealthInsuranceProvider(healthInsuranceProviderUid);
+
+      const currentAccountState =
+        snapshot.getLoadable(accountSettingsState).contents;
+
+      const newInsuranceProvidersState =
+        currentAccountState.insuranceProviders.filter(
+          (x) => x.uid !== healthInsuranceProviderUid
+        );
+
+      const newAccountSettingsState = {
+        ...currentAccountState,
+        insuranceProviders: newInsuranceProvidersState,
+      };
+      set(accountSettingsState, newAccountSettingsState);
     } catch (e) {
       console.log(e);
     } finally {
@@ -71,7 +104,32 @@ export const addInsuranceProviderCallback =
   async (publicToken) => {
     try {
       set(isAccountLoadingState, true);
-      await addHealthInsuranceProvider(publicToken);
+      const insuranceProvider = await addHealthInsuranceProvider(publicToken);
+      const currentAccountState =
+        snapshot.getLoadable(accountSettingsState).contents;
+
+      const newAccountState = {
+        ...currentAccountState,
+        insuranceProviders: [
+          ...currentAccountState.insuranceProviders,
+          insuranceProvider,
+        ],
+      };
+      set(accountSettingsState, newAccountState);
+    } catch (e) {
+      console.log(e);
+    } finally {
+      set(isAccountLoadingState, false);
+    }
+  };
+
+export const getAccountSettingsCallback =
+  ({ set, snapshot }) =>
+  async () => {
+    try {
+      set(isAccountLoadingState, true);
+      const account = await getAccountSettings();
+      set(accountSettingsState, account);
     } catch (e) {
       console.log(e);
     } finally {

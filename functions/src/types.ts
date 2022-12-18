@@ -32,6 +32,10 @@ export interface InsuranceProvider {
   capabilities: string[];
 }
 
+export interface Account {
+  insuranceProviders: InsuranceProvider[];
+}
+
 export interface InsuranceMetadata {
   publisher: string;
   capabilities: string[];

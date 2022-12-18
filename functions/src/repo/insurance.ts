@@ -24,6 +24,34 @@ export const updateAccessTokenForInsuranceProvider = async (
   await docRef.update({ accessToken });
 };
 
+export const getInsuranceProvidersByUserUid = async (
+  userUid: string
+): Promise<null | InsuranceProvider[]> => {
+  const db = admin.firestore();
+  const insuranceProvidersRef = db.collection("insuranceProviders");
+  const snapshot = await insuranceProvidersRef
+    .where("userUid", "==", userUid)
+    .get();
+
+  if (snapshot.empty) return null;
+  return snapshot.docs.map((doc) => {
+    const data: any = doc.data();
+    const uid = doc.id;
+    return {
+      ...data,
+      uid,
+    };
+  });
+};
+
+export const removeHealthInsuranceProvider = async (
+  insuranceProviderUid: string
+) => {
+  const db = admin.firestore();
+  const insuranceProvidersRef = db.collection("insuranceProviders");
+  await insuranceProvidersRef.doc(insuranceProviderUid).delete();
+};
+
 export const getInsuranceProviderByUserUidAndName = async (
   providerName: string,
   userUid: string
