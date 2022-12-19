@@ -11,6 +11,7 @@ import { useRecoilValue } from "recoil";
 import { isLoggingInUserState } from "../recoil/profile/profile";
 import { authorizedProfileState } from "../recoil/auth/auth";
 import { withPublicRoute } from "./hocs";
+import { TextInput } from "./common";
 
 const PatientSignup = () => {
   const navigate = useNavigate();
@@ -41,77 +42,108 @@ const PatientSignup = () => {
 
   return (
     <div className="flex flex-col  flex-1 items-center justify-center ">
-      <div className="  w-72 text-center py-2 mb-2  text-gray-600 ">
-        Patient Sign up
-      </div>
-      <div className="  w-72 border-b border-blue-400 mb-4"></div>
-      <form onSubmit={handleSubmit}>
+      <div className=" text-2xl w-96 text-center  text-gray-600 ">Sign up</div>
+      <div className="  w-96 border-b my-6 border-black"></div>
+      <form className="space-y-6" onSubmit={handleSubmit}>
+        <TextInput
+          label="Name"
+          disabled={isLoggingInUser}
+          onChange={(e) => setNameValue(e.target.value)}
+          value={nameValue}
+          placeholder="Enter name..."
+        />
+        <TextInput
+          label="Email"
+          disabled={isLoggingInUser}
+          onChange={(e) => setEmailValue(e.target.value)}
+          value={emailValue}
+          placeholder="Enter email..."
+        />
+        <TextInput
+          label="Password"
+          type="password"
+          disabled={isLoggingInUser}
+          onChange={(e) => setPasswordValue(e.target.value)}
+          value={passwordValue}
+          placeholder="Enter password..."
+        />
+        <TextInput
+          label="Confirm password"
+          type="password"
+          disabled={isLoggingInUser}
+          onChange={(e) => setConfirmPasswordValue(e.target.value)}
+          value={confirmPasswordValue}
+          placeholder="Confirm password..."
+        />
+
         <div className="">
-          <input
+          {/* <input
             disabled={isLoggingInUser}
             value={nameValue}
             onChange={(e) => setNameValue(e.target.value)}
             type="name"
             className="border focus:outline-none px-2 py-2 w-72 mb-4"
             placeholder="Name"
-          />
+          /> */}
         </div>
         <div className="">
-          <input
+          {/* <input
             disabled={isLoggingInUser}
             value={emailValue}
             onChange={(e) => setEmailValue(e.target.value)}
             type="email"
             className="border focus:outline-none px-2 py-2 w-72 mb-4"
             placeholder="Email"
-          />
+          /> */}
         </div>
         <div>
-          <input
+          {/* <input
             disabled={isLoggingInUser}
             value={passwordValue}
             onChange={(e) => setPasswordValue(e.target.value)}
             type="password"
             className="border focus:outline-none px-2 py-2 w-72 mb-4"
             placeholder="Password"
-          />
+          /> */}
         </div>
         <div>
-          <input
+          {/* <input
             disabled={isLoggingInUser}
             value={confirmPasswordValue}
             onChange={(e) => setConfirmPasswordValue(e.target.value)}
             type="password"
             className="border focus:outline-none px-2 py-2 w-72 mb-4"
             placeholder="Confirm password"
-          />
+          /> */}
         </div>
         {isLoggingInUser ? (
           <div className=" flex flex-row items-center ">
             <div className="animate-spin mr-2">
-              <div className=" rounded-full border border-blue-200 border-t-blue-400  w-4 h-4"></div>
+              <div className=" rounded-full border border-black border-t-0  w-4 h-4"></div>
             </div>
             <span className="text-blue-400">Logging in...</span>
           </div>
         ) : (
           <div className="">
-            <button
-              onClick={handleSubmit}
-              className="w-72 text-sm text-center border rounded-sm px-3 py-3 bg-blue-400 text-white hover:opacity-50"
-            >
-              Submit
-            </button>
+            <div className=" w-96">
+              <button
+                onClick={handleSubmit}
+                className="p-3 px-8 font-bold border rounded-lg bg-black text-white"
+              >
+                Submit
+              </button>
+            </div>
           </div>
         )}
       </form>
-      <div className="  w-72 border-b border-blue-400 my-4"></div>
-      <div className="">
+      <div className="  w-96 border-b my-6 border-black"></div>
+      <div className=" w-96">
         <button
           disabled={isLoggingInUser}
-          onClick={() => navigate("/patient-login")}
-          className="w-72 text-sm text-center border rounded-sm px-3 py-3  text-gray-500 hover:opacity-50"
+          onClick={() => navigate("/login")}
+          className="p-3 px-8 font-bold border rounded-lg "
         >
-          Log in to your account
+          Login
         </button>
       </div>
     </div>

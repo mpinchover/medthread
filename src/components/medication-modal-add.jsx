@@ -11,7 +11,13 @@ const idleState = {
   lastRefill: "",
 };
 
-const AddMedicationModal = ({ isOpen, onSave, onClose, medToBeUpdated }) => {
+const AddMedicationModal = ({
+  isOpen,
+  onSave,
+  onClose,
+  medToBeUpdated,
+  onRemoveMedication,
+}) => {
   const [medAttrs, setMedAttrs] = useState(idleState);
 
   useEffect(() => {
@@ -39,7 +45,6 @@ const AddMedicationModal = ({ isOpen, onSave, onClose, medToBeUpdated }) => {
   const onChange = (e) => {
     const val = e.target.value;
     const name = e.target.name;
-
     setMedAttrs({
       ...medAttrs,
       [name]: val,
@@ -53,6 +58,14 @@ const AddMedicationModal = ({ isOpen, onSave, onClose, medToBeUpdated }) => {
     }
   };
 
+  const handleSave = () => {
+    const params = {};
+    if (medAttrs.medicationName)
+      params.medicationName = medAttrs.medicationName;
+    if (medAttrs.dateStarted) params.dateStarted = medAttrs.dateStarted;
+    if (medToBeUpdated) params.uid = medToBeUpdated.uid;
+    onSave(params);
+  };
   return (
     <div
       ref={modalRef}
@@ -74,14 +87,14 @@ const AddMedicationModal = ({ isOpen, onSave, onClose, medToBeUpdated }) => {
         <form className="flex flex-col space-y-6">
           <TextInput
             onChange={onChange}
-            name="itemName"
+            name="medicationName"
             value={medAttrs.medicationName}
             label="Medication name"
             placeholder="Enter medication mame..."
           />
           <DatePicker
             onChange={onChange}
-            name="date"
+            name="dateStarted"
             value={medAttrs.dateStarted}
             label="Date started"
           />
@@ -89,7 +102,10 @@ const AddMedicationModal = ({ isOpen, onSave, onClose, medToBeUpdated }) => {
 
         {medToBeUpdated ? (
           <div>
-            <button className="mt-6 p-3 px-8 text-sm border border-red-600 text-red-600 rounded-lg">
+            <button
+              onClick={() => onRemoveMedication(medToBeUpdated.uid)}
+              className="mt-6 p-3 px-8 text-sm border border-red-600 text-red-600 rounded-lg"
+            >
               Remove medication
             </button>
           </div>
@@ -97,7 +113,7 @@ const AddMedicationModal = ({ isOpen, onSave, onClose, medToBeUpdated }) => {
       </div>
       <div className="flex flex-row justify-end p-6 py-4 border-t">
         <button
-          onClick={onClose}
+          onClick={handleSave}
           className="p-3 px-8 font-bold border rounded-lg bg-black text-white"
         >
           Save

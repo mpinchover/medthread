@@ -11,3 +11,4 @@ node_modules/
 .env
 .env.healthcare-f57e8
 .env.healthcare-staging-81e75
+/firebase-debug.log

@@ -35,6 +35,7 @@ const NavbarLoggedOut = () => {
     if (name === "MEDICATIONS") {
       navigate("/");
     }
+    if (name === "LOGOUT") signOutUser();
   };
 
   const handleToggleOpen = (e) => {

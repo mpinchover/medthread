@@ -8,6 +8,10 @@ import * as express from "express";
 import { addHealthInsuranceProvider } from "./add-health-insurance-provider";
 import { getUserAccount } from "./get-user-account";
 import { removeHealthInsuranceProvider } from "./remove-health-insurance-provider";
+import { saveMedication } from "./save-medication";
+import { getMedicationsByUserUid } from "./get-medications-by-user-uid";
+import { removeMedication } from "./remove-medication";
+import { sendMedicationsToProvider } from "./send-medications";
 // import { getMedicationsByPatientUid } from "./get-medications-by-patient-uid";
 const app = express();
 
@@ -61,5 +65,14 @@ app.post(
   validateFirebaseIdToken,
   removeHealthInsuranceProvider
 );
+app.post("/send-medications-to-provider", sendMedicationsToProvider);
+app.post("/remove-medication", validateFirebaseIdToken, removeMedication);
+app.post("/save-medication", validateFirebaseIdToken, saveMedication);
 app.get("/get-user-account", validateFirebaseIdToken, getUserAccount);
+app.get(
+  "/get-medications-by-user-uid",
+  validateFirebaseIdToken,
+  getMedicationsByUserUid
+);
+
 exports.app = functions.https.onRequest(app);

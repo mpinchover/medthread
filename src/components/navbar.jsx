@@ -7,7 +7,6 @@ import { authorizedProfileState } from "../recoil/auth/auth";
 import { FirebaseContext } from "../firebase/firebase-context";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 
-
 const Navbar = () => {
   const [_authUser, _setAuthUser] = useState(null);
   const { getAuthUser } = useContext(FirebaseContext);
@@ -26,12 +25,8 @@ const Navbar = () => {
   // const authUser = getAuthUser();
   const authUser = authorizedProfile;
 
-  return <PatientNavbar />;
   if (authUser && authUser.role === "PATIENT") {
     return <PatientNavbar />;
-  }
-  if (authUser && authUser.role === "PROVIDER") {
-    return <ProviderNavbar />;
   }
 
   return <NavbarLoggedOut />;

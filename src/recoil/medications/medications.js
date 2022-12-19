@@ -12,8 +12,10 @@ import { getMedicationsForProvider } from "../../rpc/get-medications-for-provide
 import { getMedicationsForPatient } from "../../rpc/get-medications-by-patient-uid";
 import { removeHealthcareProvider } from "../../rpc/remove-healthcare-provider";
 import { activePatientState } from "../provider/provider";
-
+import { saveMedication } from "../../rpc/save-medication";
 import { getPatientProfileForProviderByUid } from "../../rpc/get-patient-profile-for-provider-by-uid";
+import { getMedicationsByUserUid } from "../../rpc/get-medications-by-user-uid";
+
 export const patientSourcedMedicationListState = atom({
   key: "patientSourcedMedicationListState",
   default: [],
@@ -150,7 +152,7 @@ const fakeMeds = [
 ];
 export const derivedMedicationsState = atom({
   key: "derivedMedicationsState",
-  default: fakeMeds,
+  default: [],
 });
 
 export const filteredDerivedMedicationsState = selector({
@@ -171,6 +173,33 @@ export const loadMedicationListState = atom({
   key: "loadMedicationListState",
   default: false,
 });
+
+export const saveMedicationCallback =
+  ({ set, snapshot }) =>
+  async (params) => {
+    try {
+      // use this one
+      set(loadingDerivedMedicationlistState, true);
+
+      const currentMedicationlist = snapshot.getLoadable(
+        derivedMedicationsState
+      ).contents;
+
+      if (!params.source) params.source = "PATIENT";
+
+      const medication = await saveMedication(params);
+      const newMedicationList = [...currentMedicationlist, medication].sort(
+        (a, b) =>
+          new Date(b.dateStarted).valueOf() - new Date(a.dateStarted).valueOf()
+      );
+
+      set(derivedMedicationsState, newMedicationList);
+    } catch (e) {
+      console.log(e);
+    } finally {
+      set(loadingDerivedMedicationlistState, false);
+    }
+  };
 
 export const getMedicationsForProviderCallback =
   ({ set, snapshot }) =>
@@ -281,8 +310,23 @@ export const getMedicationCallback =
     try {
       set(loadingGetMedicationState, true);
 
-      const med = await getMedicationByUid(uid);
+      const med = await getMedicationsByUserUid(uid);
       set(medicationBeingUpdatedState, med);
+    } catch (e) {
+    } finally {
+      set(loadingGetMedicationState, false);
+    }
+  };
+
+export const getMedicationsByUserUidCallback =
+  ({ set, snapshot }) =>
+  async () => {
+    try {
+      set(loadingGetMedicationState, true);
+
+      const meds = await getMedicationsByUserUid();
+
+      set(derivedMedicationsState, meds);
     } catch (e) {
     } finally {
       set(loadingGetMedicationState, false);
@@ -314,18 +358,27 @@ export const removeMedicationCallback =
   ({ set, snapshot }) =>
   async (uid) => {
     try {
-      // add in validation here
-      set(isRemovingMedicationState, true);
-      // document.dispatchEvent(new Event("PENDING_REMOVE_MEDICATION_EVENT"));
+      set(loadingDerivedMedicationlistState, true);
 
-      // need the id here, don't forget
+      const currentMedicationlist = snapshot.getLoadable(
+        derivedMedicationsState
+      ).contents;
+
       await removeMedication(uid);
-      document.dispatchEvent(new Event("SUCCESS_REMOVE_MEDICATION_EVENT"));
+
+      let newMedicationList = currentMedicationlist.filter(
+        (x) => x.uid !== uid
+      );
+      newMedicationList = newMedicationList.sort(
+        (a, b) =>
+          new Date(b.dateStarted).valueOf() - new Date(a.dateStarted).valueOf()
+      );
+
+      set(derivedMedicationsState, newMedicationList);
     } catch (e) {
       console.log(e);
-      document.dispatchEvent(new Event("FAILED_REMOVE_MEDICATION_EVENT"));
     } finally {
-      set(isRemovingMedicationState, false);
+      set(loadingDerivedMedicationlistState, false);
     }
   };
 

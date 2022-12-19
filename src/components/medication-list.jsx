@@ -1,5 +1,9 @@
 import { useEffect, useState, useContext } from "react";
-import { medicationsCallback } from "../recoil/medications/medications";
+import {
+  medicationsCallback,
+  saveMedicationCallback,
+  removeMedicationCallback,
+} from "../recoil/medications/medications";
 import { useRecoilCallback, useSetRecoilState } from "recoil";
 import { withPrivateRoute } from "./hocs";
 import { AiOutlinePlus } from "react-icons/ai";
@@ -25,6 +29,9 @@ const MedicationList = ({
   const [isAddMedModalOpen, setIsAddMedModalOpen] = useState(false);
   const [isSendMedsModalOpen, setIsSendMedsModalOpen] = useState(false);
   const [isAccountModalOpen, setIsAccountModalOpen] = useState(true);
+  const removeMedication = useRecoilCallback(removeMedicationCallback);
+
+  const saveMedication = useRecoilCallback(saveMedicationCallback);
 
   const handleChange = (e) => {
     const { value } = e.target;
@@ -65,15 +72,18 @@ const MedicationList = ({
     setIsModalOpen(false);
   };
 
-  const onSave = () => {
+  const handleRemoveMedication = (uid) => {
     setMedToBeUpdated(null);
     setIsAddMedModalOpen(false);
     setIsModalOpen(false);
+    removeMedication(uid);
+  };
 
-    // check if the uid exists and save
-    if (medToBeUpdated) {
-      // if ()
-    }
+  const onSave = (params) => {
+    setMedToBeUpdated(null);
+    setIsAddMedModalOpen(false);
+    setIsModalOpen(false);
+    saveMedication(params);
   };
 
   const renderMedicationList = () => {
@@ -187,8 +197,9 @@ const MedicationList = ({
       <AddMedicationModal
         medToBeUpdated={medToBeUpdated}
         isOpen={isAddMedModalOpen}
-        onSave={onSave}
+        onSave={(params) => onSave(params)}
         onClose={handleAddMedModalClose}
+        onRemoveMedication={(uid) => handleRemoveMedication(uid)}
       />
       <SendMedicationsModal
         isOpen={isSendMedsModalOpen}

@@ -6,9 +6,8 @@ import { AiOutlineMenu } from "react-icons/ai";
 import { HeadlessDropdown } from "./common";
 
 const navbarDropdownMenuOptions = [
-  { name: "PATIENT_LOGIN", display: "Patient login" },
-  { name: "PROVIDER_LOGIN", display: "Provider login" },
-  { name: "CONTACT", display: "Contact" },
+  { name: "LOGIN", display: "Login" },
+  { name: "SIGNUP", display: "Signup" },
 ];
 
 const NavbarLoggedOut = () => {
@@ -21,10 +20,9 @@ const NavbarLoggedOut = () => {
   const [isOpen, toggleOpen] = useState(false);
 
   const onDropdownClick = (e) => {
-    const name = e.target.name;
-    if (name === "PROVIDER_LOGIN") navigate("/provider-login");
-    if (name === "PATIENT_LOGIN") navigate("/patient-login");
-    if (name === "PREVIOUS_PATIENTS") navigate("/previous-patients");
+    const name = e.currentTarget.name;
+    if (name === "LOGIN") navigate("/login");
+    if (name === "SIGNUP") navigate("/signup");
   };
 
   const handleToggleOpen = (e) => {
@@ -50,9 +48,6 @@ const NavbarLoggedOut = () => {
     if (tab === "logout") {
       await signOutUser();
       navigate("/");
-    } else if (tab === "previous_patients") {
-      setActiveTab("previous_patients");
-      navigate("/previous-patients");
     } else if (tab === "contact") {
       setActiveTab("contact");
     } else if (tab === "active_patient") {

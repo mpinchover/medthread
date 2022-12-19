@@ -11,6 +11,8 @@ import {
   filteredDerivedMedicationsState,
   getMedicationsForPatientCallback,
   medicationSearchTermState,
+  getMedicationsByUserUidCallback,
+  loadingGetMedicationState,
 } from "../recoil/medications/medications";
 
 import { getAuth } from "firebase/auth";
@@ -31,7 +33,7 @@ const MedicationListPatient = () => {
   };
   const role = "PATIENT";
 
-  const getMedications = useRecoilCallback(getMedicationsForPatientCallback);
+  const getMedications = useRecoilCallback(getMedicationsByUserUidCallback);
 
   const [medicationList, setMedicationList] = useRecoilState(
     filteredDerivedMedicationsState
@@ -43,9 +45,7 @@ const MedicationListPatient = () => {
     getMedications();
   }, []);
 
-  const isLoadingMedicationList = useRecoilValue(
-    loadingDerivedMedicationlistState
-  );
+  const isLoadingMedicationList = useRecoilValue(loadingGetMedicationState);
 
   if (isLoadingMedicationList) {
     return <LoadingMedicationData />;

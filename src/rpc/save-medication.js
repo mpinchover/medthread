@@ -2,20 +2,20 @@ import axios from "axios";
 import { getAuth } from "firebase/auth";
 import { getServerConfig } from "../config/config";
 
-export const removeMedication = async (medUid) => {
+export const saveMedication = async (medication) => {
   const config = getServerConfig();
   const authUser = JSON.parse(localStorage.getItem("med_thread_auth_user"));
   const { idToken } = authUser;
 
   const res = await axios({
     method: "post",
-    url: `${config.baseUrl}/remove-medication`,
+    url: `${config.baseUrl}/save-medication`,
     data: {
-      medUid,
+      medication,
     },
     headers: {
       Authorization: `Bearer ${idToken}`,
     },
   });
-  return res;
+  return res?.data?.medication;
 };

@@ -33,8 +33,6 @@ export const getDerivedMedications = async (userUid: string) => {
   });
 };
 
-
-
 export const getAuthProfile = async (uid: string) => {
   const authProfile: AuthProfile = await admin.auth().getUser(uid);
   return authProfile;
@@ -42,8 +40,7 @@ export const getAuthProfile = async (uid: string) => {
 
 export const addAuthorizedHealthcareProvider = async (
   patientUid: string,
-  providerEmail: string,
-  providerName: string
+  providerEmail: string
 ) => {
   // first check to see if the document exists
   const existingHealthcareProvider = await getAuthorizedHealthcareProvider(
@@ -62,8 +59,6 @@ export const addAuthorizedHealthcareProvider = async (
     patientUid,
     uid: authorizedProviderDoc.id,
   };
-
-  if (providerName) params.providerName = providerName;
 
   await authorizedProviderDoc.set(params);
   return params;
