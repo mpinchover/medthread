@@ -1,9 +1,5 @@
 import { atom, selector } from "recoil";
 import axios from "axios";
-import { collection, query, where, getDocs } from "firebase/firestore";
-import { getAuth } from "firebase/auth";
-import { addMedication } from "../../rpc/add-medication";
-import { updateMedication } from "../../rpc/update-medication";
 import { getMedicationByUid } from "../../rpc/get-medication-by-uid";
 import { getPatientSourcedMedications } from "../../rpc/get-patient-sourced-medications";
 import { removeMedication } from "../../rpc/remove-medication";
@@ -15,7 +11,8 @@ import { activePatientState } from "../provider/provider";
 import { saveMedication } from "../../rpc/save-medication";
 import { getPatientProfileForProviderByUid } from "../../rpc/get-patient-profile-for-provider-by-uid";
 import { getMedicationsByUserUid } from "../../rpc/get-medications-by-user-uid";
-
+import { accountSettingsState } from "../account/account";
+import { validateSaveMedication } from "../../validation/validation";
 export const patientSourcedMedicationListState = atom({
   key: "patientSourcedMedicationListState",
   default: [],
@@ -162,7 +159,7 @@ export const filteredDerivedMedicationsState = selector({
     let medications = get(derivedMedicationsState);
 
     medications = medications.filter((x) =>
-      x.medicationName.toLowerCase().includes(searchTerm.toLowerCase())
+      x.medicationName?.toLowerCase().includes(searchTerm.toLowerCase())
     );
     return medications;
   },
@@ -179,8 +176,8 @@ export const saveMedicationCallback =
   async (params) => {
     try {
       // use this one
-      set(loadingDerivedMedicationlistState, true);
-
+      set(isAddingMedicationState, true);
+      validateSaveMedication(params);
       const currentMedicationlist = snapshot.getLoadable(
         derivedMedicationsState
       ).contents;
@@ -195,9 +192,11 @@ export const saveMedicationCallback =
 
       set(derivedMedicationsState, newMedicationList);
     } catch (e) {
-      console.log(e);
+      if (e.errorType === "INVALID_ARGUMENT_ERROR") {
+        alert(e.message);
+      }
     } finally {
-      set(loadingDerivedMedicationlistState, false);
+      set(isAddingMedicationState, false);
     }
   };
 
@@ -244,11 +243,19 @@ export const sendMedicationsToCareProviderCallback =
     try {
       set(isSendingMedicationsState, true);
 
-      await sendMedicationsToProvider(healthcareProviderEmail);
+      const hcp = await sendMedicationsToProvider(healthcareProviderEmail);
+      if (hcp) {
+        set(accountSettingsState, (prevAccountState) => {
+          return {
+            ...prevAccountState,
+            healthcareProviders: [...prevAccountState.healthcareProviders, hcp],
+          };
+        });
+        // add hcp
+      }
 
       document.dispatchEvent(new Event("SUCCESS_SEND_MEDICATIONS_EVENT"));
     } catch (e) {
-      console.log("FAILED TO SEND MEDS");
       document.dispatchEvent(new Event("FAILED_SEND_MEDICATIONS_EVENT"));
     } finally {
       set(isSendingMedicationsState, false);
@@ -268,24 +275,6 @@ export const removeCareProviderEmailCallback =
       // document.dispatchEvent(new Event("FAILED_SEND_MEDICATIONS_EVENT"));
     } finally {
       set(isRemovingCareProviderState, false);
-    }
-  };
-
-export const addMedicationCallback =
-  ({ set, snapshot }) =>
-  async (params) => {
-    try {
-      // add in validation here
-
-      set(isAddingMedicationState, true);
-      const med = await addMedication(params);
-
-      document.dispatchEvent(new Event("SUCCESS_ADD_MEDICATION_EVENT"));
-    } catch (e) {
-      console.log(e);
-      document.dispatchEvent(new Event("FAILED_ADD_MEDICATION_EVENT"));
-    } finally {
-      set(isAddingMedicationState, false);
     }
   };
 
@@ -330,27 +319,6 @@ export const getMedicationsByUserUidCallback =
     } catch (e) {
     } finally {
       set(loadingGetMedicationState, false);
-    }
-  };
-
-// have a seperate callback to get all the medications
-export const updateMedicationCallback =
-  ({ set, snapshot }) =>
-  async (params) => {
-    try {
-      // add in validation here
-      // document.dispatchEvent(new Event("PENDING_UPDATE_MEDICATION_EVENT"));
-      set(isUpdatingMedicationState, true);
-
-      // need the id here, don't forget
-      await updateMedication(params);
-      // set(medicationBeingUpdatedState, null);
-      document.dispatchEvent(new Event("SUCCESS_UPDATE_MEDICATION_EVENT"));
-    } catch (e) {
-      console.log(e);
-      document.dispatchEvent(new Event("FAILED_UPDATE_MEDICATION_EVENT"));
-    } finally {
-      set(isUpdatingMedicationState, false);
     }
   };
 

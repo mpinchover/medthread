@@ -8,6 +8,7 @@ import { HeadlessDropdown } from "./common";
 const navbarDropdownMenuOptions = [
   { name: "LOGIN", display: "Login" },
   { name: "SIGNUP", display: "Signup" },
+  { name: "CONTACT", link: "mailto:info@usemedthread.com", display: "Contact" },
 ];
 
 const NavbarLoggedOut = () => {

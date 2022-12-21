@@ -70,7 +70,7 @@ export const getAuthorizedHealthcareProvider = async (
 ) => {
   const authorizedProvidersRef = await admin
     .firestore()
-    .collection("authorized_providers");
+    .collection("authorizedProviders");
 
   const snapshot = await authorizedProvidersRef
     .where("healthcareProviderEmail", "==", providerEmail)
@@ -97,7 +97,7 @@ export const getPatientsByProviderUid = async (providerUid: string) => {
   // now query all the authorized healthcare docs that this provider has been authorized for
   const authorizedProvidersRef = await admin
     .firestore()
-    .collection("authorized_providers");
+    .collection("authorizedProviders");
 
   let snapshot = await authorizedProvidersRef
     .where("healthcareProviderEmail", "==", providerEmail)

@@ -26,8 +26,9 @@ const Settings = () => {
   const getAccountSettings = useRecoilCallback(getAccountSettingsCallback);
   const accountSettings = useRecoilValue(accountSettingsState);
   useEffect(() => {
+    // getAccountSettings();
     // getPatientProfileCbk();
-    getAccountSettings();
+    // getAccountSettings();
   }, []);
   const isLoadingSettings = useRecoilValue(isLoadingSettingsState);
 

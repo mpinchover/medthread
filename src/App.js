@@ -6,7 +6,7 @@ import { getFirestore } from "firebase/firestore";
 import { collection, addDoc } from "firebase/firestore";
 import { useEffect, useState, useContext } from "react";
 import axios from "axios";
-
+import { useRecoilCallback } from "recoil";
 import { FirebaseProvider } from "./firebase/firebase-context";
 import Navbar from "./components/navbar";
 import RecordsFeed from "./components/active-patient";
@@ -50,15 +50,9 @@ const ModalShadow = () => {
 
 function App() {
   const [open, setOpen] = useState(null);
-  // const [flexpaLink, setFlexpaLink] = useState(null);
+
   const [accessToken, setAccessToken] = useState(null);
   const [publicToken, setPublicToken] = useState(null);
-
-  const handleClickDown = (e) => {
-    // console.log("CLICKED ON");
-    // console.log(e.target);
-    // console.log(e.currentTarget);
-  };
 
   function resetHeight() {
     // reset the body height to that of the inner browser
@@ -66,14 +60,10 @@ function App() {
     document.getElementById("root").style.minHeight = window.innerHeight + "px";
   }
   useEffect(() => {
-    // reset the height whenever the window's resized
     window.addEventListener("resize", resetHeight);
-    // document.body.addEventListener("click", handleClickDown);
 
-    // called to initially set the height.
     return () => {
       window.removeEventListener("resize", resetHeight);
-      // document.body.removeEventListener("click", handleClickDown);
     };
   }, []);
   resetHeight();

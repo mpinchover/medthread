@@ -16,7 +16,6 @@ export const Medication = ({ e }) => {
   let medValues = {};
   const { getAuthUser } = useContext(FirebaseContext);
 
-  console.log(e.dose);
   const authUser = getAuthUser();
   const role = authUser.role;
 
@@ -161,6 +160,7 @@ export const TextInput = ({
   return (
     <div className="relative  w-96">
       <input
+        type={type}
         disabled={disabled}
         name={name}
         value={value}
@@ -241,6 +241,19 @@ export const HeadlessDropdown = ({
       } absolute top-full w-72 bg-white shadow-md flex-col right-0 `}
     >
       {options.map((e, i) => {
+        if (e.link) {
+          return (
+            <li
+              key={i}
+              className="border border-t-0 last:border-b-0 hover:opacity-50"
+            >
+              <div className="text-left w-full p-6 flex flex-row items-center">
+                {e.icon ? <div className="mr-2">{<e.icon />}</div> : null}
+                <a href={e.link}>{e.display}</a>
+              </div>
+            </li>
+          );
+        }
         return (
           <li
             key={i}
@@ -366,7 +379,7 @@ export const LoadingMedicationData = () => {
   return (
     <div className="px-28 flex-1 flex items-center justify-center">
       <div className="animate-spin mr-2">
-        <div className=" rounded-full border border-blue-200 border-t-blue-400  w-5 h-5"></div>
+        <div className=" rounded-full border border-black border-t-0 w-4 h-4"></div>
       </div>
 
       <span>Loading medication list...</span>
@@ -378,7 +391,7 @@ export const LoadingSettingsData = () => {
   return (
     <div className="px-28 flex-1 flex items-center justify-center">
       <div className="animate-spin mr-2">
-        <div className=" rounded-full border border-blue-200 border-t-blue-400  w-5 h-5"></div>
+        <div className=" rounded-full border border-black border-t-0 w-4 h-4"></div>
       </div>
 
       <span>Loading account settings...</span>
@@ -390,7 +403,7 @@ export const LoadingWindow = ({ display }) => {
   return (
     <div className="px-28 flex-1 flex items-center justify-center">
       <div className="animate-spin mr-2">
-        <div className=" rounded-full border border-blue-200 border-t-blue-400  w-5 h-5"></div>
+        <div className=" rounded-full border border-black border-t-0 w-4 h-4"></div>
       </div>
 
       <span>{display}</span>

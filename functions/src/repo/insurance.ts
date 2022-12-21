@@ -33,7 +33,7 @@ export const getInsuranceProvidersByUserUid = async (
     .where("userUid", "==", userUid)
     .get();
 
-  if (snapshot.empty) return null;
+  if (snapshot.empty) return [];
   return snapshot.docs.map((doc) => {
     const data: any = doc.data();
     const uid = doc.id;

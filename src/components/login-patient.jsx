@@ -44,7 +44,7 @@ const PatientLogin = (props) => {
     <div className="flex flex-col  flex-1 items-center justify-center ">
       <div className="text-bold text-2xl w-72 text-center ">Login</div>
       <div className="  w-96   border-b border-black my-6"></div>
-      <form onSubmit={handleSubmit} className="lex flex-col space-y-6">
+      <form onSubmit={handleSubmit} className="flex flex-col space-y-6">
         <TextInput
           value={emailVal}
           onChange={(e) => setEmailVal(e.target.value)}

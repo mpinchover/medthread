@@ -6,7 +6,6 @@ export const removeHealthInsuranceProvider = async (insuranceProviderUid) => {
   const authUser = JSON.parse(localStorage.getItem("med_thread_auth_user"));
   const { idToken } = authUser;
 
-  console.log("PUSHING HERE");
   const res = await axios({
     method: "post",
     url: `${config.baseUrl}/remove-health-insurance-provider`,

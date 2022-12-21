@@ -7,6 +7,7 @@ export const saveMedication = async (req: any, res: any) => {
     const { medication } = body;
     const userUid = user.user_id;
 
+    medication.source = "PATIENT";
     let med: Medication;
     if (medication.uid) {
       // update med
@@ -16,7 +17,6 @@ export const saveMedication = async (req: any, res: any) => {
       medication.userUid = userUid;
       med = await medicationsRepo.addMedication(medication);
     }
-    med.source = "PATIENT";
     res.send({ medication: med });
   } catch (e) {
     console.log(e);

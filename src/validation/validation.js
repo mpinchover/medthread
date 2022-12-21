@@ -1,3 +1,5 @@
+import { InvalidArgumentError } from "../errors/errors";
+
 export const validateCreatePatient = ({
   name,
   password,
@@ -9,3 +11,19 @@ export const validateCreatePatient = ({
   if (password !== confirmPassword) throw new Error("Passwords do not match");
   if (!name) throw new Error("Name is required");
 };
+
+export const validateSaveMedication = (params) => {
+  if (!params.dateStarted)
+    throw new InvalidArgumentError("Date started required");
+
+  if (!params.medicationName)
+    throw new InvalidArgumentError("Medication name required");
+};
+
+export const validateSendMedications = () => {};
+
+export const validateUpdatePassword = () => {};
+
+export const validateUpdateEmail = () => {};
+
+export const validateAddInsuranceProvider = () => {};

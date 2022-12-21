@@ -15,7 +15,6 @@ export const getPreviousPatients = async () => {
     });
     return res.data.previousPatients;
   } catch (e) {
-    console.log("FAILED");
     console.log(e);
   }
   return [];

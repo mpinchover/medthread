@@ -146,7 +146,7 @@ const ProviderSettings = ({ authProfile }) => {
                   className=" flex flex-row items-center px-6 py-2 text-white bg-blue-600 mb-1 border rounded-sm"
                 >
                   <div className="animate-spin mr-2">
-                    <div className=" rounded-full border border-blue-200 border-t-blue-400  w-4 h-4"></div>
+                    <div className=" rounded-full border border-black border-t-0 w-4 h-4"></div>
                   </div>
                   <span>Saving...</span>
                 </button>

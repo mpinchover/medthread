@@ -110,7 +110,6 @@ export const createPatientCallback =
 
       let hydratedUserProfile;
       try {
-        console.log("CREATING A PATIENT");
         hydratedUserProfile = await createHydratedUserProfile(newUser);
       } catch (e) {
         console.log(e);
@@ -293,6 +292,7 @@ export const addInsuranceProviderCallback =
       });
 
       const listOfInsuranceProviders = [];
+
       const insuranceProviders = Object.keys(
         res.data.patient_profile.insurance_providers
       );

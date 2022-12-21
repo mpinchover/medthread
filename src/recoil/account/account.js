@@ -3,6 +3,7 @@ import { getAuth, updateEmail, updatePassword } from "firebase/auth";
 import { removeHealthInsuranceProvider } from "../../rpc/remove-insurance-provider";
 import { addHealthInsuranceProvider } from "../../rpc/add-health-insurance-provider";
 import { getAccountSettings } from "../../rpc/get-account-settings";
+import { derivedMedicationsState } from "../medications/medications";
 
 const idleState = {
   isEditingPassword: false,
@@ -20,7 +21,9 @@ export const accountUpdateState = atom({
 
 const defaultAccountSettingsState = {
   insuranceProviders: [],
+  healthcareProviders: [],
 };
+
 export const accountSettingsState = atom({
   key: "accountSettingsState",
   default: defaultAccountSettingsState,
@@ -104,18 +107,31 @@ export const addInsuranceProviderCallback =
   async (publicToken) => {
     try {
       set(isAccountLoadingState, true);
-      const insuranceProvider = await addHealthInsuranceProvider(publicToken);
-      const currentAccountState =
-        snapshot.getLoadable(accountSettingsState).contents;
+      const { newProvider, medications } = await addHealthInsuranceProvider(
+        publicToken
+      );
 
-      const newAccountState = {
-        ...currentAccountState,
-        insuranceProviders: [
-          ...currentAccountState.insuranceProviders,
-          insuranceProvider,
-        ],
-      };
-      set(accountSettingsState, newAccountState);
+      // const currentAccountState =
+      //   snapshot.getLoadable(accountSettingsState).contents;
+
+      // const newAccountState = {
+      //   ...currentAccountState,
+      //   insuranceProviders: [
+      //     ...currentAccountState.insuranceProviders,
+      //     insuranceProvider,
+      //   ],
+      // };
+
+      set(derivedMedicationsState, (curMeds) => [...curMeds, ...medications]);
+      set(accountSettingsState, (prevAccountState) => {
+        return {
+          ...prevAccountState,
+          insuranceProviders: [
+            ...prevAccountState.insuranceProviders,
+            newProvider,
+          ],
+        };
+      });
     } catch (e) {
       console.log(e);
     } finally {

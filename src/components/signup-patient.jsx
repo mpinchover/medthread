@@ -119,7 +119,7 @@ const PatientSignup = () => {
         {isLoggingInUser ? (
           <div className=" flex flex-row items-center ">
             <div className="animate-spin mr-2">
-              <div className=" rounded-full border border-black border-t-0  w-4 h-4"></div>
+              <div className=" rounded-full border border-black border-t-0 w-4 h-4"></div>
             </div>
             <span className="text-blue-400">Logging in...</span>
           </div>

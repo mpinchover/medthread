@@ -13,7 +13,12 @@ import { AiOutlinePlus } from "react-icons/ai";
 const navbarDropdownMenuOptions = [
   { name: "MEDICATIONS", display: "Medications", icon: TbPill },
   { name: "ACCOUNT", display: "Account", icon: MdAccountCircle },
-  { name: "CONTACT", display: "Contact", icon: AiOutlineMail },
+  {
+    name: "CONTACT",
+    link: "mailto:info@usemedthread.com",
+    display: "Contact",
+    icon: AiOutlineMail,
+  },
   { name: "LOGOUT", display: "Log out", icon: FiLogOut },
 ];
 
@@ -35,7 +40,9 @@ const NavbarLoggedOut = () => {
     if (name === "MEDICATIONS") {
       navigate("/");
     }
-    if (name === "LOGOUT") signOutUser();
+    if (name === "LOGOUT") {
+      signOutUser();
+    }
   };
 
   const handleToggleOpen = (e) => {
@@ -44,19 +51,6 @@ const NavbarLoggedOut = () => {
   };
 
   const mainDropdownRefBtn = useRef(null);
-
-  // // window.FlexpaLink.create({
-  // //   publishableKey: "pk_test_pKDGhsAjAOiDxw6LdHuoogYupzm9VNnQh113WuCoK6I",
-  // //   onSuccess: async (publicToken) => {
-  // //     console.log("TOKEN IS");
-  // //     console.log(publicToken);
-  // //     // addInsuranceProviderCbk(publicToken);
-  // //   },
-  // // });
-
-  // const openFlexpaLink = () => {
-  //   window.FlexpaLink.open();
-  // };
 
   return (
     <div

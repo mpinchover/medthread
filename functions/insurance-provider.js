@@ -66,7 +66,6 @@ const addHealthInsuranceProvider = async (req, res) => {
     res.send({ patient_profile: doc });
   } catch (e) {
     console.log(e);
-    console.log(e);
 
     res.status(500).send({
       code,

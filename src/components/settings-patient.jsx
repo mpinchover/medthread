@@ -200,7 +200,7 @@ const PatientSettings = ({ authProfile, accountSettings }) => {
         </section>
       </section>
       <section className="mb-6">
-        <div className="text-3xl font-bold mb-6">Insurance providers</div>
+        <div className="text-3xl font-bold ">Insurance providers</div>
         <section>
           {accountSettings?.insuranceProviders?.map((element, i) => {
             return (

@@ -65,7 +65,11 @@ app.post(
   validateFirebaseIdToken,
   removeHealthInsuranceProvider
 );
-app.post("/send-medications-to-provider", sendMedicationsToProvider);
+app.post(
+  "/send-medications-to-provider",
+  validateFirebaseIdToken,
+  sendMedicationsToProvider
+);
 app.post("/remove-medication", validateFirebaseIdToken, removeMedication);
 app.post("/save-medication", validateFirebaseIdToken, saveMedication);
 app.get("/get-user-account", validateFirebaseIdToken, getUserAccount);

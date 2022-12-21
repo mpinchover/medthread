@@ -1,6 +1,6 @@
 import * as nodemailer from "nodemailer";
 import * as medicationsRepo from "./repo/medications";
-
+import { v4 } from "uuid";
 import { getUserProfile, addAuthorizedHealthcareProvider } from "./repo/repo";
 import { Medication } from "./types";
 
@@ -18,14 +18,18 @@ export const sendMedicationsToProvider = async (req: any, res: any) => {
     const profile = await getUserProfile(userUid);
 
     // // create a new authorized healthcare provider doc
-    await addAuthorizedHealthcareProvider(userUid, healthcareProviderEmail);
+    const healthcareProvider = await addAuthorizedHealthcareProvider(
+      userUid,
+      healthcareProviderEmail
+    );
     const meds = await medicationsRepo.getMedicationsByUserUid(userUid);
+
     await sendProviderMedicationsInEmail(
       healthcareProviderEmail,
       profile,
       meds
     );
-    res.send({ data: "success" });
+    res.send({ healthcareProvider });
   } catch (e) {
     console.log(e);
     res.status(500).send(e);
@@ -50,26 +54,15 @@ const sendProviderMedicationsInEmail = async (
     },
   });
 
-  console.log("MEDS ARE");
-  console.log(meds);
-  // const meds = [
-  //   {
-  //     medicationName: "ADVIL",
-  //     dateStarted: "Jan 1st, 20202",
-  //     source: "CLAIMS",
-  //   },
-  //   {
-  //     medicationName: "ADVIL",
-  //     dateStarted: "Jan 30st, 20202",
-  //     source: "PATIENT",
-  //   },
-  // ];
+  const seq = v4();
 
   const mailBody = `
     <div>
-    ${meds.map((e) => {
-      return `<div style="">
-        <div>${displayName} medication list</div>
+    <div>Medications for ${displayName} (${seq})</div>
+    <br />
+    ${meds
+      .map((e) => {
+        return `<div style="">
         <div>
           <span style="width:400px">Medication: </span>
           <span>${e.medicationName}</span>
@@ -84,7 +77,8 @@ const sendProviderMedicationsInEmail = async (
         </div>
         <br />
       </div>`;
-    })}
+      })
+      .join("")}
 
     </div>
   `;

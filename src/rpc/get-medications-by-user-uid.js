@@ -15,6 +15,7 @@ export const getMedicationsByUserUid = async () => {
       Authorization: `Bearer ${idToken}`,
     },
   });
+
   if (!res.data.medications) return [];
   return res.data.medications;
 };

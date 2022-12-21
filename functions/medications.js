@@ -34,8 +34,6 @@ const _getPatientMedicationsByPatientUid = async (req, res) => {
   } catch (e) {
     const { data, code } = e;
     console.log(e);
-    console.log(code);
-    console.log(data);
     res.status(500).send({
       code,
       data,
@@ -153,8 +151,6 @@ const processFlexpaMedicationResponse = (flexpaMedication) => {
 
   if (!intent) intent = "UNKNOWN";
 
-  console.log("MED IS");
-  console.log(med);
   return med;
 };
 

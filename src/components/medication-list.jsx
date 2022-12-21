@@ -16,6 +16,7 @@ import AddMedicationModal from "./medication-modal-add";
 import AccountModal from "./account-modal";
 import SendMedicationsModal from "./medication-modal-send-meds";
 import { FirebaseContext } from "../firebase/firebase-context";
+import { accountSettingsState } from "../recoil/account/account";
 
 const MedicationList = ({
   meds,
@@ -23,6 +24,7 @@ const MedicationList = ({
   searchTerm,
   authUser,
   activePatient,
+  accountSettings,
 }) => {
   const { role, account } = authUser;
   const [medToBeUpdated, setMedToBeUpdated] = useState(null);
@@ -202,6 +204,7 @@ const MedicationList = ({
         onRemoveMedication={(uid) => handleRemoveMedication(uid)}
       />
       <SendMedicationsModal
+        healthcareProviders={accountSettings.healthcareProviders}
         isOpen={isSendMedsModalOpen}
         onSend={onSendMedications}
         onClose={handleSendMedsModalClose}

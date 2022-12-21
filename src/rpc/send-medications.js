@@ -1,5 +1,6 @@
 import axios from "axios";
 import { getServerConfig } from "../config/config";
+
 export const sendMedicationsToProvider = async (healthcareProviderEmail) => {
   const authUser = JSON.parse(localStorage.getItem("med_thread_auth_user"));
   const { idToken } = authUser;
@@ -16,4 +17,5 @@ export const sendMedicationsToProvider = async (healthcareProviderEmail) => {
       Authorization: `Bearer ${idToken}`,
     },
   });
+  return res.data.healthcareProvider;
 };

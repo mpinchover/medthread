@@ -18,7 +18,6 @@ const VerificationPage = () => {
   }, []);
 
   if (!authorizedProfile || authorizedProfile?.emailVerified) {
-    console.log(authorizedProfile);
     return <Navigate to="/" replace={true} />;
   }
 

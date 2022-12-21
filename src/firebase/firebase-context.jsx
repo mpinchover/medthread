@@ -24,6 +24,7 @@ import {
 } from "../recoil/profile/profile";
 import {
   updateEmailCallback,
+  getAccountSettingsCallback,
   updatePasswordCallback,
 } from "../recoil/account/account";
 import {
@@ -44,6 +45,7 @@ export const FirebaseProvider = ({ children }) => {
   const [authorizedProfile, setAuthorizedProfile] = useRecoilState(
     authorizedProfileState
   );
+
   const updateEmailCbk = useRecoilCallback(updateEmailCallback);
   const [profileAccount, setProfileAccount] =
     useRecoilState(profileAccountState);
@@ -57,6 +59,8 @@ export const FirebaseProvider = ({ children }) => {
   const _updateUserPasswordCallback = useRecoilCallback(updatePasswordCallback);
   const _signIn = useRecoilCallback(signInCallback);
   const navigate = useNavigate();
+
+  const getAccountSettings = useRecoilCallback(getAccountSettingsCallback);
 
   const hydrateUserProfile = async (uid) => {
     if (!uid) return;
@@ -85,6 +89,15 @@ export const FirebaseProvider = ({ children }) => {
         }
         return;
       }
+
+      const curAuthUserCache = getAuthUser();
+      if (curAuthUserCache?.uid !== user?.uid) {
+        localStorage.clear();
+        setAuthorizedProfile(null);
+        return;
+      }
+
+      getAccountSettings();
 
       // might be this
 
@@ -118,8 +131,14 @@ export const FirebaseProvider = ({ children }) => {
         }
         return;
       }
-      // might be this
+
       const curAuthUserCache = getAuthUser();
+      if (curAuthUserCache?.uid !== user?.uid) {
+        localStorage.clear();
+        setAuthorizedProfile(null);
+        return;
+      }
+      // might be this
       if (curAuthUserCache?.uid !== user.uid) {
         localStorage.clear();
         setAuthorizedProfile(null);
@@ -249,7 +268,6 @@ export const FirebaseProvider = ({ children }) => {
         url = "http://localhost:3000";
       }
 
-      console.log("THE URL IS");
       console.log(url);
 
       const auth = getAuth();

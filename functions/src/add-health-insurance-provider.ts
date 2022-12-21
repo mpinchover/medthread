@@ -1,5 +1,8 @@
 import { getAccessToken, getMetadata } from "./gateway/flepxa";
 import * as insuranceRepo from "./repo/insurance";
+import * as medicationsRepo from "./repo/medications";
+import * as flexpaGateway from "./gateway/flepxa";
+import * as medicationsController from "./controllers/medications";
 import { InsuranceMetadata, InsuranceProvider } from "./types";
 
 export const addHealthInsuranceProvider = async (req: any, res: any) => {
@@ -34,7 +37,23 @@ export const addHealthInsuranceProvider = async (req: any, res: any) => {
       newProviderParams
     );
 
-    res.send({ newProvider });
+    const flexpaMedications = await flexpaGateway.getMedicationByAccessToken(
+      accessToken
+    );
+
+    const entityMedications =
+      medicationsController.fromFlexpaToEntityMedications(flexpaMedications);
+
+    for (let i = 0; i < entityMedications.length; i++) {
+      entityMedications[i].userUid = userUid;
+      entityMedications[i].source = "CLAIMS";
+    }
+    // pull all meds for patient on the first of the month
+    const medications = await medicationsRepo.addMedicationsInbatch(
+      entityMedications
+    );
+
+    res.send({ newProvider, medications });
   } catch (e) {
     console.log(e);
     res.status(501).send({ error: e });

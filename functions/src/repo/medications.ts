@@ -10,6 +10,25 @@ export const addMedication = async (params: Medication) => {
   return params;
 };
 
+export const addMedicationsInbatch = async (params: Medication[]) => {
+  if (!params || params.length === 0) return [];
+
+  var db = admin.firestore();
+  var batch = db.batch();
+
+  for (let i = 0; i < params.length; i++) {
+    const doc: Medication = params[i];
+    const docRef = db.collection("medications").doc();
+    doc.uid = docRef.id;
+    batch.set(docRef, doc);
+
+    params[i] = doc;
+  }
+  
+  await batch.commit();
+  return params;
+};
+
 export const updateMedication = async (params: Medication, uid: string) => {
   const db = admin.firestore();
 

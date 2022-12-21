@@ -24,7 +24,6 @@ const Navbar = () => {
 
   // const authUser = getAuthUser();
   const authUser = authorizedProfile;
-
   if (authUser && authUser.role === "PATIENT") {
     return <PatientNavbar />;
   }

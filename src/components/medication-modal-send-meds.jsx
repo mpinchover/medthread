@@ -9,26 +9,13 @@ import {
 } from "../recoil/medications/medications";
 import { useRecoilCallback } from "recoil";
 
-const prevProviders = [
-  {
-    providerEmail: "drkumanah@nycdoctors.com",
-  },
-  {},
-  {},
-  {},
-  {},
-  {},
-  {},
-  {},
-  {},
-  {},
-  {},
-  {},
-  {},
-  {},
-  {},
-];
-const SendMedicationsModal = ({ isOpen, onSend, onClose, medToBeUpdated }) => {
+const SendMedicationsModal = ({
+  isOpen,
+  onSend,
+  onClose,
+  medToBeUpdated,
+  healthcareProviders,
+}) => {
   const [email, setEmail] = useState("");
 
   const sendMedicationsToCareProvider = useRecoilCallback(
@@ -56,6 +43,7 @@ const SendMedicationsModal = ({ isOpen, onSend, onClose, medToBeUpdated }) => {
 
   const handleClickOutside = (event) => {
     if (modalRef.current && !modalRef.current.contains(event.target)) {
+      setEmail("");
       onClose();
     }
   };
@@ -63,6 +51,7 @@ const SendMedicationsModal = ({ isOpen, onSend, onClose, medToBeUpdated }) => {
   const handleSend = (e) => {
     e.preventDefault();
     sendMedicationsToCareProvider(email);
+    setEmail("");
     onClose();
   };
 
@@ -84,18 +73,18 @@ const SendMedicationsModal = ({ isOpen, onSend, onClose, medToBeUpdated }) => {
       <div className="h-72 overflow-y-scroll p-6">
         <div className="font-bold ">Previous providers</div>
         <ul className="">
-          {prevProviders.map((e, i) => {
+          {healthcareProviders.map((e, i) => {
             return (
               <li
                 key={i}
                 className="text-m border-b last:border-b-0 py-6 flex flex-row justify-between items-center"
               >
                 <button
-                  onClick={() => setEmail(e.providerEmail)}
-                  name={e.providerEmail}
+                  onClick={() => setEmail(e.healthcareProviderEmail)}
+                  name={e.healthcareProviderEmail}
                   className=""
                 >
-                  sinaiconstructions@sinai.com
+                  {e.healthcareProviderEmail}
                 </button>
                 <button>
                   <FaTrash />

@@ -34,6 +34,7 @@ export interface InsuranceProvider {
 
 export interface Account {
   insuranceProviders: InsuranceProvider[];
+  healthcareProviders: AuthorizedProvider[];
 }
 
 export interface InsuranceMetadata {
