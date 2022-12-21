@@ -2,6 +2,7 @@ const admin = require("firebase-admin");
 const axios = require("axios");
 const { getUserProfile } = require("./repo");
 
+// deprecated
 const addHealthInsuranceProvider = async (req, res) => {
   try {
     const { body } = req;
@@ -19,7 +20,7 @@ const addHealthInsuranceProvider = async (req, res) => {
     const accessToken = await getAccessToken(publicToken);
 
     // get publisher
-    const publisher = await getMetaData(accessToken);
+    const publisher = await getMetaDataV2(accessToken);
 
     const patientProfile = await getUserProfile(userUid);
 
@@ -87,7 +88,6 @@ const getAccessToken = async (publicToken) => {
       secret_key: process.env.FLEXPA_SECRET_KEY,
     },
   });
-
 
   return res.data.access_token;
 };

@@ -1,4 +1,4 @@
-import { getAccessToken, getMetadata } from "./gateway/flepxa";
+import { getAccessToken, getMetadata, getMetadataV2 } from "./gateway/flepxa";
 import * as insuranceRepo from "./repo/insurance";
 import * as medicationsRepo from "./repo/medications";
 import * as flexpaGateway from "./gateway/flepxa";
@@ -13,7 +13,7 @@ export const addHealthInsuranceProvider = async (req: any, res: any) => {
     const userUid = user.user_id;
 
     const accessToken = await getAccessToken(publicToken);
-    const metadata: InsuranceMetadata = await getMetadata(accessToken);
+    const metadata: InsuranceMetadata = await getMetadataV2(accessToken);
 
     // check to see if we've already added this health insurance provider
     const existingInsuranceprovider =

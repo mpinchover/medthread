@@ -36,6 +36,30 @@ export const refreshToken = async (accessToken: string) => {
   return res.data.access_token;
 };
 
+export const getMetadataV2 = async (
+  accessToken: string
+): Promise<InsuranceMetadata> => {
+  try {
+    let res = await axios.get("https://api.flexpa.com/link/introspect", {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+        "Content-Type": "application/json",
+        "accept-encoding": "*",
+      },
+    });
+
+    const capabilities: string[] = res.data?.endpoint?.resources;
+
+    const metadata = {
+      publisher: res.data?.endpoint?.label,
+      capabilities,
+    };
+    return metadata;
+  } catch (e) {
+    throw e;
+  }
+};
+
 export const getMetadata = async (
   accessToken: string
 ): Promise<InsuranceMetadata> => {
