@@ -1,11 +1,11 @@
-import { getDerivedMedications } from "./repo/repo";
+import {getDerivedMedications} from "./repo/repo";
 import {
   getHealthInsuranceProvidersByPatientUid,
   updateAccessTokenForInsuranceProvider,
 } from "./repo/insurance";
 
-import { getMedicationByAccessToken, refreshToken } from "./gateway/flepxa";
-import { Medication, InsuranceProvider } from "./types";
+import {getMedicationByAccessToken, refreshToken} from "./gateway/flepxa";
+import {Medication, InsuranceProvider} from "./types";
 import * as admin from "firebase-admin";
 
 // protect route https://github.com/firebase/functions-samples/blob/main/authorized-https-endpoint/functions/index.js
@@ -17,58 +17,59 @@ export const getMedicationsByPatientUid = async (req: any, res: any) => {
     // const patientUid = decodedToken.uid;
 
     // TODO – change this to use the actual decoded uid fromt he token
-    const { patientUid } = req.body;
+    const {patientUid} = req.body;
 
     let medications: Medication[] = [];
     const patientMedications = await getDerivedMedications(patientUid);
     medications.push(...patientMedications);
 
     const claimsMedications = await getMedicationsFromInsuranceProvider(
-      patientUid
+        patientUid
     );
 
     medications.push(...claimsMedications);
     medications = medications.sort(
-      (a, b) =>
-        new Date(b.dateStarted).valueOf() - new Date(a.dateStarted).valueOf()
+        (a, b) =>
+          new Date(b.dateStarted).valueOf() - new Date(a.dateStarted).valueOf()
     );
 
-    res.send({ medications });
+    res.send({medications});
   } catch (e) {
     console.log(e);
-    res.status(501).send({ error: e });
+    res.status(501).send({error: e});
   }
 };
 
 export const getMedicationsFromInsuranceProvider = async (
-  patientUid: string
+    patientUid: string
 ) => {
   const medications: Medication[] = [];
 
   // get access tokens by patient uid
   const insuranceMedications = await getHealthInsuranceProvidersByPatientUid(
-    patientUid
+      patientUid
   );
 
   for (let i = 0; i < insuranceMedications.length; i++) {
     const insuranceProviderData: InsuranceProvider = insuranceMedications[i];
 
     // make sure the provider can do medication requests
-    if (!insuranceProviderData.capabilities.includes("MedicationRequest"))
+    if (!insuranceProviderData.capabilities.includes("MedicationRequest")) {
       continue;
+    }
 
-    const { accessToken } = insuranceProviderData;
+    const {accessToken} = insuranceProviderData;
     if (!accessToken) throw new Error("Access token cannot be null");
 
     const refreshedAccessToken = await refreshToken(accessToken);
 
     // save new access token
     await updateAccessTokenForInsuranceProvider(
-      insuranceProviderData.uid,
-      refreshedAccessToken
+        insuranceProviderData.uid,
+        refreshedAccessToken
     );
     const flexpaMedications = await getMedicationByAccessToken(
-      refreshedAccessToken
+        refreshedAccessToken
     );
     const entityMedications = fromFlexpaToEntityMedications(flexpaMedications);
     medications.push(...entityMedications);
@@ -84,7 +85,7 @@ export const fromFlexpaToEntityMedications = (flexpaMedications: any) => {
   const entityMedications: any[] = [];
   for (let i = 0; i < flexpaMedications.entry.length; i++) {
     const entityMedication = fromFlexpaToEntityMedication(
-      flexpaMedications.entry[i]
+        flexpaMedications.entry[i]
     );
     entityMedications.push(entityMedication);
   }

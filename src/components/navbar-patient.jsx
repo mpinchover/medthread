@@ -22,7 +22,7 @@ const navbarDropdownMenuOptions = [
   { name: "LOGOUT", display: "Log out", icon: FiLogOut },
 ];
 
-const NavbarLoggedOut = () => {
+const NavbarLoggedOut = ({ authUser }) => {
   const navigate = useNavigate();
   const { signOutUser } = useContext(FirebaseContext);
   const location = useLocation();
@@ -52,6 +52,8 @@ const NavbarLoggedOut = () => {
 
   const mainDropdownRefBtn = useRef(null);
 
+  let name = authUser?.account?.displayName;
+  if (name && name.length > 0) name = name[0].toUpperCase();
   return (
     <div
       id="navbar"
@@ -81,7 +83,7 @@ const NavbarLoggedOut = () => {
           className="rounded-full border relative flex flex-row items-center justify-center space-x-2 p-2 px-4 "
         >
           <AiOutlineMenu size={16} />
-          <div>M.P</div>
+          <div>{name}</div>
         </button>
         <HeadlessDropdown
           options={navbarDropdownMenuOptions}

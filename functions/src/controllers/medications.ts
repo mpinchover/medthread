@@ -2,7 +2,7 @@ import { Medication, InsuranceProvider } from "../types";
 import * as medicationsRepo from "../repo/medications";
 import * as insuranceRepo from "../repo/insurance";
 import * as flexpaGateway from "../gateway/flepxa";
-
+import { fromFlexpaToEntityMedications } from "../mappers/flexpa-to-entity";
 export const getMedicationsByUserUid = async (
   userUid: string
 ): Promise<Medication[]> => {
@@ -30,15 +30,16 @@ export const getMedicationsFromInsuranceProvider = async (
   const medications: Medication[] = [];
 
   // get access tokens by patient uid
-  const insuranceMedications =
+  const insuranceProviders =
     await insuranceRepo.getHealthInsuranceProvidersByPatientUid(patientUid);
 
-  for (let i = 0; i < insuranceMedications.length; i++) {
-    const insuranceProviderData: InsuranceProvider = insuranceMedications[i];
+  for (let i = 0; i < insuranceProviders.length; i++) {
+    const insuranceProviderData: InsuranceProvider = insuranceProviders[i];
 
     // make sure the provider can do medication requests
-    if (!insuranceProviderData.capabilities.includes("MedicationRequest"))
+    if (!insuranceProviderData.capabilities.includes("MedicationRequest")) {
       continue;
+    }
 
     const { accessToken } = insuranceProviderData;
     if (!accessToken) throw new Error("Access token cannot be null");
@@ -53,42 +54,11 @@ export const getMedicationsFromInsuranceProvider = async (
     const flexpaMedications = await flexpaGateway.getMedicationByAccessToken(
       refreshedAccessToken
     );
-    const entityMedications = fromFlexpaToEntityMedications(flexpaMedications);
+    const entityMedications = fromFlexpaToEntityMedications(
+      flexpaMedications,
+      insuranceProviderData.uid
+    );
     medications.push(...entityMedications);
   }
   return medications;
-};
-
-export const fromFlexpaToEntityMedications = (flexpaMedications: any) => {
-  if (!flexpaMedications.entry) {
-    return [];
-  }
-
-  const entityMedications: any[] = [];
-  for (let i = 0; i < flexpaMedications.entry.length; i++) {
-    const entityMedication = fromFlexpaToEntityMedication(
-      flexpaMedications.entry[i]
-    );
-    entityMedications.push(entityMedication);
-  }
-
-  return entityMedications;
-};
-
-export const fromFlexpaToEntityMedication = (flexpaMedication: any) => {
-  let display =
-    flexpaMedication?.resource?.medicationCodeableConcept?.coding[0]?.display;
-  let authoredOn = flexpaMedication?.resource?.authoredOn;
-
-  if (!display) display = "UNKNOWN";
-
-  if (!authoredOn) authoredOn = "UNKNOWN";
-  // else authoredOn = new Date(authoredOn);
-
-  const med: Medication = {
-    medicationName: display,
-    dateStarted: authoredOn,
-    source: "CLAIMS",
-  };
-  return med;
 };

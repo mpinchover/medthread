@@ -58,24 +58,6 @@ const PatientLogin = (props) => {
           type="password"
           placeholder="Enter password..."
         />
-        {/* <input
-            type="email"
-            value={emailVal}
-            onChange={(e) => setEmailVal(e.target.value)}
-            className="border focus:outline-none px-2 py-2 w-72 mb-4"
-            placeholder="Email"
-          />
-  */}
-
-        <div>
-          {/* <input
-            value={passwordVal}
-            onChange={(e) => setPasswordVal(e.target.value)}
-            type="password"
-            className="border focus:outline-none px-2 py-2 w-72 mb-4"
-            placeholder="Password"
-          /> */}
-        </div>
         {isLoggingInUser ? (
           <div className=" flex flex-row items-center ">
             <div className="animate-spin mr-2">

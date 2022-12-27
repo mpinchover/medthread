@@ -101,15 +101,17 @@ export const removeInsuranceProviderCallback =
       set(isAccountLoadingState, false);
     }
   };
-
+// instead of ading meds, you need to add everything here
 export const addInsuranceProviderCallback =
   ({ set, snapshot }) =>
   async (publicToken) => {
     try {
       set(isAccountLoadingState, true);
-      const { newProvider, medications } = await addHealthInsuranceProvider(
-        publicToken
-      );
+      const { insuranceProvider, claimsData } =
+        await addHealthInsuranceProvider(publicToken);
+
+      console.log("CLAIMS DATA");
+      console.log(claimsData);
 
       // const currentAccountState =
       //   snapshot.getLoadable(accountSettingsState).contents;
@@ -122,13 +124,18 @@ export const addInsuranceProviderCallback =
       //   ],
       // };
 
-      set(derivedMedicationsState, (curMeds) => [...curMeds, ...medications]);
+      if (claimsData?.derivedClaimsMedications?.length > 0) {
+        set(derivedMedicationsState, (curMeds) => [
+          ...curMeds,
+          ...claimsData.derivedClaimsMedications,
+        ]);
+      }
       set(accountSettingsState, (prevAccountState) => {
         return {
           ...prevAccountState,
           insuranceProviders: [
             ...prevAccountState.insuranceProviders,
-            newProvider,
+            insuranceProvider,
           ],
         };
       });

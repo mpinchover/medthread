@@ -16,11 +16,12 @@ export const addHealthInsuranceProvider = async (publicToken) => {
       Authorization: `Bearer ${idToken}`,
     },
   });
-  const { newProvider, medications } = res.data;
+
+  const { insuranceProvider, claimsData } = res.data;
 
   return {
-    newProvider,
-    medications,
+    insuranceProvider,
+    claimsData,
   };
   // should we get the medications from this provider?
 };

@@ -1,4 +1,4 @@
-import { getPatientsByProviderUid } from "./repo/repo";
+import {getPatientsByProviderUid} from "./repo/repo";
 import * as admin from "firebase-admin";
 
 export const getPreviousPatients = async (req: any, res: any) => {
@@ -10,9 +10,9 @@ export const getPreviousPatients = async (req: any, res: any) => {
 
     // get the provider uid out of the header
     const previousPatients = await getPatientsByProviderUid(providerUid);
-    res.send({ previousPatients });
+    res.send({previousPatients});
   } catch (e) {
     console.log(e);
-    res.status(500).send({ error: e });
+    res.status(500).send({error: e});
   }
 };

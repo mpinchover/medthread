@@ -1,8 +1,8 @@
 import * as nodemailer from "nodemailer";
 import * as medicationsRepo from "./repo/medications";
-import { v4 } from "uuid";
-import { getUserProfile, addAuthorizedHealthcareProvider } from "./repo/repo";
-import { Medication } from "./types";
+import {v4} from "uuid";
+import {getUserProfile, addAuthorizedHealthcareProvider} from "./repo/repo";
+import {Medication} from "./types";
 
 export const sendMedicationsToProvider = async (req: any, res: any) => {
   try {
@@ -11,25 +11,25 @@ export const sendMedicationsToProvider = async (req: any, res: any) => {
     // const decodedToken = await admin.auth().verifyIdToken(tokenId);
     // const patientUid = decodedToken.uid;
 
-    const { body, user } = req;
+    const {body, user} = req;
     const userUid = user.user_id;
-    const { healthcareProviderEmail } = body;
+    const {healthcareProviderEmail} = body;
 
     const profile = await getUserProfile(userUid);
 
     // // create a new authorized healthcare provider doc
     const healthcareProvider = await addAuthorizedHealthcareProvider(
-      userUid,
-      healthcareProviderEmail
+        userUid,
+        healthcareProviderEmail
     );
     const meds = await medicationsRepo.getMedicationsByUserUid(userUid);
 
     await sendProviderMedicationsInEmail(
-      healthcareProviderEmail,
-      profile,
-      meds
+        healthcareProviderEmail,
+        profile,
+        meds
     );
-    res.send({ healthcareProvider });
+    res.send({healthcareProvider});
   } catch (e) {
     console.log(e);
     res.status(500).send(e);
@@ -37,14 +37,14 @@ export const sendMedicationsToProvider = async (req: any, res: any) => {
 };
 
 const sendProviderMedicationsInEmail = async (
-  healthcareProviderEmail: any,
-  profile: any,
-  meds: Medication[]
+    healthcareProviderEmail: any,
+    profile: any,
+    meds: Medication[]
 ) => {
-  const { account } = profile;
-  const { displayName } = account;
+  const {account} = profile;
+  const {displayName} = account;
 
-  var transporter = nodemailer.createTransport({
+  const transporter = nodemailer.createTransport({
     host: "smtp.gmail.com",
     port: 465,
     secure: true,
@@ -84,7 +84,7 @@ const sendProviderMedicationsInEmail = async (
   `;
 
   const mailOptions = {
-    from: ``,
+    from: "",
     to: healthcareProviderEmail,
     subject: `${displayName} medical records`,
     html: mailBody,
