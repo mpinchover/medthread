@@ -13,9 +13,9 @@ import {
   ClaimsData,
   MedicationDispense,
   DerivedMedication,
+  Condition,
 } from "../types";
 import {
-  fromFlexpaToEntityMedications,
   fromFlexpaToEntityAllergyIntoleranceList,
   fromFlexpaToEntityMedicationRequestList,
   fromFlexpaToEntityMedicationDispenseList,
@@ -40,6 +40,103 @@ const immunizationCapability = "Immunization";
 const conditionCapability = "Condition";
 const allergyIntoleranceCapability = "AllergyIntolerance";
 
+export const getClaimsDataByUserUid = async (
+  userUid: string
+): Promise<ClaimsData> => {
+  // get all claims data with the userUid
+  const claimsResults = await Promise.allSettled([
+    getClaimsConditionByUserUid(userUid),
+    getClaimsProcedureByUserUid(userUid),
+    getClaimsImmunizationByUserUid(userUid),
+    getClaimsAllergyIntoleranceByUserUid(userUid),
+    getClaimsMedicationRequestByUserUid(userUid),
+    getClaimsMedicationDispenseByUserUid(userUid),
+  ]);
+  const claimsData = extractClaimsResultsFromPromises(claimsResults);
+
+  const derivedMedications = deriveClaimsMedications(
+    claimsData.medicationRequest,
+    claimsData.medicationDispense
+  );
+  claimsData.derivedClaimsMedications = derivedMedications;
+  return claimsData;
+  //
+};
+
+export const getClaimsConditionByUserUid = async (userUid: string) => {
+  return new Promise(async (res, rej) => {
+    try {
+      const claimsValues = await insuranceRepo.getClaimsConditionByUserUid(
+        userUid
+      );
+      res({ type: CONDITION, values: claimsValues });
+    } catch (e) {
+      rej(e);
+    }
+  });
+};
+export const getClaimsProcedureByUserUid = async (userUid: string) => {
+  return new Promise(async (res, rej) => {
+    try {
+      const claimsValues = await insuranceRepo.getClaimsProcedureByUserUid(
+        userUid
+      );
+      res({ type: PROCEDURE, values: claimsValues });
+    } catch (e) {
+      rej(e);
+    }
+  });
+};
+
+export const getClaimsImmunizationByUserUid = async (userUid: string) => {
+  return new Promise(async (res, rej) => {
+    try {
+      const claimsValues = await insuranceRepo.getClaimsImmunizationByUserUid(
+        userUid
+      );
+      res({ type: IMMUNIZATION, values: claimsValues });
+    } catch (e) {
+      rej(e);
+    }
+  });
+};
+
+export const getClaimsAllergyIntoleranceByUserUid = async (userUid: string) => {
+  return new Promise(async (res, rej) => {
+    try {
+      const claimsValues =
+        await insuranceRepo.getClaimsAllergyIntoleranceByUserUid(userUid);
+      res({ type: ALLERGY_INTOLERANCE, values: claimsValues });
+    } catch (e) {
+      rej(e);
+    }
+  });
+};
+
+export const getClaimsMedicationRequestByUserUid = async (userUid: string) => {
+  return new Promise(async (res, rej) => {
+    try {
+      const claimsValues =
+        await insuranceRepo.getClaimsMedicationRequestByUserUid(userUid);
+      res({ type: MEDICATION_REQUEST, values: claimsValues });
+    } catch (e) {
+      rej(e);
+    }
+  });
+};
+
+export const getClaimsMedicationDispenseByUserUid = async (userUid: string) => {
+  return new Promise(async (res, rej) => {
+    try {
+      const claimsValues =
+        await insuranceRepo.getClaimsMedicationDispenseByUserUid(userUid);
+      res({ type: MEDICATION_DISPENSE, values: claimsValues });
+    } catch (e) {
+      rej(e);
+    }
+  });
+};
+
 export const addHealthInsuranceProvider = async (
   userUid: string,
   publicToken: string
@@ -54,6 +151,8 @@ export const addHealthInsuranceProvider = async (
         metadata.publisher,
         userUid
       );
+
+    // if this health insurance provider exists, just return it
     if (existingInsuranceprovider) {
       const res: AddHealthInsuranceProviderResponse = {
         insuranceProvider: existingInsuranceprovider,
@@ -61,6 +160,8 @@ export const addHealthInsuranceProvider = async (
       return res;
     }
 
+    // TODO – batch the insurance provider creation with the claims data creation
+    // create the new health insurance provider
     const newProviderParams: InsuranceProvider = {
       userUid,
       accessToken,
@@ -68,75 +169,25 @@ export const addHealthInsuranceProvider = async (
       capabilities: metadata.capabilities,
     };
 
-    // check if the health insurance provider already exists
     const newProvider = await insuranceRepo.addInsuranceProviderForPatient(
       newProviderParams
     );
 
-    // need to make sure you're not adding duplicate
-    // also maybe dont delete anything when removing the health insurance provider
-    // this is also saving the claims data
+    // TODO – test this
     const claimsData = await getClaimsFromInsuranceProvider(newProvider);
-    // now that you have the claims data
-    // you want to sort out the meds
+
+    appendInsuranceAndUserUidToClaims(claimsData, newProvider);
+    // TODO – make sure not to save duplicates
     const savedClaimsData = await insuranceRepo.batchWriteClaimsData(
       claimsData
     );
 
-    console.log("CLAIMS DATA IS");
-    console.log(claimsData);
-
-    // and then add this as another medications field
     const derivedClaimsMedications = deriveClaimsMedications(
       savedClaimsData.medicationRequest,
       savedClaimsData.medicationDispense
     );
 
-    console.log("DERIVED MEDS IS");
-    console.log(derivedClaimsMedications);
-
     savedClaimsData.derivedClaimsMedications = derivedClaimsMedications;
-    // let incomingFlexpaMedications =
-    //   await flexpaGateway.getMedicationByAccessToken(accessToken);
-
-    // incomingFlexpaMedications = fromFlexpaToEntityMedications(
-    //   incomingFlexpaMedications,
-    //   newProvider.uid
-    // );
-
-    // const incomingFlexpaMedicationResourceIds: string[] =
-    //   incomingFlexpaMedications.map((med: Medication) => med.flexpaResourceId);
-
-    // // get the ones that match
-    // // retain the ones that dont
-    // // get rid of anything we already have
-    // const existingFlexpaMedications =
-    //   await medicationsRepo.getMedicationsByFlepxaResourceIds(
-    //     userUid,
-    //     incomingFlexpaMedicationResourceIds
-    //   );
-
-    // const existingFlexpaMedicationsResourceIds = existingFlexpaMedications.map(
-    //   (med) => med.flexpaResourceId
-    // );
-
-    // const incomingFlexpaMedicationsToBeInserted =
-    //   incomingFlexpaMedications.filter(
-    //     (med: Medication) =>
-    //       !existingFlexpaMedicationsResourceIds.includes(med.flexpaResourceId)
-    //   );
-
-    // for (let i = 0; i < incomingFlexpaMedicationsToBeInserted.length; i++) {
-    //   incomingFlexpaMedicationsToBeInserted[i].userUid = userUid;
-    //   incomingFlexpaMedicationsToBeInserted[i].source = "CLAIMS";
-    // }
-
-    // // now make the request to medication dispense
-
-    // // pull all meds for patient on the first of the month
-    // const medications = await medicationsRepo.addMedicationsInbatch(
-    //   incomingFlexpaMedicationsToBeInserted
-    // );
     const res: AddHealthInsuranceProviderResponse = {
       insuranceProvider: newProvider,
       claimsData: savedClaimsData,
@@ -148,20 +199,69 @@ export const addHealthInsuranceProvider = async (
   }
 };
 
+export const appendInsuranceAndUserUidToClaims = (
+  claimsData: ClaimsData,
+  insuranceProvider: InsuranceProvider
+) => {
+  const userUid = insuranceProvider.userUid;
+  const providerUid = insuranceProvider.uid;
+
+  _appendInsuranceAndUseUidToClaims(
+    userUid,
+    providerUid,
+    claimsData.medicationRequest
+  );
+
+  _appendInsuranceAndUseUidToClaims(
+    userUid,
+    providerUid,
+    claimsData.medicationDispense
+  );
+
+  _appendInsuranceAndUseUidToClaims(
+    userUid,
+    providerUid,
+    claimsData.allergyIntolerance
+  );
+
+  _appendInsuranceAndUseUidToClaims(userUid, providerUid, claimsData.condition);
+
+  _appendInsuranceAndUseUidToClaims(userUid, providerUid, claimsData.procedure);
+
+  _appendInsuranceAndUseUidToClaims(
+    userUid,
+    providerUid,
+    claimsData.immunization
+  );
+};
+
+export const _appendInsuranceAndUseUidToClaims = (
+  userUid: string,
+  providerUid: string,
+  values: any[]
+) => {
+  for (let i = 0; i < values.length; i++) {
+    values[i].insuranceProviderUid = providerUid;
+    values[i].userUid = userUid;
+  }
+};
+
 interface MedContext {
   request: MedicationRequest[];
   dispense: MedicationDispense[];
 }
 
 // TODO - change the response to a new type and dont send med req/dispense
-const deriveClaimsMedications = (
+export const deriveClaimsMedications = (
   medRequest: MedicationRequest[],
   medDispense: MedicationDispense[]
-) => {
+): DerivedMedication[] => {
   const derivedMedications: DerivedMedication[] = [];
   const medicationMap = new Map<string, MedContext>();
 
   // group the medications by med request and med dispense
+  // so med code -> {med req, med dispense}
+  // we may have some meds with only the dispense and some with only the req
   for (let i = 0; i < medRequest.length; i++) {
     const medReq = medRequest[i];
 
@@ -173,13 +273,9 @@ const deriveClaimsMedications = (
       };
       medicationMap.set(medReq.code, medContext);
     }
-    // if we have already pushed a med context for this med code,
-    // then just query it and add the med request to that code
     medicationMap.get(medReq.code).request.push(medReq);
   }
 
-  // do the same thing for medication dispensed.
-  // it's possible we might have med dispensed that we dont have the requests for
   for (let i = 0; i < medDispense.length; i++) {
     const medDis = medDispense[i];
 
@@ -197,7 +293,8 @@ const deriveClaimsMedications = (
   const medContextValues = Array.from(medicationMap.values());
   for (let i = 0; i < medContextValues.length; i++) {
     const medContext = medContextValues[i];
-    // need to check this in nodejs compiler
+
+    // sort the request, dispense into descending order by date
     medContext.request = medContext.request.sort(
       (a: MedicationRequest, b: MedicationRequest) =>
         new Date(b.authoredOn).valueOf() - new Date(a.authoredOn).valueOf()
@@ -208,31 +305,70 @@ const deriveClaimsMedications = (
         new Date(a.whenHandedOver).valueOf()
     );
 
-    const derivedMedication: DerivedMedication = {};
+    const derivedMedication: DerivedMedication = {
+      request: medContext.request,
+      dispense: medContext.dispense,
+    };
 
-    if (medContext?.dispense?.length > 0) {
-      const lastRefill = medContext?.dispense?.[0]?.whenHandedOver;
-      const firstRefill =
-        medContext.dispense[medContext?.dispense?.length - 1].whenHandedOver;
+    // TODO – add in a first requested as well
+    const firstFill = getFirstFill(medContext);
+    if (firstFill) derivedMedication.firstFillOn = firstFill;
 
-      derivedMedication.firstFillOn = firstRefill;
-      derivedMedication.lastFilledOn = lastRefill;
-    }
+    const lastFill = getLastFill(medContext);
+    if (lastFill) derivedMedication.lastFillOn = lastFill;
 
-    if (medContext?.request?.length > 0) {
-      const lastRequested = medContext.request[0].authoredOn;
-      derivedMedication.lastRequestedOn = lastRequested;
-    }
+    const lastRequested = getLastRequested(medContext);
+    if (lastRequested) derivedMedication.lastRequestedOn = lastRequested;
 
-    if (medContext?.request?.length > 0 || medContext?.dispense?.length > 0) {
+    const firstRequested = getFirstRequestedOn(medContext);
+    if (firstRequested) derivedMedication.firstRequestedOn = firstRequested;
+
+    const codeDisplay = getCodeDisplayFromMedContext(medContext);
+    if (codeDisplay) derivedMedication.codeDisplay = codeDisplay;
+
+    const code = getCodeFromMedContext(medContext);
+    if (code) derivedMedication.code = code;
+
+    if (medContextHasData(medContext)) {
       derivedMedications.push(derivedMedication);
     }
   }
   return derivedMedications;
 };
 
+const getLastFill = (medContext: MedContext) => {
+  return medContext?.dispense?.[0]?.whenHandedOver;
+};
+
+const getFirstFill = (medContext: MedContext) => {
+  return medContext?.dispense?.[medContext?.dispense?.length - 1]
+    ?.whenHandedOver;
+};
+
+const getLastRequested = (medContext: MedContext) => {
+  return medContext?.request?.[0]?.authoredOn;
+};
+
+const getFirstRequestedOn = (medContext: MedContext) => {
+  return medContext?.request?.[medContext?.request?.length - 1]?.authoredOn;
+};
+
+const getCodeDisplayFromMedContext = (medContext: MedContext) => {
+  if (medContext?.request?.[0]?.codeDisplay)
+    return medContext?.request?.[0]?.codeDisplay;
+  return medContext?.dispense?.[0]?.codeDisplay;
+};
+
+const getCodeFromMedContext = (medContext: MedContext) => {
+  if (medContext?.request?.[0]?.code) return medContext?.request?.[0]?.code;
+  return medContext?.dispense?.[0]?.code;
+};
+
+const medContextHasData = (medContext: MedContext) => {
+  return Object.keys(medContext).length > 0;
+};
+
 // get all claims data from insurance provider
-// this is after you've already checked to make sure you haven't seen this health insurance provider
 export const getClaimsFromInsuranceProvider = async (
   insuranceProvider: InsuranceProvider
 ): Promise<ClaimsData> => {
@@ -267,7 +403,13 @@ export const getClaimsFromInsuranceProvider = async (
     )
   );
 
-  // TODO – add in rest of the claims data here
+  const claimsData = extractClaimsResultsFromPromises(claimsResults);
+  return claimsData;
+};
+
+export const extractClaimsResultsFromPromises = (
+  claimsResults: any[]
+): ClaimsData => {
   const claimsData: ClaimsData = {
     medicationRequest: [],
     allergyIntolerance: [],
@@ -299,10 +441,6 @@ export const getClaimsFromInsuranceProvider = async (
       claimsData.immunization = values;
     }
   }
-  // const savedClaimsData = await insuranceRepo.batchWriteClaimsData(
-  //   claimsDataToWrite
-  // );
-
   return claimsData;
 };
 
@@ -315,10 +453,8 @@ export const getMedicationRequests = (
       const flexpaMedRequest = await flexpaGateway.getMedicationRequest(
         accessToken
       );
-
       const entityMedRequestList = fromFlexpaToEntityMedicationRequestList(
-        flexpaMedRequest.entry,
-        insuranceProviderUid
+        flexpaMedRequest.entry
       );
 
       res({ type: MEDICATION_REQUEST, values: entityMedRequestList });
@@ -339,8 +475,7 @@ export const getMedicationDispense = (
       );
 
       const entityMedDispenseList = fromFlexpaToEntityMedicationDispenseList(
-        flexpaMedDispense.entry,
-        insuranceProviderUid
+        flexpaMedDispense.entry
       );
 
       res({ type: MEDICATION_DISPENSE, values: entityMedDispenseList });
@@ -361,8 +496,7 @@ export const getAllergyIntolerance = (
 
       const allergyIntoleranceEntityList =
         fromFlexpaToEntityAllergyIntoleranceList(
-          flexpaAllergyIntolerance.entry,
-          insuranceProviderUid
+          flexpaAllergyIntolerance.entry
         );
 
       // map it
@@ -381,12 +515,8 @@ export const getConditions = (
     try {
       const flexpaConditions = await flexpaGateway.getConditions(accessToken);
 
-      const conditionsEntityList = fromFlexpaToEntityConditionList(
-        flexpaConditions,
-        insuranceProviderUid
-      );
-      console.log("CONDITIONS ARE");
-      console.log(conditionsEntityList);
+      const conditionsEntityList =
+        fromFlexpaToEntityConditionList(flexpaConditions);
 
       res({ type: CONDITION, values: conditionsEntityList });
     } catch (e) {
@@ -406,11 +536,8 @@ export const getImmunizations = (
       );
 
       const immunizationsEntityList = fromFlexpaToEntityImmunizationList(
-        flexpaImmunizationList,
-        insuranceProviderUid
+        flexpaImmunizationList
       );
-      console.log("IMMUNIZATIONS ARE");
-      console.log(immunizationsEntityList);
 
       res({ type: IMMUNIZATION, values: immunizationsEntityList });
     } catch (e) {
@@ -429,12 +556,8 @@ export const getProcedures = (
         accessToken
       );
 
-      const proceduresEntityList = fromFlexpaToEntityProcedureList(
-        flexpaProceduresList,
-        insuranceProviderUid
-      );
-      console.log("PROCEDURES ARE");
-      console.log(proceduresEntityList);
+      const proceduresEntityList =
+        fromFlexpaToEntityProcedureList(flexpaProceduresList);
 
       res({ type: PROCEDURE, values: proceduresEntityList });
     } catch (e) {

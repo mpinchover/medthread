@@ -4,7 +4,12 @@ import {
   saveMedicationCallback,
   removeMedicationCallback,
 } from "../recoil/medications/medications";
-import { useRecoilCallback, useSetRecoilState } from "recoil";
+import {
+  useRecoilCallback,
+  useSetRecoilState,
+  useRecoilValue,
+  useRecoilState,
+} from "recoil";
 import { withPrivateRoute } from "./hocs";
 import { AiOutlinePlus } from "react-icons/ai";
 import { getAuth } from "firebase/auth";
@@ -17,7 +22,16 @@ import AccountModal from "./account-modal";
 import SendMedicationsModal from "./medication-modal-send-meds";
 import { FirebaseContext } from "../firebase/firebase-context";
 import { accountSettingsState } from "../recoil/account/account";
-
+import MedicationListFilterBar from "./medication-list-filter-bar";
+import {
+  recordsActiveCategoryState,
+  recordsSearchQueryState,
+} from "../recoil/claims/claims";
+import MedicationsTable from "./table-medications";
+import AllergiesTable from "./table-allergies";
+import ImmunizationsTable from "./table-immunizations";
+import ConditionsTable from "./table-conditions";
+import ProceduresTable from "./table-procedures";
 const MedicationList = ({
   meds,
   onChange,
@@ -25,6 +39,11 @@ const MedicationList = ({
   authUser,
   activePatient,
   accountSettings,
+  claimsAllergyIntolerance,
+  claimsConditions,
+  claimsImmunizations,
+  claimsProcedures,
+  claimsDerivedMedications,
 }) => {
   const { role, account } = authUser;
   const [medToBeUpdated, setMedToBeUpdated] = useState(null);
@@ -32,6 +51,7 @@ const MedicationList = ({
   const [isSendMedsModalOpen, setIsSendMedsModalOpen] = useState(false);
   const [isAccountModalOpen, setIsAccountModalOpen] = useState(true);
   const removeMedication = useRecoilCallback(removeMedicationCallback);
+  const recordsActiveCategory = useRecoilValue(recordsActiveCategoryState);
 
   const saveMedication = useRecoilCallback(saveMedicationCallback);
 
@@ -88,66 +108,28 @@ const MedicationList = ({
     saveMedication(params);
   };
 
-  const renderMedicationList = () => {
-    function capitalizeFirstLetter(string) {
-      return string.charAt(0).toUpperCase() + string.slice(1).toLowerCase();
-    }
-
-    function getMonthShortName(monthNo) {
-      const date = new Date();
-      date.setMonth(monthNo);
-
-      return date.toLocaleString("en-US", { month: "short" });
-    }
-
-    const handleUpdateMedication = (med) => {
-      setMedToBeUpdated(med);
-      setIsAddMedModalOpen(true);
-      setIsModalOpen(true);
-    };
-
-    const getFormattedDate = (date) => {
-      if (!date) return null;
-      const dateObj = new Date(date);
-
-      const month = getMonthShortName(dateObj.getMonth());
-      const day = dateObj.getDate();
-      const year = dateObj.getFullYear();
-
-      const formattedDate = `${month}, ${day}, ${year}`;
-      return formattedDate;
-    };
-
-    return (
-      <ul className="w-full">
-        {meds.map((e, i) => {
-          return (
-            <li
-              key={i}
-              className="relative flex w-full flex-row border-b last:border-b-0 py-6"
-            >
-              <div className="flex-1 relative">
-                <div>{e.medicationName}</div>{" "}
-                <button
-                  onClick={() => handleUpdateMedication(e)}
-                  className={`${
-                    e.source === "PATIENT" ? "absolute" : "hidden"
-                  } left-0 text-sm  text-blue-400`}
-                >
-                  Update
-                </button>
-              </div>
-
-              <div className="w-48 ">{getFormattedDate(e.dateStarted)}</div>
-              <div className="w-16 ">{capitalizeFirstLetter(e.source)}</div>
-            </li>
-          );
-        })}
-      </ul>
-    );
-  };
-
   const navigate = useNavigate();
+
+  const renderRecordsTable = () => {
+    if (recordsActiveCategory === "MEDICATIONS") {
+      return <MedicationsTable meds={claimsDerivedMedications} />;
+    }
+    if (recordsActiveCategory === "ALLERGIES") {
+      return <AllergiesTable allergies={claimsAllergyIntolerance} />;
+    }
+
+    if (recordsActiveCategory === "IMMUNIZATIONS") {
+      return <ImmunizationsTable immunizations={claimsImmunizations} />;
+    }
+
+    if (recordsActiveCategory === "CONDITIONS") {
+      return <ConditionsTable conditions={claimsConditions} />;
+    }
+
+    if (recordsActiveCategory === "PROCEDURES") {
+      return <ProceduresTable procedures={claimsProcedures} />;
+    }
+  };
 
   return (
     <div className="flex-1 relative ">
@@ -163,13 +145,13 @@ const MedicationList = ({
           {role === "PATIENT" ? (
             <div className="flex flex-row ">
               <button
-                name="send_medications"
+                name="send_records"
                 onClick={handleToggleOpen}
                 // ref={mainDropdownRefBtn}
                 className="ml-4 flex flex-row border rounded-full py-4 px-6 items-center"
               >
                 <RiSendPlaneFill size={20} />
-                <span className="text-xs ml-1">Send medications</span>
+                <span className="text-xs ml-1">Send records</span>
               </button>
 
               <button
@@ -179,7 +161,7 @@ const MedicationList = ({
                 className="ml-2 text-white bg-black flex flex-row border rounded-full py-4 px-6 items-center"
               >
                 <AiOutlinePlus size={20} />
-                <span className="text-xs ml-1">Add medication</span>
+                <span className="text-xs ml-1">Add item</span>
               </button>
             </div>
           ) : null}
@@ -187,16 +169,18 @@ const MedicationList = ({
 
         {/* {renderMedicationList()} */}
       </div>
-      <div className="py-4  w-full text-md px-2 md:px-28 ">
-        <div className="flex flex-row">
+      <MedicationListFilterBar />
+      <div className="py-4  w-full text-md  ">
+        {/* <div className="flex flex-row">
           <div className="flex-1 font-bold">Medication</div>
 
           <div className="w-48 font-bold">Date requested</div>
           <div className="w-16 font-bold">Source</div>
         </div>
-        <div className="flex flex-row">{renderMedicationList()}</div>
+        <div className="flex flex-row">{renderMedicationList()}</div> */}
+        {renderRecordsTable()}
       </div>
-      <AddMedicationModal
+      {/* <AddMedicationModal
         medToBeUpdated={medToBeUpdated}
         isOpen={isAddMedModalOpen}
         onSave={(params) => onSave(params)}
@@ -208,7 +192,7 @@ const MedicationList = ({
         isOpen={isSendMedsModalOpen}
         onSend={onSendMedications}
         onClose={handleSendMedsModalClose}
-      />
+      /> */}
       {/* <AccountModal isOpen={true} /> */}
     </div>
   );

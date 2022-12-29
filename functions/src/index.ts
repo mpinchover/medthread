@@ -3,15 +3,16 @@ import * as functions from "firebase-functions";
 import * as admin from "firebase-admin";
 admin.initializeApp();
 require("dotenv").config();
-const cors = require("cors")({origin: true});
+const cors = require("cors")({ origin: true });
 import * as express from "express";
-import {addHealthInsuranceProvider} from "./add-health-insurance-provider";
-import {getUserAccount} from "./get-user-account";
-import {removeHealthInsuranceProvider} from "./remove-health-insurance-provider";
-import {saveMedication} from "./save-medication";
-import {getMedicationsByUserUid} from "./get-medications-by-user-uid";
-import {removeMedication} from "./remove-medication";
-import {sendMedicationsToProvider} from "./send-medications";
+import { addHealthInsuranceProvider } from "./add-health-insurance-provider";
+import { getUserAccount } from "./get-user-account";
+import { removeHealthInsuranceProvider } from "./remove-health-insurance-provider";
+import { saveMedication } from "./save-medication";
+import { getMedicationsByUserUid } from "./get-medications-by-user-uid";
+import { removeMedication } from "./remove-medication";
+import { sendMedicationsToProvider } from "./send-medications";
+import { getClaimsDataByUserUid } from "./handlers/get-claims-data-by-user-uid";
 // import { getMedicationsByPatientUid } from "./get-medications-by-patient-uid";
 const app = express();
 
@@ -56,27 +57,33 @@ const validateFirebaseIdToken = async (req: any, res: any, next: any) => {
 //   // getMedicationsByPatientUid
 // );
 app.post(
-    "/add-health-insurance-provider",
-    validateFirebaseIdToken,
-    addHealthInsuranceProvider
+  "/add-health-insurance-provider",
+  validateFirebaseIdToken,
+  addHealthInsuranceProvider
+);
+app.get(
+  "/get-claims-data-by-user-uid",
+  validateFirebaseIdToken,
+  getClaimsDataByUserUid
+);
+
+app.post(
+  "/remove-health-insurance-provider",
+  validateFirebaseIdToken,
+  removeHealthInsuranceProvider
 );
 app.post(
-    "/remove-health-insurance-provider",
-    validateFirebaseIdToken,
-    removeHealthInsuranceProvider
-);
-app.post(
-    "/send-medications-to-provider",
-    validateFirebaseIdToken,
-    sendMedicationsToProvider
+  "/send-medications-to-provider",
+  validateFirebaseIdToken,
+  sendMedicationsToProvider
 );
 app.post("/remove-medication", validateFirebaseIdToken, removeMedication);
 app.post("/save-medication", validateFirebaseIdToken, saveMedication);
 app.get("/get-user-account", validateFirebaseIdToken, getUserAccount);
 app.get(
-    "/get-medications-by-user-uid",
-    validateFirebaseIdToken,
-    getMedicationsByUserUid
+  "/get-medications-by-user-uid",
+  validateFirebaseIdToken,
+  getMedicationsByUserUid
 );
 
 exports.app = functions.https.onRequest(app);

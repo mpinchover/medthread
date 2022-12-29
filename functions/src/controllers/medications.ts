@@ -2,7 +2,7 @@ import { Medication, InsuranceProvider } from "../types";
 import * as medicationsRepo from "../repo/medications";
 import * as insuranceRepo from "../repo/insurance";
 import * as flexpaGateway from "../gateway/flepxa";
-import { fromFlexpaToEntityMedications } from "../mappers/flexpa-to-entity";
+// import { fromFlexpaToEntityMedications } from "../mappers/flexpa-to-entity";
 export const getMedicationsByUserUid = async (
   userUid: string
 ): Promise<Medication[]> => {
@@ -54,11 +54,11 @@ export const getMedicationsFromInsuranceProvider = async (
     const flexpaMedications = await flexpaGateway.getMedicationByAccessToken(
       refreshedAccessToken
     );
-    const entityMedications = fromFlexpaToEntityMedications(
-      flexpaMedications,
-      insuranceProviderData.uid
-    );
-    medications.push(...entityMedications);
+    // const entityMedications = fromFlexpaToEntityMedications(
+    //   flexpaMedications,
+    //   insuranceProviderData.uid
+    // );
+    // medications.push(...entityMedications);
   }
   return medications;
 };

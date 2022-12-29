@@ -17,10 +17,17 @@ export interface Medication {
 // TODO – add in all the meds that are connected to this med
 export interface DerivedMedication {
   lastRequestedOn?: string;
-  lastFilledOn?: string;
+  firstRequestedOn?: string;
+  lastFillOn?: string;
   firstFillOn?: string;
-  code?: string;
+  code?: string; // you can get the patient input from this code, so have like a patient modification, by code
   codeDisplay?: string;
+  request?: MedicationRequest[];
+  dispense?: MedicationDispense[];
+  quantity?: number; // if med dispense doesn't have it then use med request
+  daysSupply?: number; // if med dispense doesn't have it then use med request
+  dosage?: string;
+  source?: string; // if the patient has modified the derived me by the code then should be claims + patient
 }
 
 export interface MedicationRequest {
@@ -39,6 +46,7 @@ export interface MedicationRequest {
   doseAndRateQuantityUnit?: string;
   flexpaResourceId?: string;
   insuranceProviderUid?: string;
+  userUid?: string;
 }
 
 export interface MedicationDispense {
@@ -55,6 +63,7 @@ export interface MedicationDispense {
   whenHandedOver?: string;
   intent?: string;
   source?: string;
+  userUid?: string;
 }
 
 export interface AllergyIntolerance {
@@ -73,6 +82,7 @@ export interface AllergyIntolerance {
   reactionManifestation?: string;
   recorderIdentifier?: string;
   asserterIdentifier?: string;
+  userUid?: string;
 }
 
 export interface Condition {
@@ -85,6 +95,7 @@ export interface Condition {
   category?: string;
   code?: string;
   codeDisplay?: string; // the condition
+  userUid?: string;
 }
 
 export interface Immunization {
@@ -96,6 +107,7 @@ export interface Immunization {
   code?: string;
   codeDisplay?: string; // the vaccine display
   occurenceDateTime?: string;
+  userUid?: string;
 }
 
 export interface Procedure {
@@ -111,6 +123,7 @@ export interface Procedure {
   recorderIdentifier?: string;
   performer?: string;
   performerIdentifier?: string;
+  userUid?: string;
 }
 
 export interface ClaimsData {

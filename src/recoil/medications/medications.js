@@ -80,11 +80,6 @@ export const isSendingMedicationsState = atom({
   default: false,
 });
 
-export const medicationSearchTermState = atom({
-  key: "medicationSearchTermState",
-  default: "",
-});
-
 const fakeMeds = [
   {
     medicationName: "Advil",
@@ -150,19 +145,6 @@ const fakeMeds = [
 export const derivedMedicationsState = atom({
   key: "derivedMedicationsState",
   default: [],
-});
-
-export const filteredDerivedMedicationsState = selector({
-  key: "filteredDerivedMedicationsState",
-  get: ({ get }) => {
-    const searchTerm = get(medicationSearchTermState);
-    let medications = get(derivedMedicationsState);
-
-    medications = medications.filter((x) =>
-      x.medicationName?.toLowerCase().includes(searchTerm.toLowerCase())
-    );
-    return medications;
-  },
 });
 
 // depreicate this

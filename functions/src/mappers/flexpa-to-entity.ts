@@ -13,74 +13,69 @@ const CLAIMS = "CLAIMS";
 const ALLERGY_INTOLERANCE = "ALLERGY_INTOLERANCE";
 const MEDICATION_REQUEST = "MEDICATION_REQUEST";
 
-export const fromFlexpaToEntityMedications = (
-  flexpaMedications: any,
-  insuranceProviderUid: string
-): Medication[] => {
-  if (!flexpaMedications.entry) {
-    return [];
-  }
+// export const fromFlexpaToEntityMedications = (
+//   flexpaMedications: any,
+//   insuranceProviderUid: string
+// ): Medication[] => {
+//   if (!flexpaMedications.entry) {
+//     return [];
+//   }
 
-  const entityMedications: any[] = [];
-  for (let i = 0; i < flexpaMedications.entry.length; i++) {
-    const entityMedication = fromFlexpaToEntityMedication(
-      flexpaMedications.entry[i],
-      insuranceProviderUid
-    );
-    entityMedications.push(entityMedication);
-  }
+//   const entityMedications: any[] = [];
+//   for (let i = 0; i < flexpaMedications.entry.length; i++) {
+//     const entityMedication = fromFlexpaToEntityMedication(
+//       flexpaMedications.entry[i],
+//       insuranceProviderUid
+//     );
+//     entityMedications.push(entityMedication);
+//   }
 
-  return entityMedications;
-};
+//   return entityMedications;
+// };
 
-export const fromFlexpaToEntityMedication = (
-  flexpaMedication: any,
-  insuranceProviderUid: string
-) => {
-  let display =
-    flexpaMedication?.resource?.medicationCodeableConcept?.coding[0]?.display;
-  let flexpaResourceId = flexpaMedication?.resource?.id;
-  let authoredOn = flexpaMedication?.resource?.authoredOn;
+// export const fromFlexpaToEntityMedication = (
+//   flexpaMedication: any,
+//   insuranceProviderUid: string
+// ) => {
+//   let display =
+//     flexpaMedication?.resource?.medicationCodeableConcept?.coding[0]?.display;
+//   let flexpaResourceId = flexpaMedication?.resource?.id;
+//   let authoredOn = flexpaMedication?.resource?.authoredOn;
 
-  if (!display) display = UNKNOWN;
-  if (!authoredOn) authoredOn = UNKNOWN;
-  if (!flexpaResourceId) flexpaResourceId = UNKNOWN;
-  if (!insuranceProviderUid) insuranceProviderUid = UNKNOWN;
+//   if (!display) display = UNKNOWN;
+//   if (!authoredOn) authoredOn = UNKNOWN;
+//   if (!flexpaResourceId) flexpaResourceId = UNKNOWN;
+//   if (!insuranceProviderUid) insuranceProviderUid = UNKNOWN;
 
-  const med: Medication = {
-    medicationName: display,
-    dateStarted: authoredOn,
-    flexpaResourceId,
-    source: CLAIMS,
-    insuranceProviderUid,
-  };
-  return med;
-};
+//   const med: Medication = {
+//     medicationName: display,
+//     dateStarted: authoredOn,
+//     flexpaResourceId,
+//     source: CLAIMS,
+//     insuranceProviderUid,
+//   };
+//   return med;
+// };
 
 //medication requests
 export const fromFlexpaToEntityMedicationRequestList = (
-  flexpaMedicationRequestList: any[],
-  insuranceProviderUid: string
+  flexpaMedicationRequestList: any[]
 ): MedicationRequest[] => {
   const entityMedicationRequestList: MedicationRequest[] = [];
 
   for (let i = 0; i < flexpaMedicationRequestList.length; i++) {
     const flexpaMedReq = flexpaMedicationRequestList[i];
-    const entityMedReq = fromFlexpaToEntityMedicationRequest(
-      flexpaMedReq,
-      insuranceProviderUid
-    );
+    const entityMedReq = fromFlexpaToEntityMedicationRequest(flexpaMedReq);
     entityMedicationRequestList.push(entityMedReq);
   }
   return entityMedicationRequestList;
 };
-
+// TODO – clean up extra white space in codeDisplay
 export const fromFlexpaToEntityMedicationRequest = (
-  params: any,
-  insuranceProviderUid: string
+  params: any
 ): MedicationRequest => {
   const medicationRequest: MedicationRequest = {
-    insuranceProviderUid,
+    source: CLAIMS,
   };
 
   let flexpaResourceId = params.resource?.id;
@@ -95,10 +90,10 @@ export const fromFlexpaToEntityMedicationRequest = (
   let code = params.resource?.medicationCodeableConcept?.coding?.[0]?.code;
   if (code) medicationRequest.code = code;
 
-  let codeDisplay = params.resource?.medicationCodeableConcept?.coding?.text;
+  let codeDisplay =
+    params.resource?.medicationCodeableConcept?.coding?.[0]?.display;
   if (!codeDisplay)
-    codeDisplay =
-      params.resource?.medicationCodeableConcept?.coding?.[0]?.display;
+    codeDisplay = params.resource?.medicationCodeableConcept?.coding?.text;
   if (codeDisplay) medicationRequest.codeDisplay = codeDisplay;
 
   let authoredOn = params.resource?.authoredOn;
@@ -137,14 +132,12 @@ export const fromFlexpaToEntityMedicationRequest = (
 
 // allergies
 export const fromFlexpaToEntityAllergyIntoleranceList = (
-  flexpaAllergyIntoleranceList: any[],
-  insuranceProviderUid: string
+  flexpaAllergyIntoleranceList: any[]
 ): AllergyIntolerance[] => {
   const entityAllergyIntoleranceList: AllergyIntolerance[] = [];
   for (let i = 0; i < flexpaAllergyIntoleranceList.length; i++) {
     const entityAllergyIntolerance = fromFlexpaToEntityAllergyIntolerance(
-      flexpaAllergyIntoleranceList[i],
-      insuranceProviderUid
+      flexpaAllergyIntoleranceList[i]
     );
     entityAllergyIntoleranceList.push(entityAllergyIntolerance);
   }
@@ -152,11 +145,10 @@ export const fromFlexpaToEntityAllergyIntoleranceList = (
 };
 
 export const fromFlexpaToEntityAllergyIntolerance = (
-  params: any,
-  insuranceProviderUid: string
+  params: any
 ): AllergyIntolerance => {
   const allergyIntolerance: AllergyIntolerance = {
-    insuranceProviderUid,
+    source: CLAIMS,
   };
 
   let clinicalStatus = params.resource?.clinicalStatus?.coding?.[0]?.code;
@@ -206,29 +198,20 @@ export const fromFlexpaToEntityAllergyIntolerance = (
 };
 
 // conditions
-export const fromFlexpaToEntityConditionList = (
-  flexpaConditionList: any[],
-  insuranceProviderUid: string
-) => {
+export const fromFlexpaToEntityConditionList = (flexpaConditionList: any[]) => {
   const entityConditionList: Condition[] = [];
 
   for (let i = 0; i < flexpaConditionList.length; i++) {
     const fCondition = flexpaConditionList[i];
-    const eCondition = fromFlexpaToEntityCondition(
-      fCondition,
-      insuranceProviderUid
-    );
+    const eCondition = fromFlexpaToEntityCondition(fCondition);
     entityConditionList.push(eCondition);
   }
   return entityConditionList;
 };
 
-export const fromFlexpaToEntityCondition = (
-  params: any,
-  insuranceProviderUid: string
-): Condition => {
+export const fromFlexpaToEntityCondition = (params: any): Condition => {
   const condition: Condition = {
-    insuranceProviderUid,
+    source: CLAIMS,
   };
   let flexpaResourceId = params.resource?.id;
   if (flexpaResourceId) condition.flexpaResourceId = flexpaResourceId;
@@ -254,19 +237,13 @@ export const fromFlexpaToEntityCondition = (
 };
 
 //procedures
-export const fromFlexpaToEntityProcedureList = (
-  flexpaProcedureList: any[],
-  insuranceProviderUid: string
-) => {
+export const fromFlexpaToEntityProcedureList = (flexpaProcedureList: any[]) => {
   const entityProcedureList: Procedure[] = [];
 
   for (let i = 0; i < flexpaProcedureList.length; i++) {
     const fProcedure = flexpaProcedureList[i];
 
-    const eProcedure = fromFlexpaToEntityProcedure(
-      fProcedure,
-      insuranceProviderUid
-    );
+    const eProcedure = fromFlexpaToEntityProcedure(fProcedure);
     entityProcedureList.push(eProcedure);
   }
   return entityProcedureList;
@@ -274,12 +251,9 @@ export const fromFlexpaToEntityProcedureList = (
 
 // TODO – just dont save null values to Firestore
 // use fallbacks for resource code
-export const fromFlexpaToEntityProcedure = (
-  params: any,
-  insuranceProviderUid: string
-): Procedure => {
+export const fromFlexpaToEntityProcedure = (params: any): Procedure => {
   const procedure: Procedure = {
-    insuranceProviderUid,
+    source: CLAIMS,
   };
 
   let flexpaResourceId = params.resource?.id;
@@ -315,8 +289,7 @@ export const fromFlexpaToEntityProcedure = (
 
 //immunization
 export const fromFlexpaToEntityImmunizationList = (
-  flexpaImmunizationList: any[],
-  insuranceProviderUid: string
+  flexpaImmunizationList: any[]
 ): Immunization[] => {
   const entityImmunizationList: Immunization[] = [];
 
@@ -332,7 +305,6 @@ export const fromFlexpaToEntityImmunizationList = (
       const vCode = vaccineCodes[j];
       const eImmunization = fromFlexpaToEntityImmunization(
         fImmunization,
-        insuranceProviderUid,
         vCode
       );
       entityImmunizationList.push(eImmunization);
@@ -342,13 +314,13 @@ export const fromFlexpaToEntityImmunizationList = (
   return entityImmunizationList;
 };
 
+// TODO – handle the same code issue here with every other claims data
 export const fromFlexpaToEntityImmunization = (
   params: any,
-  insuranceProviderUid: string,
   vCode: any
 ): Immunization => {
   const immunization: Immunization = {
-    insuranceProviderUid,
+    source: CLAIMS,
   };
 
   const code = vCode.code;
@@ -368,28 +340,23 @@ export const fromFlexpaToEntityImmunization = (
 
 //medication dispense
 export const fromFlexpaToEntityMedicationDispenseList = (
-  flexpaMedicationDispenseList: any[],
-  insuranceProviderUid: string
+  flexpaMedicationDispenseList: any[]
 ): MedicationDispense[] => {
   const entityMedicationDispenseList: MedicationDispense[] = [];
 
   for (let i = 0; i < flexpaMedicationDispenseList.length; i++) {
     const medDispense = flexpaMedicationDispenseList[i];
-    const entityMedDispense = fromFlexpaToEntityMedicationDispense(
-      medDispense,
-      insuranceProviderUid
-    );
+    const entityMedDispense = fromFlexpaToEntityMedicationDispense(medDispense);
     entityMedicationDispenseList.push(entityMedDispense);
   }
   return entityMedicationDispenseList;
 };
 
 export const fromFlexpaToEntityMedicationDispense = (
-  params: any,
-  insuranceProviderUid: string
+  params: any
 ): MedicationDispense => {
   const medicationDispense: MedicationDispense = {
-    insuranceProviderUid,
+    source: CLAIMS,
   };
 
   let flexpaResourceId = params.resource?.id;
@@ -404,10 +371,10 @@ export const fromFlexpaToEntityMedicationDispense = (
   let code = params.resource?.medicationCodeableConcept?.coding?.[0].code;
   if (code) medicationDispense.code = code;
 
-  let codeDisplay = params.resource?.medicationCodeableConcept?.text;
+  let codeDisplay =
+    params.resource?.medicationCodeableConcept?.coding?.[0]?.display;
   if (!codeDisplay)
-    codeDisplay =
-      params.resource?.medicationCodeableConcept?.coding?.[0]?.display;
+    codeDisplay = params.resource?.medicationCodeableConcept?.text;
   if (codeDisplay) medicationDispense.codeDisplay = codeDisplay;
 
   let type = params.resource?.type?.coding?.[0]?.code;

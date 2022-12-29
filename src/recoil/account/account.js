@@ -101,6 +101,7 @@ export const removeInsuranceProviderCallback =
       set(isAccountLoadingState, false);
     }
   };
+
 // instead of ading meds, you need to add everything here
 export const addInsuranceProviderCallback =
   ({ set, snapshot }) =>
@@ -110,26 +111,13 @@ export const addInsuranceProviderCallback =
       const { insuranceProvider, claimsData } =
         await addHealthInsuranceProvider(publicToken);
 
-      console.log("CLAIMS DATA");
-      console.log(claimsData);
+      // if (claimsData?.derivedClaimsMedications?.length > 0) {
+      //   set(derivedMedicationsState, (curMeds) => [
+      //     ...curMeds,
+      //     ...claimsData.derivedClaimsMedications,
+      //   ]);
+      // }
 
-      // const currentAccountState =
-      //   snapshot.getLoadable(accountSettingsState).contents;
-
-      // const newAccountState = {
-      //   ...currentAccountState,
-      //   insuranceProviders: [
-      //     ...currentAccountState.insuranceProviders,
-      //     insuranceProvider,
-      //   ],
-      // };
-
-      if (claimsData?.derivedClaimsMedications?.length > 0) {
-        set(derivedMedicationsState, (curMeds) => [
-          ...curMeds,
-          ...claimsData.derivedClaimsMedications,
-        ]);
-      }
       set(accountSettingsState, (prevAccountState) => {
         return {
           ...prevAccountState,

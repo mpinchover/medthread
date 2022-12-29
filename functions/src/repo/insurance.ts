@@ -213,3 +213,129 @@ export const batchWriteAllergyIntolerances = async (
   await batch.commit();
   return params;
 };
+
+export const getClaimsMedicationRequestByUserUid = async (
+  userUid: string
+): Promise<MedicationRequest[]> => {
+  const db = admin.firestore();
+
+  const medicationsReqRef = db.collection(medicationRequestCollection);
+  const snapshot = await medicationsReqRef
+    .where("userUid", "==", userUid)
+    .get();
+
+  if (snapshot.empty) return [];
+
+  const res: MedicationRequest[] = snapshot.docs.map((doc) => {
+    const data: any = doc.data();
+    return {
+      ...data,
+      uid: doc.id,
+    };
+  });
+  return res;
+};
+
+export const getClaimsMedicationDispenseByUserUid = async (
+  userUid: string
+): Promise<MedicationDispense[]> => {
+  const db = admin.firestore();
+
+  const medicationsDisRef = db.collection(medicationDispenseCollection);
+  const snapshot = await medicationsDisRef
+    .where("userUid", "==", userUid)
+    .get();
+
+  if (snapshot.empty) return [];
+
+  const res: MedicationDispense[] = snapshot.docs.map((doc) => {
+    const data: any = doc.data();
+    return {
+      ...data,
+      uid: doc.id,
+    };
+  });
+  return res;
+};
+
+export const getClaimsProcedureByUserUid = async (
+  userUid: string
+): Promise<Procedure[]> => {
+  const db = admin.firestore();
+
+  const procedureRef = db.collection(procedureCollection);
+  const snapshot = await procedureRef.where("userUid", "==", userUid).get();
+
+  if (snapshot.empty) return [];
+
+  const res: Procedure[] = snapshot.docs.map((doc) => {
+    const data: any = doc.data();
+    return {
+      ...data,
+      uid: doc.id,
+    };
+  });
+  return res;
+};
+
+export const getClaimsConditionByUserUid = async (
+  userUid: string
+): Promise<Condition[]> => {
+  const db = admin.firestore();
+
+  const conditionRef = db.collection(conditionCollection);
+  const snapshot = await conditionRef.where("userUid", "==", userUid).get();
+
+  if (snapshot.empty) return [];
+
+  const res: Condition[] = snapshot.docs.map((doc) => {
+    const data: any = doc.data();
+    return {
+      ...data,
+      uid: doc.id,
+    };
+  });
+  return res;
+};
+
+export const getClaimsAllergyIntoleranceByUserUid = async (
+  userUid: string
+): Promise<AllergyIntolerance[]> => {
+  const db = admin.firestore();
+
+  const allergyIntoleranceRef = db.collection(allergyIntoleranceCollection);
+  const snapshot = await allergyIntoleranceRef
+    .where("userUid", "==", userUid)
+    .get();
+
+  if (snapshot.empty) return [];
+
+  const res: AllergyIntolerance[] = snapshot.docs.map((doc) => {
+    const data: any = doc.data();
+    return {
+      ...data,
+      uid: doc.id,
+    };
+  });
+  return res;
+};
+
+export const getClaimsImmunizationByUserUid = async (
+  userUid: string
+): Promise<Immunization[]> => {
+  const db = admin.firestore();
+
+  const immunizationRef = db.collection(immunizationCollection);
+  const snapshot = await immunizationRef.where("userUid", "==", userUid).get();
+
+  if (snapshot.empty) return [];
+
+  const res: Immunization[] = snapshot.docs.map((doc) => {
+    const data: any = doc.data();
+    return {
+      ...data,
+      uid: doc.id,
+    };
+  });
+  return res;
+};
