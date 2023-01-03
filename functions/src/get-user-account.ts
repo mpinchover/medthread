@@ -1,5 +1,5 @@
 import * as insuranceRepo from "./repo/insurance";
-import * as carepProviderRepo from "./repo/care-providers";
+import * as careProviderRepo from "./repo/care-providers";
 import { Account } from "./types";
 
 export const getUserAccount = async (req: any, res: any) => {
@@ -12,7 +12,7 @@ export const getUserAccount = async (req: any, res: any) => {
     if (!insuranceProviders) insuranceProviders = [];
 
     const healthcareProviders =
-      await carepProviderRepo.getAuthorizedHealthcareProvider(userUid);
+      await careProviderRepo.getAuthorizedHealthcareProviders(userUid);
 
     const account: Account = {
       insuranceProviders,

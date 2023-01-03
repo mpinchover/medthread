@@ -90,14 +90,12 @@ export const FirebaseProvider = ({ children }) => {
         return;
       }
 
-      const curAuthUserCache = getAuthUser();
-      if (curAuthUserCache?.uid !== user?.uid) {
-        localStorage.clear();
-        setAuthorizedProfile(null);
-        return;
-      }
-
-      getAccountSettings();
+      // const curAuthUserCache = getAuthUser();
+      // if (curAuthUserCache?.uid !== user?.uid) {
+      //   localStorage.clear();
+      //   setAuthorizedProfile(null);
+      //   return;
+      // }
 
       // might be this
 
@@ -120,6 +118,7 @@ export const FirebaseProvider = ({ children }) => {
       setProfileAccount(hydratedUserProfile.account);
       // _setAuthorizedProfileState(authUser);
       setAuthorizedProfile(authUser);
+      getAccountSettings();
     });
 
     const removeIdTokenListener = onIdTokenChanged(auth, async (user) => {
@@ -131,7 +130,6 @@ export const FirebaseProvider = ({ children }) => {
         }
         return;
       }
-
       const curAuthUserCache = getAuthUser();
       if (curAuthUserCache?.uid !== user?.uid) {
         localStorage.clear();
@@ -139,10 +137,10 @@ export const FirebaseProvider = ({ children }) => {
         return;
       }
       // might be this
-      if (curAuthUserCache?.uid !== user.uid) {
-        localStorage.clear();
-        setAuthorizedProfile(null);
-      }
+      // if (curAuthUserCache?.uid !== user.uid) {
+      //   localStorage.clear();
+      //   setAuthorizedProfile(null);
+      // }
 
       const hydratedUserProfile = await hydrateUserProfile(user.uid);
       const idToken = await auth.currentUser.getIdToken(

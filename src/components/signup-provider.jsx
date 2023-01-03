@@ -3,86 +3,85 @@ import {
   getAuth,
   createUserWithEmailAndPassword,
   updateProfile,
-  signInWithEmailAndPassword,
 } from "firebase/auth";
-import { collection, addDoc, getFirestore } from "firebase/firestore";
 import { FirebaseContext } from "../firebase/firebase-context";
+import { collection, addDoc, getFirestore } from "firebase/firestore";
 import { useNavigate } from "react-router-dom";
-import { isLoggingInUserState } from "../recoil/profile/profile";
 import { useRecoilValue } from "recoil";
+import { isLoggingInUserState } from "../recoil/profile/profile";
+import { authorizedProfileState } from "../recoil/auth/auth";
 import { withPublicRoute } from "./hocs";
+import { TextInput } from "./common";
+
 const ProviderSignup = () => {
   const navigate = useNavigate();
   const auth = getAuth();
 
-  const [nameValue, setNameValue] = useState("");
-  const [emailVal, setEmailVal] = useState("");
-  const [passVal, setPassVal] = useState("");
-  const [confirmPassVal, setConfirmPassVal] = useState("");
-  const isLoggingInUser = useRecoilValue(isLoggingInUserState);
-
   const { createProvider } = useContext(FirebaseContext);
+
+  const [nameValue, setNameValue] = useState("");
+  const [emailValue, setEmailValue] = useState("");
+  const [passwordValue, setPasswordValue] = useState("");
+  const [confirmPasswordValue, setConfirmPasswordValue] = useState("");
+  const isLoggingInUser = useRecoilValue(isLoggingInUserState);
+  const authorizedUser = useRecoilValue(authorizedProfileState);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
     try {
-      await createProvider(emailVal, passVal, confirmPassVal, nameValue);
-
-      // setEmailVal("");
-      // setPassVal("");
-      // setConfirmPassVal("");
-      // setNameValue("");
+      await createProvider(
+        emailValue,
+        passwordValue,
+        confirmPasswordValue,
+        nameValue
+      );
     } catch (e) {
       console.log(e);
     }
   };
+
   return (
     <div className="flex flex-col  flex-1 items-center justify-center ">
-      <div className="  w-72 text-center py-2 mb-2  text-gray-600 ">
-        Provider Sign up
+      <div className=" text-2xl w-96 text-center  text-gray-600 ">
+        Provider sign up
       </div>
-      <div className="  w-72 border-b border-blue-400 mb-4"></div>
-      <form onSubmit={handleSubmit}>
-        <div className="">
-          <input
-            disabled={isLoggingInUser}
-            value={nameValue}
-            onChange={(e) => setNameValue(e.target.value)}
-            className="border focus:outline-none px-2 py-2 w-72 mb-4"
-            placeholder="Name"
-          />
-        </div>
-        <div className="">
-          <input
-            disabled={isLoggingInUser}
-            value={emailVal}
-            onChange={(e) => setEmailVal(e.target.value)}
-            className="border focus:outline-none px-2 py-2 w-72 mb-4"
-            placeholder="Email"
-          />
-        </div>
-        <div>
-          <input
-            disabled={isLoggingInUser}
-            value={passVal}
-            onChange={(e) => setPassVal(e.target.value)}
-            type="password"
-            className="border focus:outline-none px-2 py-2 w-72 mb-4"
-            placeholder="Password"
-          />
-        </div>
-        <div>
-          <input
-            disabled={isLoggingInUser}
-            value={confirmPassVal}
-            onChange={(e) => setConfirmPassVal(e.target.value)}
-            type="password"
-            className="border focus:outline-none px-2 py-2 w-72 mb-4"
-            placeholder="Confirm password"
-          />
-        </div>
+      <div className="  w-96 border-b my-6 border-black"></div>
+      <form className="space-y-6" onSubmit={handleSubmit}>
+        <TextInput
+          label="Name"
+          disabled={isLoggingInUser}
+          onChange={(e) => setNameValue(e.target.value)}
+          value={nameValue}
+          placeholder="Enter name..."
+        />
+        <TextInput
+          label="Email"
+          disabled={isLoggingInUser}
+          onChange={(e) => setEmailValue(e.target.value)}
+          value={emailValue}
+          placeholder="Enter email..."
+        />
+        <TextInput
+          label="Password"
+          type="password"
+          disabled={isLoggingInUser}
+          onChange={(e) => setPasswordValue(e.target.value)}
+          value={passwordValue}
+          placeholder="Enter password..."
+        />
+        <TextInput
+          label="Confirm password"
+          type="password"
+          disabled={isLoggingInUser}
+          onChange={(e) => setConfirmPasswordValue(e.target.value)}
+          value={confirmPasswordValue}
+          placeholder="Confirm password..."
+        />
 
+        <div className=""></div>
+        <div className=""></div>
+        <div></div>
+        <div></div>
         {isLoggingInUser ? (
           <div className=" flex flex-row items-center ">
             <div className="animate-spin mr-2">
@@ -92,22 +91,25 @@ const ProviderSignup = () => {
           </div>
         ) : (
           <div className="">
-            <button
-              onClick={handleSubmit}
-              className="w-72 text-sm text-center border rounded-sm px-3 py-3 bg-blue-400 text-white hover:opacity-50"
-            >
-              Submit
-            </button>
+            <div className=" w-96">
+              <button
+                onClick={handleSubmit}
+                className="p-3 px-8 font-bold border rounded-lg bg-black text-white"
+              >
+                Submit
+              </button>
+            </div>
           </div>
         )}
       </form>
-      <div className="  w-72 border-b border-blue-400 my-4"></div>
-      <div className="">
+      <div className="  w-96 border-b my-6 border-black"></div>
+      <div className=" w-96">
         <button
           disabled={isLoggingInUser}
-          className="w-72 text-sm text-center border rounded-sm px-3 py-3  text-gray-500 hover:opacity-50"
+          onClick={() => navigate("/provider-login")}
+          className="p-3 px-8 font-bold border rounded-lg "
         >
-          Log in to your account
+          Login
         </button>
       </div>
     </div>

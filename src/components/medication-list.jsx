@@ -26,12 +26,14 @@ import MedicationListFilterBar from "./medication-list-filter-bar";
 import {
   recordsActiveCategoryState,
   recordsSearchQueryState,
+  saveNoteCallback,
 } from "../recoil/claims/claims";
 import MedicationsTable from "./table-medications";
 import AllergiesTable from "./table-allergies";
 import ImmunizationsTable from "./table-immunizations";
 import ConditionsTable from "./table-conditions";
 import ProceduresTable from "./table-procedures";
+import { modalState } from "../recoil/utils/utils";
 const MedicationList = ({
   meds,
   onChange,
@@ -52,12 +54,20 @@ const MedicationList = ({
   const [isAccountModalOpen, setIsAccountModalOpen] = useState(true);
   const removeMedication = useRecoilCallback(removeMedicationCallback);
   const recordsActiveCategory = useRecoilValue(recordsActiveCategoryState);
-
+  const [modal, setModal] = useRecoilState(modalState);
+  const saveNote = useRecoilCallback(saveNoteCallback);
   const saveMedication = useRecoilCallback(saveMedicationCallback);
 
   const handleChange = (e) => {
     const { value } = e.target;
     onChange(value);
+  };
+
+  const handleSaveNote = (text, parentUid) => {
+    saveNote({
+      text,
+      parentUid,
+    });
   };
 
   const { setIsModalOpen } = useContext(FirebaseContext);
@@ -71,27 +81,35 @@ const MedicationList = ({
   };
 
   const handleSendMedsModalClose = () => {
-    if (isSendMedsModalOpen) {
-      setIsModalOpen(false);
-    }
-    setIsSendMedsModalOpen(false);
+    setModal((prevModal) => {
+      return {
+        ...prevModal,
+        isSendRecordsModalOpen: false,
+      };
+    });
   };
 
   const handleToggleOpen = (e) => {
     const name = e.currentTarget.name;
 
-    if (name === "send_medications") {
-      setIsSendMedsModalOpen(!isSendMedsModalOpen);
-    } else {
-      setIsAddMedModalOpen(!isAddMedModalOpen);
+    if (name === "SEND_RECORDS") {
+      setModal((prevModal) => {
+        return {
+          ...prevModal,
+          isSendRecordsModalOpen: true,
+        };
+      });
     }
-    setIsModalOpen(!isAddMedModalOpen);
   };
 
   const onSendMedications = (e) => {
     e.preventDefault();
-    setIsSendMedsModalOpen(false);
-    setIsModalOpen(false);
+    setModal((prevModal) => {
+      return {
+        ...prevModal,
+        isSendRecordsModalOpen: false,
+      };
+    });
   };
 
   const handleRemoveMedication = (uid) => {
@@ -112,22 +130,47 @@ const MedicationList = ({
 
   const renderRecordsTable = () => {
     if (recordsActiveCategory === "MEDICATIONS") {
-      return <MedicationsTable meds={claimsDerivedMedications} />;
+      return (
+        <MedicationsTable
+          handleSaveNote={handleSaveNote}
+          meds={claimsDerivedMedications}
+        />
+      );
     }
     if (recordsActiveCategory === "ALLERGIES") {
-      return <AllergiesTable allergies={claimsAllergyIntolerance} />;
+      return (
+        <AllergiesTable
+          handleSaveNote={handleSaveNote}
+          allergies={claimsAllergyIntolerance}
+        />
+      );
     }
 
     if (recordsActiveCategory === "IMMUNIZATIONS") {
-      return <ImmunizationsTable immunizations={claimsImmunizations} />;
+      return (
+        <ImmunizationsTable
+          handleSaveNote={handleSaveNote}
+          immunizations={claimsImmunizations}
+        />
+      );
     }
 
     if (recordsActiveCategory === "CONDITIONS") {
-      return <ConditionsTable conditions={claimsConditions} />;
+      return (
+        <ConditionsTable
+          handleSaveNote={handleSaveNote}
+          conditions={claimsConditions}
+        />
+      );
     }
 
     if (recordsActiveCategory === "PROCEDURES") {
-      return <ProceduresTable procedures={claimsProcedures} />;
+      return (
+        <ProceduresTable
+          handleSaveNote={handleSaveNote}
+          procedures={claimsProcedures}
+        />
+      );
     }
   };
 
@@ -140,12 +183,12 @@ const MedicationList = ({
             onChange={(e) => onChange(e.target.value)}
             value={searchTerm}
             className=" focus:outline-none p-4 text-sm border rounded-full flex-1 "
-            placeholder="Search medications"
+            placeholder="Search records..."
           />
           {role === "PATIENT" ? (
             <div className="flex flex-row ">
               <button
-                name="send_records"
+                name="SEND_RECORDS"
                 onClick={handleToggleOpen}
                 // ref={mainDropdownRefBtn}
                 className="ml-4 flex flex-row border rounded-full py-4 px-6 items-center"
@@ -154,7 +197,7 @@ const MedicationList = ({
                 <span className="text-xs ml-1">Send records</span>
               </button>
 
-              <button
+              {/* <button
                 name="add_medication"
                 onClick={handleToggleOpen}
                 //  ref={mainDropdownRefBtn}
@@ -162,7 +205,7 @@ const MedicationList = ({
               >
                 <AiOutlinePlus size={20} />
                 <span className="text-xs ml-1">Add item</span>
-              </button>
+              </button> */}
             </div>
           ) : null}
         </div>
@@ -186,13 +229,13 @@ const MedicationList = ({
         onSave={(params) => onSave(params)}
         onClose={handleAddMedModalClose}
         onRemoveMedication={(uid) => handleRemoveMedication(uid)}
-      />
+      />*/}
       <SendMedicationsModal
         healthcareProviders={accountSettings.healthcareProviders}
-        isOpen={isSendMedsModalOpen}
+        isOpen={modal.isSendRecordsModalOpen}
         onSend={onSendMedications}
         onClose={handleSendMedsModalClose}
-      /> */}
+      />
       {/* <AccountModal isOpen={true} /> */}
     </div>
   );

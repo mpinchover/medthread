@@ -8,6 +8,7 @@ import {
   Procedure,
   Immunization,
   Condition,
+  Note,
 } from "../types";
 const medicationRequestCollection = "medicationRequest";
 const allergyIntoleranceCollection = "allergyIntolerance";
@@ -16,6 +17,7 @@ const procedureCollection = "procedure";
 const immunizationCollection = "immunization";
 const conditionCollection = "condition";
 const insuranceProvidersCollection = "insuranceProviders";
+const notesCollection = "notes";
 
 export const addInsuranceProviderForPatient = async (
   params: InsuranceProvider
@@ -338,4 +340,13 @@ export const getClaimsImmunizationByUserUid = async (
     };
   });
   return res;
+};
+
+export const saveNote = async (note: Note): Promise<Note> => {
+  const db = admin.firestore();
+
+  const notesDocRef = db.collection(insuranceProvidersCollection).doc();
+  note.uid = notesDocRef.id;
+  await notesDocRef.set(note);
+  return note;
 };

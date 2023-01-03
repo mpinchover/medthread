@@ -6,8 +6,8 @@ import { AiOutlineMenu } from "react-icons/ai";
 import { HeadlessDropdown } from "./common";
 
 const navbarDropdownMenuOptions = [
-  { name: "LOGIN", display: "Login" },
-  { name: "SIGNUP", display: "Signup" },
+  { name: "PATIENT_LOGIN", display: "Patient login" },
+  { name: "PROVIDER_LOGIN", display: "Provider login" },
   { name: "CONTACT", link: "mailto:info@usemedthread.com", display: "Contact" },
 ];
 
@@ -22,8 +22,8 @@ const NavbarLoggedOut = () => {
 
   const onDropdownClick = (e) => {
     const name = e.currentTarget.name;
-    if (name === "LOGIN") navigate("/login");
-    if (name === "SIGNUP") navigate("/signup");
+    if (name === "PATIENT_LOGIN") navigate("/patient-login");
+    if (name === "PROVIDER_LOGIN") navigate("/provider-login");
   };
 
   const handleToggleOpen = (e) => {

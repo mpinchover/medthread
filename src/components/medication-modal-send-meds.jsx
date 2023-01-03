@@ -86,9 +86,9 @@ const SendMedicationsModal = ({
                 >
                   {e.healthcareProviderEmail}
                 </button>
-                <button>
+                {/* <button>
                   <FaTrash />
-                </button>
+                </button> */}
               </li>
             );
           })}

@@ -4,14 +4,14 @@ import { AiOutlineRadiusUpleft } from "react-icons/ai";
 import { FirebaseContext } from "../firebase/firebase-context";
 import { AiOutlineMenu, AiOutlineMail } from "react-icons/ai";
 import { HeadlessDropdown } from "./common";
-import { TbPill } from "react-icons/tb";
+import { TbPill, TbFiles } from "react-icons/tb";
 import { MdAccountCircle } from "react-icons/md";
 import { FiLogOut } from "react-icons/fi";
 import { RiSendPlaneFill } from "react-icons/ri";
-import { AiOutlinePlus } from "react-icons/ai";
+import { AiOutlinePlus, AiOutlineHistory } from "react-icons/ai";
 
 const navbarDropdownMenuOptions = [
-  { name: "MEDICATIONS", display: "Medications", icon: TbPill },
+  { name: "RECORDS", display: "Records", icon: TbFiles },
   { name: "ACCOUNT", display: "Account", icon: MdAccountCircle },
   {
     name: "CONTACT",
@@ -22,7 +22,7 @@ const navbarDropdownMenuOptions = [
   { name: "LOGOUT", display: "Log out", icon: FiLogOut },
 ];
 
-const NavbarLoggedOut = ({ authUser }) => {
+const PatientNavbar = ({ authUser }) => {
   const navigate = useNavigate();
   const { signOutUser } = useContext(FirebaseContext);
   const location = useLocation();
@@ -37,7 +37,7 @@ const NavbarLoggedOut = ({ authUser }) => {
     if (name === "PATIENT_LOGIN") navigate("/patient-login");
     if (name === "PREVIOUS_PATIENTS") navigate("/previous-patients");
     if (name === "ACCOUNT") navigate("/settings");
-    if (name === "MEDICATIONS") {
+    if (name === "RECORDS") {
       navigate("/");
     }
     if (name === "LOGOUT") {
@@ -107,4 +107,4 @@ const NavbarLoggedOut = ({ authUser }) => {
   );
 };
 
-export default NavbarLoggedOut;
+export default PatientNavbar;

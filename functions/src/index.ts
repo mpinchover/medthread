@@ -13,6 +13,8 @@ import { getMedicationsByUserUid } from "./get-medications-by-user-uid";
 import { removeMedication } from "./remove-medication";
 import { sendMedicationsToProvider } from "./send-medications";
 import { getClaimsDataByUserUid } from "./handlers/get-claims-data-by-user-uid";
+import { saveNote } from "./repo/insurance";
+import { getClaimsDataByUserUidForProvider } from "./handlers/get-claims-data-by-user-uid-for-provider";
 // import { getMedicationsByPatientUid } from "./get-medications-by-patient-uid";
 const app = express();
 
@@ -68,6 +70,12 @@ app.get(
 );
 
 app.post(
+  "/get-claims-data-by-user-uid-for-provider",
+  validateFirebaseIdToken,
+  getClaimsDataByUserUidForProvider
+);
+
+app.post(
   "/remove-health-insurance-provider",
   validateFirebaseIdToken,
   removeHealthInsuranceProvider
@@ -86,4 +94,5 @@ app.get(
   getMedicationsByUserUid
 );
 
+app.post("/save-note", validateFirebaseIdToken, saveNote);
 exports.app = functions.https.onRequest(app);

@@ -171,3 +171,17 @@ export interface InsuranceMetadata {
   publisher: string;
   capabilities: string[];
 }
+
+// TODO – handle provider/role/patient
+// save the flexpa resource id and the code
+// so if its med, just query by code
+// if its anything else, do uid
+export interface Note {
+  uid?: string;
+  userUid?: string;
+  // type?: string; // MEDICATION, ALLERGY, etc
+  text?: string; // note text
+  // medicationCode?: string;
+  parentUid?: string; // what it's a note for
+  // role?: string;
+}

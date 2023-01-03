@@ -42,7 +42,9 @@ const PatientSignup = () => {
 
   return (
     <div className="flex flex-col  flex-1 items-center justify-center ">
-      <div className=" text-2xl w-96 text-center  text-gray-600 ">Sign up</div>
+      <div className=" text-2xl w-96 text-center  text-gray-600 ">
+        Patient sign up
+      </div>
       <div className="  w-96 border-b my-6 border-black"></div>
       <form className="space-y-6" onSubmit={handleSubmit}>
         <TextInput
@@ -76,46 +78,10 @@ const PatientSignup = () => {
           placeholder="Confirm password..."
         />
 
-        <div className="">
-          {/* <input
-            disabled={isLoggingInUser}
-            value={nameValue}
-            onChange={(e) => setNameValue(e.target.value)}
-            type="name"
-            className="border focus:outline-none px-2 py-2 w-72 mb-4"
-            placeholder="Name"
-          /> */}
-        </div>
-        <div className="">
-          {/* <input
-            disabled={isLoggingInUser}
-            value={emailValue}
-            onChange={(e) => setEmailValue(e.target.value)}
-            type="email"
-            className="border focus:outline-none px-2 py-2 w-72 mb-4"
-            placeholder="Email"
-          /> */}
-        </div>
-        <div>
-          {/* <input
-            disabled={isLoggingInUser}
-            value={passwordValue}
-            onChange={(e) => setPasswordValue(e.target.value)}
-            type="password"
-            className="border focus:outline-none px-2 py-2 w-72 mb-4"
-            placeholder="Password"
-          /> */}
-        </div>
-        <div>
-          {/* <input
-            disabled={isLoggingInUser}
-            value={confirmPasswordValue}
-            onChange={(e) => setConfirmPasswordValue(e.target.value)}
-            type="password"
-            className="border focus:outline-none px-2 py-2 w-72 mb-4"
-            placeholder="Confirm password"
-          /> */}
-        </div>
+        <div className=""></div>
+        <div className=""></div>
+        <div></div>
+        <div></div>
         {isLoggingInUser ? (
           <div className=" flex flex-row items-center ">
             <div className="animate-spin mr-2">
@@ -140,7 +106,7 @@ const PatientSignup = () => {
       <div className=" w-96">
         <button
           disabled={isLoggingInUser}
-          onClick={() => navigate("/login")}
+          onClick={() => navigate("/patient-login")}
           className="p-3 px-8 font-bold border rounded-lg "
         >
           Login

@@ -5,15 +5,18 @@ import {
 } from "./utils";
 import { useState } from "react";
 
-const MedicationsTable = ({ meds }) => {
+const MedicationsTable = ({ meds, handleSaveNote }) => {
   const [activeMeds, setActiveMeds] = useState([]);
+  const [activeNote, setActiveNote] = useState(null);
+  const [noteValue, setNoteValue] = useState("");
+
   const renderRequestAndDispenseTable = (e) => {
     const { code, requestAndDispense, codeDisplay } = e;
     return (
       <div
         className={`${
           activeMeds.includes(code) ? "block" : "hidden"
-        } mt-6 bg-gray-100 p-4`}
+        } mt-6 bg-gray-100 p-6`}
       >
         <div className="mb-2 text-xs">{codeDisplay}</div>
         <div className="flex flex-row">
@@ -48,20 +51,34 @@ const MedicationsTable = ({ meds }) => {
   };
 
   const renderMedicationList = () => {
-    const handleUpdateMedication = (med) => {
-      //   setMedToBeUpdated(med);
-      //   setIsAddMedModalOpen(true);
-      //   setIsModalOpen(true);
-    };
-
     const handleClick = (e) => {
       const medCode = e.currentTarget.name;
       if (activeMeds.includes(medCode)) {
         setActiveMeds((active) => active.filter((code) => code !== medCode));
+        setActiveNote(null);
         return;
       }
+      setActiveNote(null);
       setActiveMeds([...activeMeds, medCode]);
     };
+
+    const handleAddNote = (e) => {
+      const name = e.currentTarget.name;
+      if (activeNote === name) {
+        setActiveMeds([]);
+        setActiveNote(null);
+      } else {
+        setActiveMeds([name]);
+        setActiveNote(name);
+      }
+    };
+
+    const _handleSaveNote = () => {
+      console.log("MEDS");
+      console.log(meds[0]);
+      // handleSaveNote()
+    };
+
     return (
       <div className="w-full  ">
         {meds.map((e, i) => {
@@ -75,15 +92,7 @@ const MedicationsTable = ({ meds }) => {
                 >
                   <div className="pr-6 w-72 text-ellipsis overflow-hidden whitespace-nowrap">
                     {e.codeDisplay}
-                  </div>{" "}
-                  {/* <button
-                  onClick={() => handleUpdateMedication(e)}
-                  className={`${
-                    e.source === "PATIENT" ? "absolute" : "hidden"
-                  } left-0 text-sm  text-blue-400`}
-                >
-                  Update
-                </button> */}
+                  </div>
                   <div className="pr-6 w-48 ">
                     {getFormattedDate(e.firstFillOn)}
                   </div>
@@ -98,21 +107,41 @@ const MedicationsTable = ({ meds }) => {
                   </div>
                 </button>
                 <div className="absolute top-1/2 right-0 -translate-y-1/2 flex-row items-center justify-end ">
-                  <button className="font-bold">Add note</button>
+                  {activeNote === e.code ? (
+                    <button
+                      name={e.code}
+                      onClick={handleAddNote}
+                      className={`font-bold`}
+                    >
+                      Cancel
+                    </button>
+                  ) : (
+                    <button
+                      name={e.code}
+                      onClick={handleAddNote}
+                      className={`font-bold`}
+                    >
+                      Add note
+                    </button>
+                  )}
                 </div>
               </div>
 
               <div>{renderRequestAndDispenseTable(e)}</div>
-              <textarea
-                className="w-full resize-none mt-6 border focus:outline-none p-4"
-                rows={4}
-              />
-              <button
-                // onClick={handleSave}
-                className="mt-6 p-3 px-8 font-bold border rounded-lg bg-black text-white"
-              >
-                Save
-              </button>
+              <div className={`${activeNote === e.code ? "block" : "hidden"}`}>
+                <textarea
+                  value={noteValue}
+                  onChange={(e) => setNoteValue(e.target.value)}
+                  className="w-full resize-none mt-6 border focus:outline-none p-6"
+                  rows={4}
+                />
+                <button
+                  onClick={_handleSaveNote}
+                  className="mt-6 p-3 px-8 font-bold border rounded-lg bg-black text-white"
+                >
+                  Save
+                </button>
+              </div>
             </div>
           );
         })}

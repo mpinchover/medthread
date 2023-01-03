@@ -14,7 +14,7 @@ const VerificationPage = () => {
   const { verifyEmailAddress } = useContext(FirebaseContext);
   const navigate = useNavigate();
   useEffect(() => {
-    const auth = getAuth();
+    // const auth = getAuth();
   }, []);
 
   if (!authorizedProfile || authorizedProfile?.emailVerified) {
@@ -24,11 +24,18 @@ const VerificationPage = () => {
   const { email } = authorizedProfile;
 
   return (
-    <div className="flex flex-col  flex-1 items-center justify-center ">
-      <div>Please verify your email address {email}</div>
-      <button onClick={verifyEmailAddress} className="text-blue-400">
-        Send verification link
-      </button>
+    <div className="flex flex-col   flex-1 items-center justify-center">
+      <div className="w-96">
+        <div className=" text-2xl  mb-2">
+          Please verify your email address {email}
+        </div>
+        <button
+          onClick={verifyEmailAddress}
+          className="p-3 px-8 font-bold  border rounded-lg bg-black text-white"
+        >
+          Send verification link
+        </button>
+      </div>
     </div>
   );
 };

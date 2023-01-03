@@ -1,8 +1,8 @@
 import * as nodemailer from "nodemailer";
 import * as medicationsRepo from "./repo/medications";
-import {v4} from "uuid";
-import {getUserProfile, addAuthorizedHealthcareProvider} from "./repo/repo";
-import {Medication} from "./types";
+import { v4 } from "uuid";
+import { getUserProfile, addAuthorizedHealthcareProvider } from "./repo/repo";
+import { Medication } from "./types";
 
 export const sendMedicationsToProvider = async (req: any, res: any) => {
   try {
@@ -11,25 +11,25 @@ export const sendMedicationsToProvider = async (req: any, res: any) => {
     // const decodedToken = await admin.auth().verifyIdToken(tokenId);
     // const patientUid = decodedToken.uid;
 
-    const {body, user} = req;
+    const { body, user } = req;
     const userUid = user.user_id;
-    const {healthcareProviderEmail} = body;
+    const { healthcareProviderEmail } = body;
 
     const profile = await getUserProfile(userUid);
 
     // // create a new authorized healthcare provider doc
     const healthcareProvider = await addAuthorizedHealthcareProvider(
-        userUid,
-        healthcareProviderEmail
+      userUid,
+      healthcareProviderEmail
     );
     const meds = await medicationsRepo.getMedicationsByUserUid(userUid);
 
     await sendProviderMedicationsInEmail(
-        healthcareProviderEmail,
-        profile,
-        meds
+      healthcareProviderEmail,
+      profile,
+      meds
     );
-    res.send({healthcareProvider});
+    res.send({ healthcareProvider });
   } catch (e) {
     console.log(e);
     res.status(500).send(e);
@@ -37,12 +37,12 @@ export const sendMedicationsToProvider = async (req: any, res: any) => {
 };
 
 const sendProviderMedicationsInEmail = async (
-    healthcareProviderEmail: any,
-    profile: any,
-    meds: Medication[]
+  healthcareProviderEmail: any,
+  profile: any,
+  meds: Medication[]
 ) => {
-  const {account} = profile;
-  const {displayName} = account;
+  const { account } = profile;
+  const { displayName } = account;
 
   const transporter = nodemailer.createTransport({
     host: "smtp.gmail.com",
@@ -56,32 +56,33 @@ const sendProviderMedicationsInEmail = async (
 
   const seq = v4();
 
-  const mailBody = `
-    <div>
-    <div>Medications for ${displayName} (${seq})</div>
-    <br />
-    ${meds
-      .map((e) => {
-        return `<div style="">
-        <div>
-          <span style="width:400px">Medication: </span>
-          <span>${e.medicationName}</span>
-        </div>
-        <div>
-          <span>Date started: </span>
-          <span>${e.dateStarted}</span>
-        </div>
-        <div>
-          <span>Source: </span>
-          <span>${e.source}</span>
-        </div>
-        <br />
-      </div>`;
-      })
-      .join("")}
+  // const mailBody = `
+  //   <div>
+  //   <div>Medications for ${displayName} (${seq})</div>
+  //   <br />
+  //   ${meds
+  //     .map((e) => {
+  //       return `<div style="">
+  //       <div>
+  //         <span style="width:400px">Medication: </span>
+  //         <span>${e.medicationName}</span>
+  //       </div>
+  //       <div>
+  //         <span>Date started: </span>
+  //         <span>${e.dateStarted}</span>
+  //       </div>
+  //       <div>
+  //         <span>Source: </span>
+  //         <span>${e.source}</span>
+  //       </div>
+  //       <br />
+  //     </div>`;
+  //     })
+  //     .join("")}
 
-    </div>
-  `;
+  //   </div>
+  // `;
+  const mailBody = `<p>${displayName} medical records. Click <a href="${process.env.BASE_URL}/patient-data/${profile.userUid}">here</a>.</p>`;
 
   const mailOptions = {
     from: "",

@@ -102,9 +102,64 @@ const PatientSettings = ({ authProfile, accountSettings }) => {
     }
   };
 
-  const handleRemoveInsuranceProvider = (insuranceProvider) => {
-    removeInsuranceProvider(insuranceProvider.uid);
-    setActiveRemoveInsuranceUid(null);
+  const renderInsuranceProviders = () => {
+    return (
+      <>
+        <section className="mb-6">
+          <div className="text-3xl font-bold ">Insurance providers</div>
+          <section>
+            {accountSettings?.insuranceProviders?.map((element, i) => {
+              return (
+                <div key={i} className=" border-b ">
+                  <div
+                    key={i}
+                    className="relative flex flex-row items-center justify-between my-6 "
+                  >
+                    <div>
+                      {element.providerName ? element.providerName : "UNKNOWN"}
+                    </div>
+                    {/* <div>
+                {activeRemoveInsuranceUid === element.uid ? (
+                  <>
+                    <button
+                      onClick={() => handleRemoveInsuranceProvider(element)}
+                      className=" font-bold"
+                    >
+                      Yes
+                    </button>
+                    <span className="mx-2">|</span>
+                    <button
+                      onClick={() => setActiveRemoveInsuranceUid(null)}
+                      className="font-bold"
+                    >
+                      Cancel
+                    </button>
+                  </>
+                ) : (
+                  <button
+                    onClick={() => setActiveRemoveInsuranceUid(element.uid)}
+                    className="font-bold"
+                  >
+                    Remove
+                  </button>
+                )}
+              </div> */}
+                  </div>
+                </div>
+              );
+            })}
+          </section>
+        </section>
+        <section>
+          <button
+            onClick={openFlexpaLink}
+            className="p-3 px-6 font-bold border rounded-lg bg-black text-white"
+          >
+            Add insurance provider
+          </button>
+        </section>
+      </>
+    );
   };
 
   if (isAccountLoading) {
@@ -199,59 +254,7 @@ const PatientSettings = ({ authProfile, accountSettings }) => {
           ) : null}
         </section>
       </section>
-      <section className="mb-6">
-        <div className="text-3xl font-bold ">Insurance providers</div>
-        <section>
-          {accountSettings?.insuranceProviders?.map((element, i) => {
-            return (
-              <div key={i} className=" border-b ">
-                <div
-                  key={i}
-                  className="relative flex flex-row items-center justify-between my-6 "
-                >
-                  <div>
-                    {element.providerName ? element.providerName : "UNKNOWN"}
-                  </div>
-                  <div>
-                    {activeRemoveInsuranceUid === element.uid ? (
-                      <>
-                        <button
-                          onClick={() => handleRemoveInsuranceProvider(element)}
-                          className=" font-bold"
-                        >
-                          Yes
-                        </button>
-                        <span className="mx-2">|</span>
-                        <button
-                          onClick={() => setActiveRemoveInsuranceUid(null)}
-                          className="font-bold"
-                        >
-                          Cancel
-                        </button>
-                      </>
-                    ) : (
-                      <button
-                        onClick={() => setActiveRemoveInsuranceUid(element.uid)}
-                        className="font-bold"
-                      >
-                        Remove
-                      </button>
-                    )}
-                  </div>
-                </div>
-              </div>
-            );
-          })}
-        </section>
-      </section>
-      <section>
-        <button
-          onClick={openFlexpaLink}
-          className="p-3 px-6 font-bold border rounded-lg bg-black text-white"
-        >
-          Add insurance provider
-        </button>
-      </section>
+      {authProfile.role === "PATIENT" && renderInsuranceProviders()}
     </div>
   );
 };

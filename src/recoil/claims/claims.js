@@ -1,5 +1,7 @@
 import { atom, selector } from "recoil";
 import { getClaimsDataByUserUid } from "../../rpc/get-claims-by-user-uid";
+import { getClaimsDataByUserUidForProvider } from "../../rpc/get-claims-data-by-user-uid-for-provider";
+import { saveNote } from "../../rpc/save-note";
 export const recordsSearchQueryState = atom({
   key: "recordsSearchQueryState",
   default: "",
@@ -8,6 +10,16 @@ export const recordsSearchQueryState = atom({
 export const isLoadingClaimsDataState = atom({
   key: "isLoadingClaimsDataState",
   state: false,
+});
+
+export const isSavingNoteState = atom({
+  key: "isSavingNoteState",
+  state: false,
+});
+
+export const recordNotesState = atom({
+  key: "recordNotesState",
+  default: [],
 });
 
 export const claimsAllergyIntolerancesState = atom({
@@ -101,11 +113,13 @@ const mockImmunizations = [
     status: "completed",
     codeDisplay: "Haemophilus influenzae type b vaccine (Hib)",
     occurenceDateTime: "2021-06-08",
+    code: "1",
   },
   {
     status: "completed",
     codeDisplay: "Hepatitis A and hepatitis B vaccine (HepA HepB)",
     occurenceDateTime: "2022-09-08",
+    code: "2",
   },
 ];
 export const claimsImmunizationsState = atom({
@@ -186,11 +200,16 @@ const combinedRequestAndDispense = (request, dispense) => {
 
 export const getClaimsDataByUserUidCallback =
   ({ set, snapshot }) =>
-  async () => {
+  async (patientUid) => {
     try {
       set(isLoadingClaimsDataState, true);
 
-      const claimsData = await getClaimsDataByUserUid();
+      let claimsData;
+      if (patientUid) {
+        claimsData = await getClaimsDataByUserUidForProvider(patientUid);
+      } else {
+        claimsData = await getClaimsDataByUserUid();
+      }
 
       if (claimsData.allergyIntolerance) {
         set(claimsAllergyIntolerancesState, claimsData.allergyIntolerance);
@@ -232,15 +251,19 @@ export const getClaimsDataByUserUidCallback =
     }
   };
 
-/*
-  
-export interface ClaimsData {
-  medicationRequest: MedicationRequest[];
-  medicationDispense: MedicationDispense[];
-  derivedClaimsMedications?: DerivedMedication[];
-  allergyIntolerance: AllergyIntolerance[];
-  procedure: Procedure[];
-  immunization: Immunization[];
-  condition: Condition[];
-}
- */
+// also handle update note here too by checking if the note has a uid
+export const saveNoteCallback =
+  ({ set, snapshot }) =>
+  async (note) => {
+    try {
+      // add some verification here
+      set(isSavingNoteState, true);
+
+      const savedNote = await saveNote(note);
+
+      set(recordNotesState, (curNotes) => [...curNotes, savedNote]);
+    } catch (e) {
+    } finally {
+      set(isSavingNoteState, false);
+    }
+  };

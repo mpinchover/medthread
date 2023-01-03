@@ -19,6 +19,7 @@ import {
   filteredClaimsAllergyIntolerancesState,
   filteredClaimsConditionsState,
   recordsSearchQueryState,
+  recordNotesState,
 } from "../recoil/claims/claims";
 import { LoadingMedicationData, LoadingWindow } from "./common";
 import { FirebaseContext } from "../firebase/firebase-context";
@@ -47,9 +48,13 @@ const MedicationListPatient = () => {
   const claimsProcedures = useRecoilValue(filteredClaimsProceduresState);
 
   const accountSettings = useRecoilValue(accountSettingsState);
+  const recordNotes = useRecoilValue(recordNotesState);
   // const [medicationList, setMedicationList] = useRecoilState(
   //   filteredDerivedMedicationsState
   // );
+
+  console.log("RECORD NOTES ARE");
+  console.log(recordNotes);
 
   const [searchTerm, setSearchTerm] = useRecoilState(recordsSearchQueryState);
 
@@ -66,11 +71,11 @@ const MedicationListPatient = () => {
     return <LoadingMedicationData />;
   }
   if (isSendingMedications) {
-    return <LoadingWindow display="Sending medications..." />;
+    return <LoadingWindow display="Sending records..." />;
   }
 
   if (isAddingMedication) {
-    return <LoadingWindow display="Saving medication..." />;
+    return <LoadingWindow display="Saving record..." />;
   }
   return (
     <MedicationList

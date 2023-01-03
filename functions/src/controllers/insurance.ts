@@ -14,6 +14,7 @@ import {
   MedicationDispense,
   DerivedMedication,
   Condition,
+  Note,
 } from "../types";
 import {
   fromFlexpaToEntityAllergyIntoleranceList,
@@ -43,6 +44,7 @@ const allergyIntoleranceCapability = "AllergyIntolerance";
 export const getClaimsDataByUserUid = async (
   userUid: string
 ): Promise<ClaimsData> => {
+  // check the userUid profile. If it's a provider then get all 
   // get all claims data with the userUid
   const claimsResults = await Promise.allSettled([
     getClaimsConditionByUserUid(userUid),
@@ -565,3 +567,15 @@ export const getProcedures = (
     }
   });
 };
+
+export const saveNote = async (note: Note) => {
+  const savedNote = await insuranceRepo.saveNote(note);
+  return savedNote;
+};
+
+// uid?: string;
+// userUid?: string;
+// type?: string; // MEDICATION, ALLERGY, etc
+// text?: string; // note text
+// medicationCode?: string;
+// parentUid?: string; // what it's a note for

@@ -25,18 +25,10 @@ const Settings = () => {
   const getPatientProfileCbk = useRecoilCallback(getPatientProfileCallback);
   const getAccountSettings = useRecoilCallback(getAccountSettingsCallback);
   const accountSettings = useRecoilValue(accountSettingsState);
-  useEffect(() => {
-    // getAccountSettings();
-    // getPatientProfileCbk();
-    // getAccountSettings();
-  }, []);
+  useEffect(() => {}, []);
   const isLoadingSettings = useRecoilValue(isLoadingSettingsState);
 
   if (isLoadingSettings) return <LoadingSettingsData />;
-
-  // if (authUser.role === "PROVIDER") {
-  //   return <ProviderSettings />;
-  // }
 
   return (
     <PatientSettings

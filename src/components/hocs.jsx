@@ -42,16 +42,16 @@ export const withPrivateRoute = (Component) => {
     const location = useLocation();
     const authorizedProfile = useRecoilValue(authorizedProfileState);
 
-    let loginLink = "/login";
+    let loginLink = "/patient-login";
     // if (location.pathname.includes("provider")) loginLink = "/login";
 
-    // if (
-    //   authorizedProfile &&
-    //   authorizedProfile.role === "PROVIDER" &&
-    //   !authorizedProfile.emailVerified
-    // ) {
-    //   return <Navigate to="/verification" replace={true} />;
-    // }
+    if (
+      authorizedProfile &&
+      authorizedProfile.role === "PROVIDER" &&
+      !authorizedProfile.emailVerified
+    ) {
+      return <Navigate to="/verification" replace={true} />;
+    }
 
     if (!authorizedProfile) {
       return (

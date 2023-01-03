@@ -28,6 +28,10 @@ const Navbar = () => {
     return <PatientNavbar authUser={authUser} />;
   }
 
+  if (authUser && authUser.role === "PROVIDER") {
+    return <ProviderNavbar authUser={authUser} />;
+  }
+
   return <NavbarLoggedOut />;
 };
 export default Navbar;

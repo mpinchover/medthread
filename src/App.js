@@ -6,7 +6,8 @@ import { getFirestore } from "firebase/firestore";
 import { collection, addDoc } from "firebase/firestore";
 import { useEffect, useState, useContext } from "react";
 import axios from "axios";
-import { useRecoilCallback } from "recoil";
+import { modalState } from "./recoil/utils/utils";
+import { useRecoilCallback, useRecoilValue } from "recoil";
 import { FirebaseProvider } from "./firebase/firebase-context";
 import Navbar from "./components/navbar";
 import RecordsFeed from "./components/active-patient";
@@ -32,10 +33,14 @@ import { FirebaseContext } from "./firebase/firebase-context";
 import MedicationListPatient from "./components/medication-list-patient";
 
 const ModalShadow = () => {
-  const { isModalOpen } = useContext(FirebaseContext);
-
+  // const { isModalOpen } = useContext(FirebaseContext);
+  const modal = useRecoilValue(modalState);
   let style = {};
-  if (isModalOpen) {
+
+  // isSendingRecords: false,
+  // isSendRecordsModalOpen: false,
+
+  if (modal.isSendRecordsModalOpen) {
     style = {
       background: "rgba(0, 0, 0, 0.5)",
     };
@@ -43,7 +48,9 @@ const ModalShadow = () => {
   return (
     <div
       style={style}
-      className={`${isModalOpen ? "absolute" : "hidden "} h-full w-full z-20`}
+      className={`${
+        modal.isSendRecordsModalOpen ? "absolute" : "hidden "
+      } h-full w-full z-20`}
     ></div>
   );
 };
@@ -80,14 +87,19 @@ function App() {
 
             <Route exact path="/provider-login" element={<ProviderLogin />} />
             <Route exact path="/provider-signup" element={<ProviderSignup />} />
-            <Route exact path="/signup" element={<PatientSignup />} />
-            <Route exact path="/login" element={<PatientLogin />} />
+            <Route exact path="/patient-signup" element={<PatientSignup />} />
+            <Route exact path="/patient-login" element={<PatientLogin />} />
             <Route exact path="/settings" element={<Settings />} />
             <Route exact path="/forgot-password" element={<ForgotPassword />} />
             <Route exact path="/" element={<MedicationListPatient />} />
+            <Route
+              exact
+              path="/patient-data/:patientUid"
+              element={<MedicationListProvider />}
+            />
             {/* <Route exact path="/update-password" element={<UpdatePassword />} /> */}
 
-            {/* <Route exact path="/verification" element={<VerificationPage />} /> */}
+            <Route exact path="/verification" element={<VerificationPage />} />
           </Routes>
 
           <ToastContainer />

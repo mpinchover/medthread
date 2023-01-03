@@ -42,7 +42,7 @@ const PatientLogin = (props) => {
   };
   return (
     <div className="flex flex-col  flex-1 items-center justify-center ">
-      <div className="text-bold text-2xl w-72 text-center ">Login</div>
+      <div className="text-bold text-2xl w-72 text-center ">Patient login</div>
       <div className="  w-96   border-b border-black my-6"></div>
       <form onSubmit={handleSubmit} className="flex flex-col space-y-6">
         <TextInput
@@ -90,7 +90,7 @@ const PatientLogin = (props) => {
 
       <div className=" w-96">
         <button
-          onClick={() => navigate("/signup")}
+          onClick={() => navigate("/patient-signup")}
           className="p-3 px-8 font-bold border rounded-lg"
         >
           Sign up

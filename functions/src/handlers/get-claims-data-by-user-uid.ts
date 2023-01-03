@@ -3,8 +3,7 @@ export const getClaimsDataByUserUid = async (req: any, res: any) => {
   try {
     const { body, user } = req;
     const userUid = user.user_id;
-    // const { body } = req;
-    // const { userUid } = body;
+    // const userUidToReadClaimsFor = req.params.userUid;
     const claimsData = await insuranceController.getClaimsDataByUserUid(
       userUid
     );

@@ -110,7 +110,7 @@ const SendMedications = () => {
                 <div className="animate-spin mr-2">
                   <div className=" rounded-full border border-black border-t-0 w-4 h-4"></div>
                 </div>
-                <span className="text-blue-400">Sending medications...</span>
+                <span className="text-black">Sending records...</span>
               </div>
             ) : (
               <button
