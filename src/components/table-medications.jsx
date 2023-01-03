@@ -106,7 +106,7 @@ const MedicationsTable = ({ meds, handleSaveNote }) => {
                     {getFormattedDate(e.lastRequestedOn)}
                   </div>
                 </button>
-                <div className="absolute top-1/2 right-0 -translate-y-1/2 flex-row items-center justify-end ">
+                {/* <div className="absolute top-1/2 right-0 -translate-y-1/2 flex-row items-center justify-end ">
                   {activeNote === e.code ? (
                     <button
                       name={e.code}
@@ -124,7 +124,7 @@ const MedicationsTable = ({ meds, handleSaveNote }) => {
                       Add note
                     </button>
                   )}
-                </div>
+                </div> */}
               </div>
 
               <div>{renderRequestAndDispenseTable(e)}</div>

@@ -82,11 +82,12 @@ export const FirebaseProvider = ({ children }) => {
     const auth = getAuth();
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
       if (!user) {
-        const curAuthUserCache = getAuthUser();
-        if (curAuthUserCache?.uid !== user?.uid) {
-          localStorage.clear();
-          setAuthorizedProfile(null);
-        }
+        // window.location.reload();
+        // const curAuthUserCache = getAuthUser();
+        // if (curAuthUserCache?.uid !== user?.uid) {
+        // localStorage.clear();
+        //   setAuthorizedProfile(null);
+        // }
         return;
       }
 
@@ -123,23 +124,15 @@ export const FirebaseProvider = ({ children }) => {
 
     const removeIdTokenListener = onIdTokenChanged(auth, async (user) => {
       if (!user) {
-        // signOutUser(); // possibly need to remove
-        const curAuthUserCache = getAuthUser();
-        if (curAuthUserCache?.uid !== user?.uid) {
-          localStorage.clear();
-        }
+        // localStorage.clear();
         return;
       }
+
       const curAuthUserCache = getAuthUser();
-      if (curAuthUserCache?.uid !== user?.uid) {
-        localStorage.clear();
-        setAuthorizedProfile(null);
-        return;
-      }
-      // might be this
-      // if (curAuthUserCache?.uid !== user.uid) {
+      // if (curAuthUserCache && curAuthUserCache.uid !== user?.uid) {
       //   localStorage.clear();
       //   setAuthorizedProfile(null);
+      //   return;
       // }
 
       const hydratedUserProfile = await hydrateUserProfile(user.uid);
@@ -178,7 +171,8 @@ export const FirebaseProvider = ({ children }) => {
     try {
       await _createProvider({ email, password, confirmPassword, displayName });
       verifyEmailAddress();
-      navigate("/", { replace: true });
+      window.location.reload();
+      navigate("/settings", { replace: true });
     } catch (e) {
       console.log(e);
     }
@@ -192,6 +186,7 @@ export const FirebaseProvider = ({ children }) => {
   ) => {
     try {
       await _createPatient({ email, password, confirmPassword, displayName });
+      window.location.reload();
       navigate("/", { replace: true });
     } catch (e) {
       console.log(e);
@@ -201,7 +196,7 @@ export const FirebaseProvider = ({ children }) => {
   const signIn = async (email, password) => {
     try {
       await _signIn({ email, password });
-
+      window.location.reload();
       // await navigate("/");
     } catch (e) {
       console.log(e);
@@ -245,6 +240,7 @@ export const FirebaseProvider = ({ children }) => {
       await signOut(auth);
       localStorage.clear();
       setAuthorizedProfile(null);
+      window.location.reload();
     } catch (e) {
       console.log(e);
     }
@@ -265,8 +261,6 @@ export const FirebaseProvider = ({ children }) => {
       } else {
         url = "http://localhost:3000";
       }
-
-      console.log(url);
 
       const auth = getAuth();
       const authUser = getAuthUser();

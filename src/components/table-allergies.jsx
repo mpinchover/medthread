@@ -94,7 +94,7 @@ const AllergiesTable = ({ allergies }) => {
                     {getFormattedDate(e.recordedDate)}
                   </div>
                 </button>
-                <div className="absolute top-1/2 right-0 -translate-y-1/2 flex-row items-center justify-end ">
+                {/* <div className="absolute top-1/2 right-0 -translate-y-1/2 flex-row items-center justify-end ">
                   {activeNote === e.code ? (
                     <button
                       name={e.code}
@@ -112,7 +112,7 @@ const AllergiesTable = ({ allergies }) => {
                       Add note
                     </button>
                   )}
-                </div>
+                </div> */}
               </div>
               <div>{renderAllergyDetails(e)}</div>
               <div className={`${activeNote === e.code ? "block" : "hidden"}`}>

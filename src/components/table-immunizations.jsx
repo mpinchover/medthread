@@ -70,7 +70,7 @@ const ImmunizationsTable = ({ immunizations }) => {
                   </div>
                   <div className="w-48 ">{capitalizeFirstLetter(e.status)}</div>
                 </button>
-                <div className="absolute top-1/2 right-0 -translate-y-1/2 flex-row items-center justify-end ">
+                {/* <div className="absolute top-1/2 right-0 -translate-y-1/2 flex-row items-center justify-end ">
                   {activeNote === e.code ? (
                     <button
                       name={e.code}
@@ -88,7 +88,7 @@ const ImmunizationsTable = ({ immunizations }) => {
                       Add note
                     </button>
                   )}
-                </div>
+                </div> */}
               </div>
               <div>{renderImmunizationDetails(e)}</div>
               <div className={`${activeNote === e.code ? "block" : "hidden"}`}>
