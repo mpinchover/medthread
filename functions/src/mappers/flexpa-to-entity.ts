@@ -13,50 +13,6 @@ const CLAIMS = "CLAIMS";
 const ALLERGY_INTOLERANCE = "ALLERGY_INTOLERANCE";
 const MEDICATION_REQUEST = "MEDICATION_REQUEST";
 
-// export const fromFlexpaToEntityMedications = (
-//   flexpaMedications: any,
-//   insuranceProviderUid: string
-// ): Medication[] => {
-//   if (!flexpaMedications.entry) {
-//     return [];
-//   }
-
-//   const entityMedications: any[] = [];
-//   for (let i = 0; i < flexpaMedications.entry.length; i++) {
-//     const entityMedication = fromFlexpaToEntityMedication(
-//       flexpaMedications.entry[i],
-//       insuranceProviderUid
-//     );
-//     entityMedications.push(entityMedication);
-//   }
-
-//   return entityMedications;
-// };
-
-// export const fromFlexpaToEntityMedication = (
-//   flexpaMedication: any,
-//   insuranceProviderUid: string
-// ) => {
-//   let display =
-//     flexpaMedication?.resource?.medicationCodeableConcept?.coding[0]?.display;
-//   let flexpaResourceId = flexpaMedication?.resource?.id;
-//   let authoredOn = flexpaMedication?.resource?.authoredOn;
-
-//   if (!display) display = UNKNOWN;
-//   if (!authoredOn) authoredOn = UNKNOWN;
-//   if (!flexpaResourceId) flexpaResourceId = UNKNOWN;
-//   if (!insuranceProviderUid) insuranceProviderUid = UNKNOWN;
-
-//   const med: Medication = {
-//     medicationName: display,
-//     dateStarted: authoredOn,
-//     flexpaResourceId,
-//     source: CLAIMS,
-//     insuranceProviderUid,
-//   };
-//   return med;
-// };
-
 //medication requests
 export const fromFlexpaToEntityMedicationRequestList = (
   flexpaMedicationRequestList: any[]
@@ -393,4 +349,17 @@ export const fromFlexpaToEntityMedicationDispense = (
   if (whenHandedOver) medicationDispense.whenHandedOver = whenHandedOver;
 
   return medicationDispense;
+};
+
+export const fromFlexpaToEntityEncounterList = (
+  flexpaMedicationDispenseList: any[]
+): MedicationDispense[] => {
+  const entityMedicationDispenseList: MedicationDispense[] = [];
+
+  for (let i = 0; i < flexpaMedicationDispenseList.length; i++) {
+    const medDispense = flexpaMedicationDispenseList[i];
+    const entityMedDispense = fromFlexpaToEntityMedicationDispense(medDispense);
+    entityMedicationDispenseList.push(entityMedDispense);
+  }
+  return entityMedicationDispenseList;
 };

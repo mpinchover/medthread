@@ -56,120 +56,6 @@ export const getMetadata = async (
   return metadata;
 };
 
-// // has the label
-// export const _getMetadataV2 = async (
-//   accessToken: string
-// ): Promise<InsuranceMetadata> => {
-//   return new Promise(async (resolve, reject) => {
-//     const res = await axios.get("https://api.flexpa.com/link/introspect", {
-//       headers: {
-//         Authorization: `Bearer ${accessToken}`,
-//         "Content-Type": "application/json",
-//         "accept-encoding": "*",
-//       },
-//     });
-//     const capabilities: string[] = res.data?.endpoint?.resources;
-
-//     const metadata = {
-//       publisher: res.data?.endpoint?.label,
-//       capabilities,
-//     };
-//     resolve(metadata);
-//   });
-// };
-
-// export const getMetadata = async (
-//   accessToken: string
-// ): Promise<InsuranceMetadata> => {
-//   try {
-//     const metadataValues: any = await Promise.all([
-//       _getMetadata(accessToken),
-//       _getMetadataV2(accessToken),
-//     ]);
-//     console.log(metadataValues);
-
-//     const metadata: InsuranceMetadata = metadataValues[0];
-//     return metadata;
-//   } catch (e) {
-//     throw e;
-//   }
-// };
-
-// export const getMetadataV2 = async (
-//   accessToken: string
-// ): Promise<InsuranceMetadata> => {
-
-//   try {
-//     const res = await axios.get("https://api.flexpa.com/link/introspect", {
-//       headers: {
-//         Authorization: `Bearer ${accessToken}`,
-//         "Content-Type": "application/json",
-//         "accept-encoding": "*",
-//       },
-//     });
-
-//     const capabilities: string[] = res.data?.endpoint?.resources;
-
-//     const metadata = {
-//       publisher: res.data?.endpoint?.label,
-//       capabilities,
-//     };
-//     return metadata;
-//   } catch (e) {
-//     throw e;
-//   }
-// };
-
-// export const _getMetadata = async (
-//   accessToken: string
-// ): Promise<InsuranceMetadata> => {
-//   return new Promise(async (resolve, reject) => {
-//     const res = await axios.get("https://api.flexpa.com/fhir/metadata", {
-//       headers: {
-//         Authorization: `Bearer ${accessToken}`,
-//         "Content-Type": "application/json",
-//         "accept-encoding": "*",
-//       },
-//     });
-
-//     const capabilities: string[] = res.data.rest[0]?.resource?.map(
-//       (resource: any) => {
-//         return resource.type;
-//       }
-//     );
-
-//     const metadata = {
-//       publisher: res.data.publisher,
-//       capabilities,
-//     };
-//     resolve(metadata);
-//   });
-// };
-
-// export const getMetadata = async (
-//   accessToken: string
-// ): Promise<InsuranceMetadata> => {
-//   const res = await axios.get("https://api.flexpa.com/fhir/metadata", {
-//     headers: {
-//       Authorization: `Bearer ${accessToken}`,
-//       "Content-Type": "application/json",
-//       "accept-encoding": "*",
-//     },
-//   });
-
-//   const capabilities: string[] = res.data.rest[0]?.resource?.map(
-//     (resource: any) => {
-//       return resource.type;
-//     }
-//   );
-
-//   const metadata = {
-//     publisher: res.data.publisher,
-//     capabilities,
-//   };
-//   return metadata;
-// };
-
 export const getMedicationByAccessToken = async (accessToken: string) => {
   const res = await axios.get("https://api.flexpa.com/fhir/MedicationRequest", {
     headers: {
@@ -181,75 +67,161 @@ export const getMedicationByAccessToken = async (accessToken: string) => {
 };
 
 export const getAllergyIntolerance = async (accessToken: string) => {
-  const res = await axios.get(
-    "https://api.flexpa.com/fhir/AllergyIntolerance",
-    {
+  const entries = [];
+  let link = "https://api.flexpa.com/fhir/AllergyIntolerance";
+
+  while (link) {
+    const res = await axios.get(link, {
       headers: {
         Authorization: `Bearer ${accessToken}`,
         "accept-encoding": "*",
       },
-    }
-  );
-  return res.data;
+    });
+    entries.push(...res.data.entry);
+    link = null;
+    res.data.link.forEach((linkItem: any) => {
+      if (linkItem.relation === "next") {
+        link = linkItem.url;
+      }
+    });
+  }
+
+  return entries;
 };
 
 export const getConditions = async (accessToken: string) => {
-  const res = await axios.get("https://api.flexpa.com/fhir/Condition", {
-    headers: {
-      Authorization: `Bearer ${accessToken}`,
-      "accept-encoding": "*",
-    },
-  });
-  return res.data;
-};
-
-export const getImmunizations = async (accessToken: string) => {
-  const res = await axios.get("https://api.flexpa.com/fhir/Immunization", {
-    headers: {
-      Authorization: `Bearer ${accessToken}`,
-      "accept-encoding": "*",
-    },
-  });
-  return res.data;
-};
-
-export const getProcedures = async (accessToken: string) => {
-  const res = await axios.get("https://api.flexpa.com/fhir/Procedure", {
-    headers: {
-      Authorization: `Bearer ${accessToken}`,
-      "accept-encoding": "*",
-    },
-  });
-  return res.data;
-};
-
-export const getMedicationRequest = async (accessToken: string) => {
-  try {
-    const res = await axios.get(
-      "https://api.flexpa.com/fhir/MedicationRequest",
-      {
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-          "accept-encoding": "*",
-        },
-      }
-    );
-
-    return res.data;
-  } catch (e) {
-    console.log(e);
-  }
-};
-
-export const getMedicationDispense = async (accessToken: string) => {
-  const res = await axios.get(
-    "https://api.flexpa.com/fhir/MedicationDispense",
-    {
+  const entries = [];
+  let link = "https://api.flexpa.com/fhir/Condition";
+  console.log("CONDITIONS");
+  while (link) {
+    const res = await axios.get(link, {
       headers: {
         Authorization: `Bearer ${accessToken}`,
         "accept-encoding": "*",
       },
-    }
-  );
-  return res.data;
+    });
+
+    entries.push(...res.data.entry);
+    link = null;
+    res.data.link.forEach((linkItem: any) => {
+      if (linkItem.relation === "next") {
+        link = linkItem.url;
+      }
+    });
+  }
+
+  return entries;
+};
+
+export const getImmunizations = async (accessToken: string) => {
+  const entries = [];
+  let link = "https://api.flexpa.com/fhir/Immunization";
+
+  while (link) {
+    const res = await axios.get(link, {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+        "accept-encoding": "*",
+      },
+    });
+    entries.push(...res.data.entry);
+    link = null;
+    res.data.link.forEach((linkItem: any) => {
+      if (linkItem.relation === "next") {
+        link = linkItem.url;
+      }
+    });
+  }
+  return entries;
+};
+
+export const getProcedures = async (accessToken: string) => {
+  const entries = [];
+  let link = "https://api.flexpa.com/fhir/Procedure";
+
+  while (link) {
+    const res = await axios.get(link, {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+        "accept-encoding": "*",
+      },
+    });
+
+    entries.push(...res.data.entry);
+    link = null;
+    res.data.link.forEach((linkItem: any) => {
+      if (linkItem.relation === "next") {
+        link = linkItem.url;
+      }
+    });
+  }
+
+  return entries;
+};
+
+export const getMedicationRequest = async (accessToken: string) => {
+  const entries = [];
+  let link = "https://api.flexpa.com/fhir/MedicationRequest";
+
+  while (link) {
+    const res = await axios.get(link, {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+        "accept-encoding": "*",
+      },
+    });
+    entries.push(...res.data.entry);
+    link = null;
+    res.data.link.forEach((linkItem: any) => {
+      if (linkItem.relation === "next") {
+        link = linkItem.url;
+      }
+    });
+  }
+
+  return entries;
+};
+
+export const getMedicationDispense = async (accessToken: string) => {
+  const entries = [];
+  let link = "https://api.flexpa.com/fhir/MedicationDispense";
+  while (link) {
+    const res = await axios.get(link, {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+        "accept-encoding": "*",
+      },
+    });
+    entries.push(...res.data.entry);
+    link = null;
+    res.data.link.forEach((linkItem: any) => {
+      if (linkItem.relation === "next") {
+        link = linkItem.url;
+      }
+    });
+  }
+  return entries;
+};
+
+export const getEncounter = async (accessToken: string) => {
+  const entries = [];
+  let link = "https://api.flexpa.com/fhir/Encounter";
+
+  while (link) {
+    const res = await axios.get(link, {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+        "accept-encoding": "*",
+      },
+    });
+    entries.push(...res.data.entry);
+    link = null;
+    res.data.link.forEach((linkItem: any) => {
+      if (linkItem.relation === "next") {
+        link = linkItem.url;
+      }
+    });
+  }
+
+  return entries;
 };

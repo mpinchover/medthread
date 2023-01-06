@@ -10,8 +10,9 @@ const MedicationsTable = ({ meds, handleSaveNote }) => {
   const [activeNote, setActiveNote] = useState(null);
   const [noteValue, setNoteValue] = useState("");
 
-  const renderRequestAndDispenseTable = (e) => {
-    const { code, requestAndDispense, codeDisplay } = e;
+  const renderDerivedMedicationHistory = (e) => {
+    // you dont have days supply, dosage etc
+    const { code, derivedMedicationHistory, codeDisplay } = e;
     return (
       <div
         className={`${
@@ -28,7 +29,7 @@ const MedicationsTable = ({ meds, handleSaveNote }) => {
           <div className="font-bold text-sm w-32">Quantity</div>
         </div>
         <div>
-          {requestAndDispense.map((e, i) => {
+          {derivedMedicationHistory.map((e, i) => {
             return (
               <div
                 key={i}
@@ -39,9 +40,9 @@ const MedicationsTable = ({ meds, handleSaveNote }) => {
                 </div>
                 <div className=" text-sm w-32">{getFormattedDate(e.date)}</div>
 
-                <div className=" text-sm w-32">{e.dose}</div>
+                <div className=" text-sm w-32">{e.dosage}</div>
                 <div className=" text-sm w-32">{e.daysSupply}</div>
-                <div className=" text-sm w-32">{e.quantityValue}</div>
+                <div className=" text-sm w-32">{e.quantity}</div>
               </div>
             );
           })}
@@ -74,14 +75,17 @@ const MedicationsTable = ({ meds, handleSaveNote }) => {
     };
 
     const _handleSaveNote = () => {
-      console.log("MEDS");
-      console.log(meds[0]);
       // handleSaveNote()
     };
 
     return (
       <div className="w-full  ">
         {meds.map((e, i) => {
+          console.log("E is");
+          console.log(e);
+          const n = e.derivedMedicationHistory.length;
+          const lastDosage = e?.derivedMedicationHistory?.[n - 1]?.dosage;
+
           return (
             <div key={i} className="border-b last:border-b-0 py-6 relative ">
               <div className="relative">
@@ -99,12 +103,7 @@ const MedicationsTable = ({ meds, handleSaveNote }) => {
                   <div className="pr-6 w-48 ">
                     {getFormattedDate(e.lastFillOn)}
                   </div>
-                  <div className="pr-6 w-48">
-                    {getFormattedDate(e.firstRequestedOn)}
-                  </div>
-                  <div className="pr-6 w-48 ">
-                    {getFormattedDate(e.lastRequestedOn)}
-                  </div>
+                  <div className="pr-6 w-48">{lastDosage}</div>
                 </button>
                 {/* <div className="absolute top-1/2 right-0 -translate-y-1/2 flex-row items-center justify-end ">
                   {activeNote === e.code ? (
@@ -127,21 +126,7 @@ const MedicationsTable = ({ meds, handleSaveNote }) => {
                 </div> */}
               </div>
 
-              <div>{renderRequestAndDispenseTable(e)}</div>
-              <div className={`${activeNote === e.code ? "block" : "hidden"}`}>
-                <textarea
-                  value={noteValue}
-                  onChange={(e) => setNoteValue(e.target.value)}
-                  className="w-full resize-none mt-6 border focus:outline-none p-6"
-                  rows={4}
-                />
-                <button
-                  onClick={_handleSaveNote}
-                  className="mt-6 p-3 px-8 font-bold border rounded-lg bg-black text-white"
-                >
-                  Save
-                </button>
-              </div>
+              <div>{renderDerivedMedicationHistory(e)}</div>
             </div>
           );
         })}
@@ -152,12 +137,11 @@ const MedicationsTable = ({ meds, handleSaveNote }) => {
   return (
     <div className="py-4  w-full text-md px-28 ">
       <div className="flex flex-row">
-        <div className="w-72 font-bold">Medication</div>
+        <div className="w-72   font-bold">Medication</div>
 
         <div className="w-48 font-bold">First fill</div>
         <div className="w-48 font-bold">Last fill</div>
-        <div className="w-48 font-bold">First requested</div>
-        <div className="w-48 font-bold">Last requested</div>
+        <div className="w-48 font-bold">Last dosage</div>
       </div>
       <div className="flex flex-row">{renderMedicationList()}</div>
     </div>

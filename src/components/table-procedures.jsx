@@ -81,7 +81,7 @@ const ProceduresTable = ({ procedures }) => {
                     {getFormattedDate(e.performedDateTime)}
                   </div>
                 </button>
-                <div className="absolute top-1/2 right-0 -translate-y-1/2 flex-row items-center justify-end ">
+                {/* <div className="absolute top-1/2 right-0 -translate-y-1/2 flex-row items-center justify-end ">
                   {activeNote === e.code ? (
                     <button
                       name={e.code}
@@ -99,7 +99,7 @@ const ProceduresTable = ({ procedures }) => {
                       Add note
                     </button>
                   )}
-                </div>
+                </div> */}
               </div>
               <div>{renderProcedureDetails(e)}</div>
               <div className={`${activeNote === e.code ? "block" : "hidden"}`}>

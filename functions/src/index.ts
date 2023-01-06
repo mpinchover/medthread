@@ -95,4 +95,9 @@ app.get(
 );
 
 app.post("/save-note", validateFirebaseIdToken, saveNote);
-exports.app = functions.https.onRequest(app);
+
+const runtimeOpts = {
+  timeoutSeconds: 300,
+  // memory: "1GB",
+};
+exports.app = functions.runWith(runtimeOpts).https.onRequest(app);

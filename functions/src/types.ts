@@ -14,6 +14,23 @@ export interface Medication {
   insuranceProviderUid?: string;
 }
 
+// TODO - move to types
+export interface DerivedMedicationHistory {
+  date?: string;
+  type?: string;
+  daysSupply?: number; // if med dispense doesn't have it then use med request
+  dosage?: string;
+  quantity?: string; // if med dispense doesn't have it then use med request
+}
+
+// TODO - move to types
+// each of these should be a single medication
+export interface MedContext {
+  request: MedicationRequest[];
+  dispense: MedicationDispense[];
+  derivedHistory: DerivedMedicationHistory[];
+}
+
 // TODO – add in all the meds that are connected to this med
 export interface DerivedMedication {
   lastRequestedOn?: string;
@@ -24,10 +41,11 @@ export interface DerivedMedication {
   codeDisplay?: string;
   request?: MedicationRequest[];
   dispense?: MedicationDispense[];
-  quantity?: number; // if med dispense doesn't have it then use med request
-  daysSupply?: number; // if med dispense doesn't have it then use med request
-  dosage?: string;
+  // quantity?: number; // if med dispense doesn't have it then use med request
+  // daysSupply?: number; // if med dispense doesn't have it then use med request
+  // dosage?: string;
   source?: string; // if the patient has modified the derived me by the code then should be claims + patient
+  derivedMedicationHistory: DerivedMedicationHistory[];
 }
 
 export interface MedicationRequest {
@@ -57,8 +75,8 @@ export interface MedicationDispense {
   code?: string;
   codeDisplay?: string;
   type?: string;
-  quantityValue?: number;
-  quantityUnit?: string;
+  quantityValue?: number; // just quantity
+  quantityUnit?: string; // just quantity
   daysSupply?: number;
   whenHandedOver?: string;
   intent?: string;
@@ -126,6 +144,15 @@ export interface Procedure {
   userUid?: string;
 }
 
+export interface Encounter {
+  uid?: string;
+  flexpaResourceId?: string;
+  insuranceProviderUid?: string;
+  userUid?: string;
+  status?: string;
+  start?: string;
+}
+
 export interface ClaimsData {
   medicationRequest: MedicationRequest[];
   medicationDispense: MedicationDispense[];
@@ -134,6 +161,7 @@ export interface ClaimsData {
   procedure: Procedure[];
   immunization: Immunization[];
   condition: Condition[];
+  encounter: Encounter[];
 }
 
 export interface Profile {

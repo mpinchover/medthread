@@ -171,32 +171,32 @@ export const recordsActiveCategoryState = atom({
   default: "MEDICATIONS",
 });
 
-const combinedRequestAndDispense = (request, dispense) => {
-  for (let i = 0; i < request.length; i++) {
-    request[i].date = request[i].authoredOn;
-    request[i].type = "REQUEST";
-    if (
-      request[i].doseAndRateQuantityUnit &&
-      request[i].doseAndRateQuantityValue
-    ) {
-      request[i].dose =
-        request[i].doseAndRateQuantityUnit +
-        " " +
-        request[i].doseAndRateQuantityValue;
-    }
-  }
+// const combinedRequestAndDispense = (request, dispense) => {
+//   for (let i = 0; i < request.length; i++) {
+//     request[i].date = request[i].authoredOn;
+//     request[i].type = "REQUEST";
+//     if (
+//       request[i].doseAndRateQuantityUnit &&
+//       request[i].doseAndRateQuantityValue
+//     ) {
+//       request[i].dose =
+//         request[i].doseAndRateQuantityUnit +
+//         " " +
+//         request[i].doseAndRateQuantityValue;
+//     }
+//   }
 
-  for (let i = 0; i < dispense.length; i++) {
-    dispense[i].date = dispense[i].whenHandedOver;
-    dispense[i].type = "DISPENSE";
-  }
+//   for (let i = 0; i < dispense.length; i++) {
+//     dispense[i].date = dispense[i].whenHandedOver;
+//     dispense[i].type = "DISPENSE";
+//   }
 
-  const combinedRequestAndDispense = [...request, ...dispense].sort(
-    (a, b) => new Date(b.date) - new Date(a.date)
-  );
+//   const combinedRequestAndDispense = [...request, ...dispense].sort(
+//     (a, b) => new Date(b.date) - new Date(a.date)
+//   );
 
-  return combinedRequestAndDispense;
-};
+//   return combinedRequestAndDispense;
+// };
 
 export const getClaimsDataByUserUidCallback =
   ({ set, snapshot }) =>
@@ -222,28 +222,25 @@ export const getClaimsDataByUserUidCallback =
       }
 
       if (claimsData.derivedClaimsMedications) {
+        console.log(claimsData.derivedClaimsMedications);
         for (let i = 0; i < claimsData.derivedClaimsMedications.length; i++) {
-          const derivedMeds = claimsData.derivedClaimsMedications[i];
-          derivedMeds.requestAndDispense = combinedRequestAndDispense(
-            derivedMeds.request,
-            derivedMeds.dispense
-          );
-          claimsData.derivedClaimsMedications[i] = derivedMeds;
+          claimsData.derivedClaimsMedications[i].requestAndDispense =
+            claimsData.derivedClaimsMedications[i].derivedHistory;
         }
 
         set(claimsDerivedMedicationsState, claimsData.derivedClaimsMedications);
       }
       if (claimsData.procedure) {
         // set(claimsProceduresState, claimsData.procedure);
-        set(claimsProceduresState, mockProcedures);
+        set(claimsProceduresState, claimsData.procedure);
       }
       if (claimsData.immunization) {
         // set(claimsImmunizationsState, claimsData.immunization);
-        set(claimsImmunizationsState, mockImmunizations);
+        set(claimsImmunizationsState, claimsData.immunization);
       }
       if (claimsData.condition) {
         // set(claimsConditionsState, claimsData.condition);
-        set(claimsConditionsState, mockConditions);
+        set(claimsConditionsState, claimsData.condition);
       }
     } catch (e) {
     } finally {
