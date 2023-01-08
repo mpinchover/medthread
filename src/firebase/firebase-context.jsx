@@ -171,8 +171,8 @@ export const FirebaseProvider = ({ children }) => {
     try {
       await _createProvider({ email, password, confirmPassword, displayName });
       verifyEmailAddress();
-      window.location.reload();
       navigate("/settings", { replace: true });
+      window.location.reload();
     } catch (e) {
       console.log(e);
     }
@@ -186,8 +186,8 @@ export const FirebaseProvider = ({ children }) => {
   ) => {
     try {
       await _createPatient({ email, password, confirmPassword, displayName });
+      navigate("/settings", { replace: true });
       window.location.reload();
-      navigate("/", { replace: true });
     } catch (e) {
       console.log(e);
     }
@@ -196,6 +196,7 @@ export const FirebaseProvider = ({ children }) => {
   const signIn = async (email, password) => {
     try {
       await _signIn({ email, password });
+      navigate("/settings", { replace: true });
       window.location.reload();
       // await navigate("/");
     } catch (e) {

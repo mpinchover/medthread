@@ -2,24 +2,11 @@ import { atom, selector } from "recoil";
 import { getClaimsDataByUserUid } from "../../rpc/get-claims-by-user-uid";
 import { getClaimsDataByUserUidForProvider } from "../../rpc/get-claims-data-by-user-uid-for-provider";
 import { saveNote } from "../../rpc/save-note";
+import { isLoadingClaimsDataState } from "../utils/utils";
+
 export const recordsSearchQueryState = atom({
   key: "recordsSearchQueryState",
   default: "",
-});
-
-export const isLoadingClaimsDataState = atom({
-  key: "isLoadingClaimsDataState",
-  state: false,
-});
-
-export const isSavingNoteState = atom({
-  key: "isSavingNoteState",
-  state: false,
-});
-
-export const recordNotesState = atom({
-  key: "recordNotesState",
-  default: [],
 });
 
 export const claimsAllergyIntolerancesState = atom({
@@ -39,23 +26,6 @@ export const filteredClaimsAllergyIntolerancesState = selector({
   },
 });
 
-const mockConditions = [
-  {
-    status: "completed",
-    code: "1234",
-    clinicalStatus: "active",
-    verificationStatus: "confirmed",
-    codeDisplay: "ELEC SALIVARY REFLEX STIMULATOR",
-  },
-  {
-    status: "completed",
-    code: "1334",
-    clinicalStatus: "active",
-    verificationStatus: "confirmed",
-    codeDisplay: "Hypercholesterolemia",
-  },
-];
-
 export const claimsConditionsState = atom({
   key: "claimsConditionsState",
   default: [],
@@ -73,24 +43,6 @@ export const filteredClaimsConditionsState = selector({
   },
 });
 
-const mockProcedures = [
-  {
-    code: "1",
-    status: "unknown",
-    codeDisplay: "BIOPSY OF NERVE",
-    performedDateTime: "2020-12-30",
-    recorder: "DR. SUSAN HOLLAR, AU.D",
-    performer: "ROBERT SUTHERLAND, MD",
-  },
-  {
-    code: "2",
-    status: "unknown",
-    codeDisplay: "EXTERNAL RADIATION DOSIMETRY",
-    performedDateTime: "2022-12-30",
-    recorder: "DR. SUSAN HOLLAR, AU.D",
-    performer: "ROBERT SUTHERLAND, MD",
-  },
-];
 export const claimsProceduresState = atom({
   key: "claimsProceduresState",
   default: [],
@@ -108,20 +60,6 @@ export const filteredClaimsProceduresState = selector({
   },
 });
 
-const mockImmunizations = [
-  {
-    status: "completed",
-    codeDisplay: "Haemophilus influenzae type b vaccine (Hib)",
-    occurenceDateTime: "2021-06-08",
-    code: "1",
-  },
-  {
-    status: "completed",
-    codeDisplay: "Hepatitis A and hepatitis B vaccine (HepA HepB)",
-    occurenceDateTime: "2022-09-08",
-    code: "2",
-  },
-];
 export const claimsImmunizationsState = atom({
   key: "claimsImmunizationsState",
   default: [],
@@ -171,37 +109,11 @@ export const recordsActiveCategoryState = atom({
   default: "MEDICATIONS",
 });
 
-// const combinedRequestAndDispense = (request, dispense) => {
-//   for (let i = 0; i < request.length; i++) {
-//     request[i].date = request[i].authoredOn;
-//     request[i].type = "REQUEST";
-//     if (
-//       request[i].doseAndRateQuantityUnit &&
-//       request[i].doseAndRateQuantityValue
-//     ) {
-//       request[i].dose =
-//         request[i].doseAndRateQuantityUnit +
-//         " " +
-//         request[i].doseAndRateQuantityValue;
-//     }
-//   }
-
-//   for (let i = 0; i < dispense.length; i++) {
-//     dispense[i].date = dispense[i].whenHandedOver;
-//     dispense[i].type = "DISPENSE";
-//   }
-
-//   const combinedRequestAndDispense = [...request, ...dispense].sort(
-//     (a, b) => new Date(b.date) - new Date(a.date)
-//   );
-
-//   return combinedRequestAndDispense;
-// };
-
 export const getClaimsDataByUserUidCallback =
   ({ set, snapshot }) =>
   async (patientUid) => {
     try {
+      // set(isLoadingClaimsDataState, true);
       set(isLoadingClaimsDataState, true);
 
       let claimsData;
@@ -245,22 +157,5 @@ export const getClaimsDataByUserUidCallback =
     } catch (e) {
     } finally {
       set(isLoadingClaimsDataState, false);
-    }
-  };
-
-// also handle update note here too by checking if the note has a uid
-export const saveNoteCallback =
-  ({ set, snapshot }) =>
-  async (note) => {
-    try {
-      // add some verification here
-      set(isSavingNoteState, true);
-
-      const savedNote = await saveNote(note);
-
-      set(recordNotesState, (curNotes) => [...curNotes, savedNote]);
-    } catch (e) {
-    } finally {
-      set(isSavingNoteState, false);
     }
   };

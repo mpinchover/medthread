@@ -26,6 +26,9 @@ import {
   fromFlexpaToEntityConditionList,
   fromFlexpaToEntityProcedureList,
   fromFlexpaToEntityImmunizationList,
+  fromFlexpaToEntityEncounterList,
+  fromFlexpaToEntityObservationList,
+  fromFlexpaToEntityCareTeamList,
 } from "../mappers/flexpa-to-entity";
 import { promises } from "nodemailer/lib/xoauth2";
 import { stringify } from "uuid";
@@ -37,6 +40,8 @@ const PROCEDURE = "PROCEDURE";
 const IMMUNIZATION = "IMMUNIZATIONS";
 const CONDITION = "CONDITION";
 const ENCOUNTER = "ENCOUNTER";
+const CARE_TEAM = "CARE_TEAM";
+const OBSERVATION = "OBSERVATION";
 
 const medicationRequestCapability = "MedicationRequest";
 const medicationDispenseCapbility = "MedicationDispense";
@@ -45,6 +50,8 @@ const immunizationCapability = "Immunization";
 const conditionCapability = "Condition";
 const allergyIntoleranceCapability = "AllergyIntolerance";
 const encounterCapability = "Encounter";
+const careTeamCapability = "CareTeam";
+const observationCapability = "Observation";
 
 export const getClaimsDataByUserUid = async (
   userUid: string
@@ -181,7 +188,6 @@ export const addHealthInsuranceProvider = async (
       capabilities: metadata.capabilities,
     };
 
-    console.log("ADDING THE INSURANCE PROVIDER");
     const newProvider = await insuranceRepo.addInsuranceProviderForPatient(
       newProviderParams
     );
@@ -387,36 +393,6 @@ export const deriveClaimsMedications = (
   return derivedMedications;
 };
 
-/*
-
-const combinedRequestAndDispense = (request, dispense) => {
-  for (let i = 0; i < request.length; i++) {
-    request[i].date = request[i].authoredOn;
-    request[i].type = "REQUEST";
-    if (
-      request[i].doseAndRateQuantityUnit &&
-      request[i].doseAndRateQuantityValue
-    ) {
-      request[i].dose =
-        request[i].doseAndRateQuantityUnit +
-        " " +
-        request[i].doseAndRateQuantityValue;
-    }
-  }
-
-  for (let i = 0; i < dispense.length; i++) {
-    dispense[i].date = dispense[i].whenHandedOver;
-    dispense[i].type = "DISPENSE";
-  }
-
-  const combinedRequestAndDispense = [...request, ...dispense].sort(
-    (a, b) => new Date(b.date) - new Date(a.date)
-  );
-
-  return combinedRequestAndDispense;
-};
-*/
-
 const getLastFill = (medContext: MedContext) => {
   return medContext?.dispense?.[0]?.whenHandedOver;
 };
@@ -485,6 +461,14 @@ export const getClaimsFromInsuranceProvider = async (
     concurrentPromisesToExecute.push(getEncounter);
   }
 
+  if (insuranceProvider.capabilities.includes(careTeamCapability)) {
+    concurrentPromisesToExecute.push(getCareTeam);
+  }
+
+  if (insuranceProvider.capabilities.includes(observationCapability)) {
+    concurrentPromisesToExecute.push(getObservation);
+  }
+
   const claimsResults = await Promise.allSettled(
     concurrentPromisesToExecute.map((fn) =>
       fn(insuranceProvider.accessToken, insuranceProvider.uid)
@@ -507,6 +491,8 @@ export const extractClaimsResultsFromPromises = (
     condition: [],
     procedure: [],
     encounter: [],
+    careTeam: [],
+    observation: [],
   };
 
   for (let i = 0; i < claimsResults.length; i++) {
@@ -530,6 +516,12 @@ export const extractClaimsResultsFromPromises = (
       claimsData.condition = values;
     } else if (type === IMMUNIZATION) {
       claimsData.immunization = values;
+    } else if (type === ENCOUNTER) {
+      claimsData.encounter = values;
+    } else if (type === OBSERVATION) {
+      claimsData.observation = values;
+    } else if (type === CARE_TEAM) {
+      claimsData.careTeam = values;
     }
   }
   return claimsData;
@@ -560,7 +552,10 @@ export const getEncounter = (accessToken: string) => {
   return new Promise(async (res, rej) => {
     try {
       const flexpaEncounters = await flexpaGateway.getEncounter(accessToken);
-      res("GOT IT");
+
+      const entityEncounterList =
+        fromFlexpaToEntityEncounterList(flexpaEncounters);
+      res({ type: ENCOUNTER, values: entityEncounterList });
     } catch (e) {
       console.log(e);
       rej(e);
@@ -676,9 +671,37 @@ export const saveNote = async (note: Note) => {
   return savedNote;
 };
 
-// uid?: string;
-// userUid?: string;
-// type?: string; // MEDICATION, ALLERGY, etc
-// text?: string; // note text
-// medicationCode?: string;
-// parentUid?: string; // what it's a note for
+export const getCareTeam = (accessToken: string) => {
+  return new Promise(async (res, rej) => {
+    try {
+      const flexpaCareTeamList = await flexpaGateway.getCareTeam(accessToken);
+
+      const careTeamEntityList =
+        fromFlexpaToEntityCareTeamList(flexpaCareTeamList);
+
+      res({ type: CARE_TEAM, values: careTeamEntityList });
+    } catch (e) {
+      console.log(e);
+      rej(e);
+    }
+  });
+};
+
+export const getObservation = (accessToken: string) => {
+  return new Promise(async (res, rej) => {
+    try {
+      const flexpaObservationList = await flexpaGateway.getObservation(
+        accessToken
+      );
+
+      const observationEntityList = fromFlexpaToEntityObservationList(
+        flexpaObservationList
+      );
+
+      res({ type: OBSERVATION, values: observationEntityList });
+    } catch (e) {
+      console.log(e);
+      rej(e);
+    }
+  });
+};

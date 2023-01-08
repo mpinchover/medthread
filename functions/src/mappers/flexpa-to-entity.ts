@@ -6,6 +6,10 @@ import {
   Condition,
   Procedure,
   Immunization,
+  Encounter,
+  CareTeamParticipant,
+  Observation,
+  CareTeam,
 } from "../types";
 
 const UNKNOWN = "UNKNOWN";
@@ -353,13 +357,138 @@ export const fromFlexpaToEntityMedicationDispense = (
 
 export const fromFlexpaToEntityEncounterList = (
   flexpaMedicationDispenseList: any[]
-): MedicationDispense[] => {
-  const entityMedicationDispenseList: MedicationDispense[] = [];
+): Encounter[] => {
+  console.log("ENCOUNTERS");
+  console.log(flexpaMedicationDispenseList);
+  console.log("\n\n\n");
+  const entityEncounterList: Encounter[] = [];
 
   for (let i = 0; i < flexpaMedicationDispenseList.length; i++) {
-    const medDispense = flexpaMedicationDispenseList[i];
-    const entityMedDispense = fromFlexpaToEntityMedicationDispense(medDispense);
-    entityMedicationDispenseList.push(entityMedDispense);
+    const encounter = flexpaMedicationDispenseList[i];
+    const entityEncounter = fromFlexpaToEntityEncounter(encounter);
+    entityEncounterList.push(entityEncounter);
   }
-  return entityMedicationDispenseList;
+  return entityEncounterList;
+};
+
+export const fromFlexpaToEntityEncounter = (params: any) => {
+  const encounter: Encounter = {
+    source: CLAIMS,
+    flexpaResourceId: params.flexpaResourceId,
+  };
+
+  if (params.status) {
+    encounter.status = params.status;
+  }
+
+  if (params.status) {
+    encounter.start = params.start;
+  }
+
+  return encounter;
+};
+
+export const fromFlexpaToEntityCareTeamList = (
+  flexpaCareTeamList: any[]
+): CareTeam[] => {
+  console.log("CARE TEAM");
+  console.log(flexpaCareTeamList);
+  console.log("\n\n\n");
+  const entityCareTeamList: Encounter[] = [];
+
+  for (let i = 0; i < flexpaCareTeamList.length; i++) {
+    const careTeam = flexpaCareTeamList[i];
+    const entityCareTeam = fromFlexpaToEntityCareTeam(careTeam);
+    entityCareTeamList.push(entityCareTeam);
+  }
+  return entityCareTeamList;
+};
+
+export const fromFlexpaToEntityCareTeam = (params: any) => {
+  const careTeam: CareTeam = {
+    source: CLAIMS,
+    flexpaResourceId: params.flexpaResourceId,
+  };
+
+  if (params.status) careTeam.status = params.status;
+
+  if (params.participants) {
+    careTeam.participants = fromFlexpaToEntityCareTeamParticipants(
+      params.participants
+    );
+  }
+  return careTeam;
+};
+
+export const fromFlexpaToEntityCareTeamParticipants = (participants: any) => {
+  const entityCareTeamParticipants: CareTeamParticipant[] = [];
+
+  participants.forEach((participant: any) => {
+    const eParticipant = fromFlexpaToEntityCareTeamParticipant(participant);
+    entityCareTeamParticipants.push(eParticipant);
+  });
+  return entityCareTeamParticipants;
+};
+
+// TODO – handle more than one role?
+export const fromFlexpaToEntityCareTeamParticipant = (participant: any) => {
+  const careTeamParticpiant: CareTeamParticipant = {};
+
+  const roleCode = participant.role?.[0]?.coding?.[0]?.code;
+  if (roleCode) {
+    careTeamParticpiant.roleCode = roleCode;
+  }
+
+  const roleDisplay = participant.role?.[0]?.coding?.[0]?.display;
+  if (roleDisplay) {
+    careTeamParticpiant.roleCodeDisplay = roleDisplay;
+  }
+
+  const memberCode = participant.member?.identifier?.value;
+  if (memberCode) {
+    careTeamParticpiant.memberCode = memberCode;
+  }
+
+  const memberCodeDisplay = participant.member?.display;
+  if (memberCodeDisplay) {
+    careTeamParticpiant.memberCodeDisplay = memberCodeDisplay;
+  }
+
+  return careTeamParticpiant;
+};
+
+export const fromFlexpaToEntityObservationList = (
+  flexpaObservationList: any[]
+) => {
+  console.log("OBSERVATIONS");
+  console.log(flexpaObservationList);
+  console.log("\n\n\n");
+  const entityObservationList: Observation[] = [];
+
+  for (let i = 0; i < flexpaObservationList.length; i++) {
+    const obs = flexpaObservationList[i];
+    const entityObservation = fromFlexpaToEntityObservation(obs);
+    entityObservationList.push(entityObservation);
+  }
+  return entityObservationList;
+};
+
+export const fromFlexpaToEntityObservation = (params: any) => {
+  const observation: Observation = {
+    source: CLAIMS,
+    flexpaResourceId: params.flexpaResourceId,
+  };
+
+  if (params.status) observation.status = params.status;
+
+  const category = params.category?.[0]?.coding?.[0]?.code;
+  if (category) observation.category = category;
+
+  const code = params.code?.coding?.[0]?.code;
+  if (code) observation.code = code;
+
+  const codeDisplay = params.code?.coding?.[0]?.display;
+  if (codeDisplay) observation.codeDisplay = codeDisplay;
+
+  return observation;
 };

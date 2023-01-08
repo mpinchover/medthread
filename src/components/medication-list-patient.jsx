@@ -19,15 +19,21 @@ import {
   filteredClaimsAllergyIntolerancesState,
   filteredClaimsConditionsState,
   recordsSearchQueryState,
-  recordNotesState,
+  isFetchingClaimsDataState,
+  // isLoadingClaimsDataState,
+  // isLoadingClaimsDataState,
+  isLoadingClaimsDataStateV2,
+  isSavingNoteState,
 } from "../recoil/claims/claims";
 import { LoadingMedicationData, LoadingWindow } from "./common";
 import { FirebaseContext } from "../firebase/firebase-context";
 import { withPrivateRoute } from "./hocs";
+import { isLoadingClaimsDataState } from "../recoil/utils/utils";
 
 const MedicationListPatient = () => {
   const { getAuthUser } = useContext(FirebaseContext);
 
+  const isLoadingClaimsData = useRecoilValue(isLoadingClaimsDataState);
   const authUser = getAuthUser();
   // const getMedications = useRecoilCallback(getMedicationsByUserUidCallback);
   const getClaimsDatabyUserUid = useRecoilCallback(
@@ -36,6 +42,7 @@ const MedicationListPatient = () => {
   const claimsAllergyIntolerance = useRecoilValue(
     filteredClaimsAllergyIntolerancesState
   );
+
   const claimsConditions = useRecoilValue(filteredClaimsConditionsState);
   const claimsDerivedMedications = useRecoilValue(
     filteredClaimsDerivedMedicationsState
@@ -48,13 +55,11 @@ const MedicationListPatient = () => {
   const claimsProcedures = useRecoilValue(filteredClaimsProceduresState);
 
   const accountSettings = useRecoilValue(accountSettingsState);
-  const recordNotes = useRecoilValue(recordNotesState);
+
+  // const isLoadingClaimsData = useRecoilValue(isLoadingClaimsDataState);
   // const [medicationList, setMedicationList] = useRecoilState(
   //   filteredDerivedMedicationsState
   // );
-
-  console.log("RECORD NOTES ARE");
-  console.log(recordNotes);
 
   const [searchTerm, setSearchTerm] = useRecoilState(recordsSearchQueryState);
 
@@ -63,11 +68,12 @@ const MedicationListPatient = () => {
     getClaimsDatabyUserUid();
   }, []);
 
+  // const isLoadingClaimsData = useRecoilValue(isLoadingClaimsDataState);
   const isLoadingMedicationList = useRecoilValue(loadingGetMedicationState);
   const isSendingMedications = useRecoilValue(isSendingMedicationsState);
   const isAddingMedication = useRecoilValue(isAddingMedicationState);
 
-  if (isLoadingMedicationList) {
+  if (isLoadingClaimsData) {
     return <LoadingMedicationData />;
   }
   if (isSendingMedications) {

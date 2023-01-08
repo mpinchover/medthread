@@ -9,6 +9,9 @@ import {
   Immunization,
   Condition,
   Note,
+  Encounter,
+  Observation,
+  CareTeam,
 } from "../types";
 const medicationRequestCollection = "medicationRequest";
 const allergyIntoleranceCollection = "allergyIntolerance";
@@ -17,7 +20,9 @@ const procedureCollection = "procedure";
 const immunizationCollection = "immunization";
 const conditionCollection = "condition";
 const insuranceProvidersCollection = "insuranceProviders";
-const notesCollection = "notes";
+const encounterCollection = "encounters";
+const careTeamCollection = "careTeams";
+const observationCollection = "observations";
 
 export const addInsuranceProviderForPatient = async (
   params: InsuranceProvider
@@ -170,6 +175,30 @@ export const batchWriteClaimsData = async (
       doc.uid = docRef.id;
       batch.set(docRef, doc);
       claimsDataToWrite.condition[i] = doc;
+    }
+
+    for (let i = 0; i < claimsDataToWrite.encounter.length; i++) {
+      const doc: Encounter = claimsDataToWrite.encounter[i];
+      const docRef = db.collection(encounterCollection).doc();
+      doc.uid = docRef.id;
+      batch.set(docRef, doc);
+      claimsDataToWrite.encounter[i] = doc;
+    }
+
+    for (let i = 0; i < claimsDataToWrite.observation.length; i++) {
+      const doc: Observation = claimsDataToWrite.observation[i];
+      const docRef = db.collection(observationCollection).doc();
+      doc.uid = docRef.id;
+      batch.set(docRef, doc);
+      claimsDataToWrite.observation[i] = doc;
+    }
+
+    for (let i = 0; i < claimsDataToWrite.careTeam.length; i++) {
+      const doc: CareTeam = claimsDataToWrite.careTeam[i];
+      const docRef = db.collection(careTeamCollection).doc();
+      doc.uid = docRef.id;
+      batch.set(docRef, doc);
+      claimsDataToWrite.careTeam[i] = doc;
     }
 
     await batch.commit();

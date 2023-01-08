@@ -148,9 +148,27 @@ export interface Encounter {
   uid?: string;
   flexpaResourceId?: string;
   insuranceProviderUid?: string;
+  source?: string;
   userUid?: string;
   status?: string;
   start?: string;
+}
+
+export interface CareTeamParticipant {
+  roleCode?: string;
+  roleCodeDisplay?: string;
+  memberCode?: string;
+  memberCodeDisplay?: string;
+}
+
+export interface CareTeam {
+  uid?: string;
+  flexpaResourceId?: string;
+  insuranceProviderUid?: string;
+  source?: string;
+  userUid?: string;
+  status?: string;
+  participants?: CareTeamParticipant[];
 }
 
 export interface ClaimsData {
@@ -162,6 +180,21 @@ export interface ClaimsData {
   immunization: Immunization[];
   condition: Condition[];
   encounter: Encounter[];
+  observation: Observation[];
+  careTeam: CareTeam[];
+}
+
+export interface Observation {
+  uid?: string;
+  source?: string;
+  status?: string;
+  category?: string;
+  code?: string;
+  codeDisplay?: string;
+  effectiveDateTime?: string;
+  issued?: string;
+  userUid?: string;
+  flexpaResourceId?: string;
 }
 
 export interface Profile {

@@ -34,6 +34,11 @@ export const isAccountLoadingState = atom({
   default: false,
 });
 
+export const isAccountLoadingStateV2 = atom({
+  key: "isAccountLoadingStateV2",
+  default: false,
+});
+
 export const updateEmailCallback =
   ({ set, snapshot }) =>
   async (auth, email) => {

@@ -382,7 +382,7 @@ export const LoadingMedicationData = () => {
         <div className=" rounded-full border border-black border-t-0 w-4 h-4"></div>
       </div>
 
-      <span>Loading medication list...</span>
+      <span>Loading records...</span>
     </div>
   );
 };

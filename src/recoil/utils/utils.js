@@ -5,6 +5,11 @@ export const isLoadingState = atom({
   default: false,
 });
 
+export const isLoadingClaimsDataState = atom({
+  key: "isLoadingClaimsDataState",
+  default: false,
+});
+
 const idleState = {
   // isAddingMedication: false,
   // isAddingImmunization: false,
@@ -18,3 +23,8 @@ export const modalState = atom({
   key: "modalState",
   default: idleState,
 });
+
+// export const getData = atom({
+//   key: "getDataasdfadsf",
+//   state: false,
+// });

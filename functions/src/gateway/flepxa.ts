@@ -225,3 +225,49 @@ export const getEncounter = async (accessToken: string) => {
 
   return entries;
 };
+
+export const getCareTeam = async (accessToken: string) => {
+  const entries = [];
+  let link = "https://api.flexpa.com/fhir/CareTeam";
+
+  while (link) {
+    const res = await axios.get(link, {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+        "accept-encoding": "*",
+      },
+    });
+    entries.push(...res.data.entry);
+    link = null;
+    res.data.link.forEach((linkItem: any) => {
+      if (linkItem.relation === "next") {
+        link = linkItem.url;
+      }
+    });
+  }
+
+  return entries;
+};
+
+export const getObservation = async (accessToken: string) => {
+  const entries = [];
+  let link = "https://api.flexpa.com/fhir/Observation";
+
+  while (link) {
+    const res = await axios.get(link, {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+        "accept-encoding": "*",
+      },
+    });
+    entries.push(...res.data.entry);
+    link = null;
+    res.data.link.forEach((linkItem: any) => {
+      if (linkItem.relation === "next") {
+        link = linkItem.url;
+      }
+    });
+  }
+
+  return entries;
+};

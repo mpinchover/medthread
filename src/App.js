@@ -31,7 +31,7 @@ import Home from "./components/home";
 import VerificationPage from "./components/verification-page";
 import { FirebaseContext } from "./firebase/firebase-context";
 import MedicationListPatient from "./components/medication-list-patient";
-
+import TermsOfService from "./components/terms-of-service";
 const ModalShadow = () => {
   // const { isModalOpen } = useContext(FirebaseContext);
   const modal = useRecoilValue(modalState);
@@ -74,7 +74,8 @@ function App() {
     };
   }, []);
   resetHeight();
-
+  // https://codesandbox.io/s/react-heatmap-grid-xoclz
+  //heatmap
   return (
     <div className="flex-1 flex flex-col relative">
       <Router>
@@ -92,6 +93,11 @@ function App() {
             <Route exact path="/settings" element={<Settings />} />
             <Route exact path="/forgot-password" element={<ForgotPassword />} />
             <Route exact path="/" element={<MedicationListPatient />} />
+            <Route
+              exact
+              path="/terms-of-service"
+              element={<TermsOfService />}
+            />
             <Route
               exact
               path="/patient-data/:patientUid"

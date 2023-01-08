@@ -82,7 +82,7 @@ const sendProviderMedicationsInEmail = async (
 
   //   </div>
   // `;
-  const mailBody = `<p>${displayName} medical records. Click <a href="${process.env.BASE_URL}/patient-data/${profile.userUid}">here</a>.</p>`;
+  const mailBody = `<p>${displayName} medical records. Click <a href="${process.env.BASE_URL}/patient-data/${profile.userUid}">here</a> to see them.</p>`;
 
   const mailOptions = {
     from: "",

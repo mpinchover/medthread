@@ -2,6 +2,7 @@ import "source-map-support/register";
 import * as functions from "firebase-functions";
 import * as admin from "firebase-admin";
 admin.initializeApp();
+admin.firestore().settings({ ignoreUndefinedProperties: true });
 require("dotenv").config();
 const cors = require("cors")({ origin: true });
 import * as express from "express";

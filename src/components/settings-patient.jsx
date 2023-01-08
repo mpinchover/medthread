@@ -2,22 +2,14 @@ import { FaPen, FaPlus, FaMinusCircle } from "react-icons/fa";
 import { AiOutlinePlus, AiOutlineSend } from "react-icons/ai";
 import { useNavigate } from "react-router-dom";
 import { useState, useContext, useEffect } from "react";
-import {
-  insuranceProvidersState,
-  // addInsuranceProviderCallback,
-  getInsuranceProvidersCallback,
-  isAddingInsuranceProviderState,
-  addHealthcareProviderCallback,
-  isAddingHealthcareProviderState,
-  isUpdatingProfileAccountState,
-  profileAccountState,
-} from "../recoil/profile/profile";
+
 import {
   useRecoilState,
   useSetRecoilState,
   useRecoilValue,
   useRecoilCallback,
 } from "recoil";
+
 import { FaPills } from "react-icons/fa";
 import { withPrivateRoute } from "./hocs";
 import axios from "axios";
@@ -29,6 +21,7 @@ import {
   addInsuranceProviderCallback,
   removeInsuranceProviderCallback,
   isAccountLoadingState,
+  isAccountLoadingStateV2,
 } from "../recoil/account/account";
 
 const PatientSettings = ({ authProfile, accountSettings }) => {
@@ -36,6 +29,7 @@ const PatientSettings = ({ authProfile, accountSettings }) => {
   const auth = getAuth();
   const { updateUserPassword, updateUserEmail } = useContext(FirebaseContext);
   const isAccountLoading = useRecoilValue(isAccountLoadingState);
+
   const [accountUpdates, setAccountUpdates] =
     useRecoilState(accountUpdateState);
 

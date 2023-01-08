@@ -26,7 +26,6 @@ import MedicationListFilterBar from "./medication-list-filter-bar";
 import {
   recordsActiveCategoryState,
   recordsSearchQueryState,
-  saveNoteCallback,
 } from "../recoil/claims/claims";
 import MedicationsTable from "./table-medications";
 import AllergiesTable from "./table-allergies";
@@ -55,19 +54,12 @@ const MedicationList = ({
   const removeMedication = useRecoilCallback(removeMedicationCallback);
   const recordsActiveCategory = useRecoilValue(recordsActiveCategoryState);
   const [modal, setModal] = useRecoilState(modalState);
-  const saveNote = useRecoilCallback(saveNoteCallback);
+
   const saveMedication = useRecoilCallback(saveMedicationCallback);
 
   const handleChange = (e) => {
     const { value } = e.target;
     onChange(value);
-  };
-
-  const handleSaveNote = (text, parentUid) => {
-    saveNote({
-      text,
-      parentUid,
-    });
   };
 
   const { setIsModalOpen } = useContext(FirebaseContext);
@@ -130,47 +122,22 @@ const MedicationList = ({
 
   const renderRecordsTable = () => {
     if (recordsActiveCategory === "MEDICATIONS") {
-      return (
-        <MedicationsTable
-          handleSaveNote={handleSaveNote}
-          meds={claimsDerivedMedications}
-        />
-      );
+      return <MedicationsTable meds={claimsDerivedMedications} />;
     }
     if (recordsActiveCategory === "ALLERGIES") {
-      return (
-        <AllergiesTable
-          handleSaveNote={handleSaveNote}
-          allergies={claimsAllergyIntolerance}
-        />
-      );
+      return <AllergiesTable allergies={claimsAllergyIntolerance} />;
     }
 
     if (recordsActiveCategory === "IMMUNIZATIONS") {
-      return (
-        <ImmunizationsTable
-          handleSaveNote={handleSaveNote}
-          immunizations={claimsImmunizations}
-        />
-      );
+      return <ImmunizationsTable immunizations={claimsImmunizations} />;
     }
 
     if (recordsActiveCategory === "CONDITIONS") {
-      return (
-        <ConditionsTable
-          handleSaveNote={handleSaveNote}
-          conditions={claimsConditions}
-        />
-      );
+      return <ConditionsTable conditions={claimsConditions} />;
     }
 
     if (recordsActiveCategory === "PROCEDURES") {
-      return (
-        <ProceduresTable
-          handleSaveNote={handleSaveNote}
-          procedures={claimsProcedures}
-        />
-      );
+      return <ProceduresTable procedures={claimsProcedures} />;
     }
   };
 

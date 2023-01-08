@@ -19,16 +19,16 @@ import {
   filteredClaimsAllergyIntolerancesState,
   filteredClaimsConditionsState,
   recordsSearchQueryState,
-  recordNotesState,
 } from "../recoil/claims/claims";
 import { LoadingMedicationData, LoadingWindow } from "./common";
 import { FirebaseContext } from "../firebase/firebase-context";
 import { withPrivateRoute } from "./hocs";
 import { useParams } from "react-router-dom";
+import { isLoadingClaimsDataState } from "../recoil/utils/utils";
 
 const MedicationListProvider = () => {
   const { getAuthUser } = useContext(FirebaseContext);
-
+  const isLoadingClaimsData = useRecoilValue(isLoadingClaimsDataState);
   const authUser = getAuthUser();
   // const getMedications = useRecoilCallback(getMedicationsByUserUidCallback);
   const getClaimsDatabyUserUid = useRecoilCallback(
@@ -49,7 +49,7 @@ const MedicationListProvider = () => {
   const claimsProcedures = useRecoilValue(filteredClaimsProceduresState);
 
   const accountSettings = useRecoilValue(accountSettingsState);
-  const recordNotes = useRecoilValue(recordNotesState);
+
   // const [medicationList, setMedicationList] = useRecoilState(
   //   filteredDerivedMedicationsState
   // );
@@ -67,7 +67,7 @@ const MedicationListProvider = () => {
   const isSendingMedications = useRecoilValue(isSendingMedicationsState);
   const isAddingMedication = useRecoilValue(isAddingMedicationState);
 
-  if (isLoadingMedicationList) {
+  if (isLoadingClaimsData) {
     return <LoadingMedicationData />;
   }
   if (isSendingMedications) {
