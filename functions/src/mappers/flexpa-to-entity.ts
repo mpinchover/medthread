@@ -358,9 +358,6 @@ export const fromFlexpaToEntityMedicationDispense = (
 export const fromFlexpaToEntityEncounterList = (
   flexpaMedicationDispenseList: any[]
 ): Encounter[] => {
-  console.log("ENCOUNTERS");
-  console.log(flexpaMedicationDispenseList);
-  console.log("\n\n\n");
   const entityEncounterList: Encounter[] = [];
 
   for (let i = 0; i < flexpaMedicationDispenseList.length; i++) {
@@ -372,6 +369,8 @@ export const fromFlexpaToEntityEncounterList = (
 };
 
 export const fromFlexpaToEntityEncounter = (params: any) => {
+  console.log("ENCOUNTER");
+  console.log(params);
   const encounter: Encounter = {
     source: CLAIMS,
     flexpaResourceId: params.flexpaResourceId,
@@ -381,8 +380,15 @@ export const fromFlexpaToEntityEncounter = (params: any) => {
     encounter.status = params.status;
   }
 
-  if (params.status) {
-    encounter.start = params.start;
+  if (params.period?.start) {
+    encounter.start = params.period?.start;
+  }
+  if (params.period?.end) {
+    encounter.end = params.period?.end;
+  }
+
+  if (params.class?.code) {
+    encounter.code = params.class?.code;
   }
 
   return encounter;
@@ -391,9 +397,6 @@ export const fromFlexpaToEntityEncounter = (params: any) => {
 export const fromFlexpaToEntityCareTeamList = (
   flexpaCareTeamList: any[]
 ): CareTeam[] => {
-  console.log("CARE TEAM");
-  console.log(flexpaCareTeamList);
-  console.log("\n\n\n");
   const entityCareTeamList: Encounter[] = [];
 
   for (let i = 0; i < flexpaCareTeamList.length; i++) {
@@ -460,9 +463,6 @@ export const fromFlexpaToEntityCareTeamParticipant = (participant: any) => {
 export const fromFlexpaToEntityObservationList = (
   flexpaObservationList: any[]
 ) => {
-  console.log("OBSERVATIONS");
-  console.log(flexpaObservationList);
-  console.log("\n\n\n");
   const entityObservationList: Observation[] = [];
 
   for (let i = 0; i < flexpaObservationList.length; i++) {

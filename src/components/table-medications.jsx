@@ -81,8 +81,6 @@ const MedicationsTable = ({ meds, handleSaveNote }) => {
     return (
       <div className="w-full  ">
         {meds.map((e, i) => {
-          console.log("E is");
-          console.log(e);
           const n = e.derivedMedicationHistory.length;
           const lastDosage = e?.derivedMedicationHistory?.[n - 1]?.dosage;
 

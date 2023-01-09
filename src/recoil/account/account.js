@@ -144,9 +144,11 @@ export const getAccountSettingsCallback =
   async () => {
     try {
       set(isAccountLoadingState, true);
+
       const account = await getAccountSettings();
       set(accountSettingsState, account);
     } catch (e) {
+      console.log("ERROR IS");
       console.log(e);
     } finally {
       set(isAccountLoadingState, false);

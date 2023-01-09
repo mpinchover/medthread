@@ -92,7 +92,7 @@ export const getAllergyIntolerance = async (accessToken: string) => {
 export const getConditions = async (accessToken: string) => {
   const entries = [];
   let link = "https://api.flexpa.com/fhir/Condition";
-  console.log("CONDITIONS");
+
   while (link) {
     const res = await axios.get(link, {
       headers: {

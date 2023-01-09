@@ -7,6 +7,7 @@ export const getClaimsDataByUserUid = async () => {
   const authUser = JSON.parse(localStorage.getItem("med_thread_auth_user"));
   const { idToken } = authUser;
 
+  console.log("GETTING CLAIMS DATA");
   const res = await axios({
     method: "get",
     url: `${config.baseUrl}/get-claims-data-by-user-uid`,
@@ -14,5 +15,6 @@ export const getClaimsDataByUserUid = async () => {
       Authorization: `Bearer ${idToken}`,
     },
   });
+  console.log("GOT CLAIMS DATA");
   return res?.data?.claimsData;
 };

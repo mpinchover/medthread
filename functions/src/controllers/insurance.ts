@@ -68,6 +68,49 @@ export const getClaimsDataByUserUid = async (
   ]);
   const claimsData = extractClaimsResultsFromPromises(claimsResults);
 
+  // sort everything
+  claimsData.allergyIntolerance = claimsData.allergyIntolerance.sort((a, b) => {
+    if (!b.recordedDate && a.recordedDate) return -1;
+    if (!a.recordedDate && b.recordedDate) return 1;
+    if (!a.recordedDate && !b.recordedDate) return 0;
+    return (
+      new Date(b.recordedDate).valueOf() - new Date(a.recordedDate).valueOf()
+    );
+  });
+  claimsData.immunization = claimsData.immunization.sort((a, b) => {
+    if (!b.occurenceDateTime && a.occurenceDateTime) return -1;
+    if (!a.occurenceDateTime && b.occurenceDateTime) return 1;
+    if (!a.occurenceDateTime && !b.occurenceDateTime) return 0;
+    return (
+      new Date(b.occurenceDateTime).valueOf() -
+      new Date(a.occurenceDateTime).valueOf()
+    );
+  });
+  claimsData.procedure = claimsData.procedure.sort((a, b) => {
+    if (!b.performedDateTime && a.performedDateTime) return -1;
+    if (!a.performedDateTime && b.performedDateTime) return 1;
+    if (!a.performedDateTime && !b.performedDateTime) return 0;
+    return (
+      new Date(b.performedDateTime).valueOf() -
+      new Date(a.performedDateTime).valueOf()
+    );
+  });
+
+  // TODO – sort medications by last med prescribed
+
+  claimsData.encounter = claimsData.encounter.sort((a, b) => {
+    if (!b.start && a.start) return -1;
+    if (!a.start && b.start) return 1;
+    if (!a.start && !b.start) return 0;
+    return new Date(b.start).valueOf() - new Date(a.start).valueOf();
+  });
+  claimsData.observation = claimsData.observation.sort((a, b) => {
+    if (!b.issued && a.issued) return -1;
+    if (!a.issued && b.issued) return 1;
+    if (!a.issued && !b.issued) return 0;
+    return new Date(b.issued).valueOf() - new Date(a.issued).valueOf();
+  });
+
   const derivedMedications = deriveClaimsMedications(
     claimsData.medicationRequest,
     claimsData.medicationDispense
@@ -348,18 +391,33 @@ export const deriveClaimsMedications = (
 
     // sort the request, dispense into descending order by date
     medContext.request = medContext.request.sort(
-      (a: MedicationRequest, b: MedicationRequest) =>
-        new Date(b.authoredOn).valueOf() - new Date(a.authoredOn).valueOf()
+      (a: MedicationRequest, b: MedicationRequest) => {
+        if (!b.authoredOn && a.authoredOn) return -1;
+        if (!a.authoredOn && b.authoredOn) return 1;
+        if (!a.authoredOn && !b.authoredOn) return 0;
+        return (
+          new Date(b.authoredOn).valueOf() - new Date(a.authoredOn).valueOf()
+        );
+      }
     );
     medContext.dispense = medContext.dispense.sort(
-      (a: MedicationDispense, b: MedicationDispense) =>
-        new Date(b.whenHandedOver).valueOf() -
-        new Date(a.whenHandedOver).valueOf()
+      (a: MedicationDispense, b: MedicationDispense) => {
+        if (!b.whenHandedOver && a.whenHandedOver) return -1;
+        if (!a.whenHandedOver && b.whenHandedOver) return 1;
+        if (!a.whenHandedOver && !b.whenHandedOver) return 0;
+        return (
+          new Date(b.whenHandedOver).valueOf() -
+          new Date(a.whenHandedOver).valueOf()
+        );
+      }
     );
 
-    medContext.derivedHistory = medContext.derivedHistory.sort(
-      (a, b) => new Date(b.date).valueOf() - new Date(a.date).valueOf()
-    );
+    medContext.derivedHistory = medContext.derivedHistory.sort((a, b) => {
+      if (!b.date && a.date) return -1;
+      if (!a.date && b.date) return 1;
+      if (!a.date && !b.date) return 0;
+      return new Date(b.date).valueOf() - new Date(a.date).valueOf();
+    });
 
     const derivedMedication: DerivedMedication = {
       request: medContext.request,

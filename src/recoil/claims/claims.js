@@ -134,7 +134,6 @@ export const getClaimsDataByUserUidCallback =
       }
 
       if (claimsData.derivedClaimsMedications) {
-        console.log(claimsData.derivedClaimsMedications);
         for (let i = 0; i < claimsData.derivedClaimsMedications.length; i++) {
           claimsData.derivedClaimsMedications[i].requestAndDispense =
             claimsData.derivedClaimsMedications[i].derivedHistory;

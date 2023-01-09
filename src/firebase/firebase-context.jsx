@@ -119,7 +119,6 @@ export const FirebaseProvider = ({ children }) => {
       setProfileAccount(hydratedUserProfile.account);
       // _setAuthorizedProfileState(authUser);
       setAuthorizedProfile(authUser);
-      getAccountSettings();
     });
 
     const removeIdTokenListener = onIdTokenChanged(auth, async (user) => {

@@ -152,6 +152,8 @@ export interface Encounter {
   userUid?: string;
   status?: string;
   start?: string;
+  end?: string;
+  code?: string;
 }
 
 export interface CareTeamParticipant {
