@@ -9,7 +9,7 @@ const TermsOfService = () => {
         </div>
       </section>
       <section className="mb-8">
-        <div className="text-xl font-bold mb-1">Data useage</div>
+        <div className="text-xl font-bold mb-1">Data usage</div>
         <div>
           MedThread primarily uses any data collected to create a full and
           complete patient history for providers to give the best quality

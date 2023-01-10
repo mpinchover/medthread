@@ -58,6 +58,7 @@ export const getClaimsDataByUserUid = async (
 ): Promise<ClaimsData> => {
   // check the userUid profile. If it's a provider then get all
   // get all claims data with the userUid
+  // TODO - make this into a filter for a single call
   const claimsResults = await Promise.allSettled([
     getClaimsConditionByUserUid(userUid),
     getClaimsProcedureByUserUid(userUid),
@@ -138,7 +139,23 @@ export const getClaimsProcedureByUserUid = async (userUid: string) => {
       const claimsValues = await insuranceRepo.getClaimsProcedureByUserUid(
         userUid
       );
+
+      console.log("PROCEDURES ARE");
+      console.log(claimsValues);
       res({ type: PROCEDURE, values: claimsValues });
+    } catch (e) {
+      rej(e);
+    }
+  });
+};
+
+export const getClaimsEncounterByUserUid = async (userUid: string) => {
+  return new Promise(async (res, rej) => {
+    try {
+      const claimsValues = await insuranceRepo.getClaimsEncounterByUserUid(
+        userUid
+      );
+      res({ type: ENCOUNTER, values: claimsValues });
     } catch (e) {
       rej(e);
     }
@@ -260,7 +277,7 @@ export const addHealthInsuranceProvider = async (
     throw e;
   }
 };
-
+// TODO – put this in a loop
 export const appendInsuranceAndUserUidToClaims = (
   claimsData: ClaimsData,
   insuranceProvider: InsuranceProvider
@@ -295,6 +312,16 @@ export const appendInsuranceAndUserUidToClaims = (
     providerUid,
     claimsData.immunization
   );
+
+  _appendInsuranceAndUseUidToClaims(userUid, providerUid, claimsData.encounter);
+
+  _appendInsuranceAndUseUidToClaims(
+    userUid,
+    providerUid,
+    claimsData.observation
+  );
+
+  _appendInsuranceAndUseUidToClaims(userUid, providerUid, claimsData.careTeam);
 };
 
 export const _appendInsuranceAndUseUidToClaims = (
@@ -311,7 +338,7 @@ export const _appendInsuranceAndUseUidToClaims = (
 // TODO - move to mappers
 export const medRequestToDerivedMedHistory = (medReq: MedicationRequest) => {
   const derivedMedHistory: DerivedMedicationHistory = {};
-  derivedMedHistory.date = medReq.authoredOn;
+  derivedMedHistory.date = medReq.primaryDate;
   derivedMedHistory.type = "REQUEST";
 
   const doseAndRateQuantityUnit = medReq.doseAndRateQuantityUnit
@@ -328,7 +355,7 @@ export const medRequestToDerivedMedHistory = (medReq: MedicationRequest) => {
 // TODO - move to mappers
 export const medDispenseToDerivedMedHistory = (medDis: MedicationDispense) => {
   const derivedMedHistory: DerivedMedicationHistory = {};
-  derivedMedHistory.date = medDis.whenHandedOver;
+  derivedMedHistory.date = medDis.primaryDate;
   derivedMedHistory.type = "DISPENSE";
   derivedMedHistory.daysSupply = medDis.daysSupply;
 
@@ -392,22 +419,21 @@ export const deriveClaimsMedications = (
     // sort the request, dispense into descending order by date
     medContext.request = medContext.request.sort(
       (a: MedicationRequest, b: MedicationRequest) => {
-        if (!b.authoredOn && a.authoredOn) return -1;
-        if (!a.authoredOn && b.authoredOn) return 1;
-        if (!a.authoredOn && !b.authoredOn) return 0;
+        if (!b.primaryDate && a.primaryDate) return -1;
+        if (!a.primaryDate && b.primaryDate) return 1;
+        if (!a.primaryDate && !b.primaryDate) return 0;
         return (
-          new Date(b.authoredOn).valueOf() - new Date(a.authoredOn).valueOf()
+          new Date(b.primaryDate).valueOf() - new Date(a.primaryDate).valueOf()
         );
       }
     );
     medContext.dispense = medContext.dispense.sort(
       (a: MedicationDispense, b: MedicationDispense) => {
-        if (!b.whenHandedOver && a.whenHandedOver) return -1;
-        if (!a.whenHandedOver && b.whenHandedOver) return 1;
-        if (!a.whenHandedOver && !b.whenHandedOver) return 0;
+        if (!b.primaryDate && a.primaryDate) return -1;
+        if (!a.primaryDate && b.primaryDate) return 1;
+        if (!a.primaryDate && !b.primaryDate) return 0;
         return (
-          new Date(b.whenHandedOver).valueOf() -
-          new Date(a.whenHandedOver).valueOf()
+          new Date(b.primaryDate).valueOf() - new Date(a.primaryDate).valueOf()
         );
       }
     );
@@ -611,8 +637,18 @@ export const getEncounter = (accessToken: string) => {
     try {
       const flexpaEncounters = await flexpaGateway.getEncounter(accessToken);
 
-      const entityEncounterList =
+      let entityEncounterList =
         fromFlexpaToEntityEncounterList(flexpaEncounters);
+
+      entityEncounterList = entityEncounterList.sort((a, b) => {
+        if (!b.primaryDate && a.primaryDate) return -1;
+        if (!a.primaryDate && b.primaryDate) return 1;
+        if (!a.primaryDate && !b.primaryDate) return 0;
+        return (
+          new Date(b.primaryDate).valueOf() - new Date(a.primaryDate).valueOf()
+        );
+      });
+
       res({ type: ENCOUNTER, values: entityEncounterList });
     } catch (e) {
       console.log(e);
@@ -642,17 +678,26 @@ export const getMedicationDispense = (
   });
 };
 
-export const getAllergyIntolerance = (
-  accessToken: string,
-  insuranceProviderUid: string
-) => {
+export const getAllergyIntolerance = (accessToken: string) => {
   return new Promise(async (res, rej) => {
     try {
       const flexpaAllergyIntolerance =
         await flexpaGateway.getAllergyIntolerance(accessToken);
 
-      const allergyIntoleranceEntityList =
+      let allergyIntoleranceEntityList =
         fromFlexpaToEntityAllergyIntoleranceList(flexpaAllergyIntolerance);
+
+      allergyIntoleranceEntityList = allergyIntoleranceEntityList.sort(
+        (a, b) => {
+          if (!b.primaryDate && a.primaryDate) return -1;
+          if (!a.primaryDate && b.primaryDate) return 1;
+          if (!a.primaryDate && !b.primaryDate) return 0;
+          return (
+            new Date(b.primaryDate).valueOf() -
+            new Date(a.primaryDate).valueOf()
+          );
+        }
+      );
 
       // map it
       res({ type: ALLERGY_INTOLERANCE, values: allergyIntoleranceEntityList });
@@ -691,9 +736,18 @@ export const getImmunizations = (
         accessToken
       );
 
-      const immunizationsEntityList = fromFlexpaToEntityImmunizationList(
+      let immunizationsEntityList = fromFlexpaToEntityImmunizationList(
         flexpaImmunizationList
       );
+
+      immunizationsEntityList = immunizationsEntityList.sort((a, b) => {
+        if (!b.primaryDate && a.primaryDate) return -1;
+        if (!a.primaryDate && b.primaryDate) return 1;
+        if (!a.primaryDate && !b.primaryDate) return 0;
+        return (
+          new Date(b.primaryDate).valueOf() - new Date(a.primaryDate).valueOf()
+        );
+      });
 
       res({ type: IMMUNIZATION, values: immunizationsEntityList });
     } catch (e) {
@@ -703,18 +757,24 @@ export const getImmunizations = (
   });
 };
 
-export const getProcedures = (
-  accessToken: string,
-  insuranceProviderUid: string
-) => {
+export const getProcedures = (accessToken: string) => {
   return new Promise(async (res, rej) => {
     try {
       const flexpaProceduresList = await flexpaGateway.getProcedures(
         accessToken
       );
 
-      const proceduresEntityList =
+      let proceduresEntityList =
         fromFlexpaToEntityProcedureList(flexpaProceduresList);
+
+      proceduresEntityList = proceduresEntityList.sort((a, b) => {
+        if (!b.primaryDate && a.primaryDate) return -1;
+        if (!a.primaryDate && b.primaryDate) return 1;
+        if (!a.primaryDate && !b.primaryDate) return 0;
+        return (
+          new Date(b.primaryDate).valueOf() - new Date(a.primaryDate).valueOf()
+        );
+      });
 
       res({ type: PROCEDURE, values: proceduresEntityList });
     } catch (e) {
@@ -752,9 +812,18 @@ export const getObservation = (accessToken: string) => {
         accessToken
       );
 
-      const observationEntityList = fromFlexpaToEntityObservationList(
+      let observationEntityList = fromFlexpaToEntityObservationList(
         flexpaObservationList
       );
+
+      observationEntityList = observationEntityList.sort((a, b) => {
+        if (!b.primaryDate && a.primaryDate) return -1;
+        if (!a.primaryDate && b.primaryDate) return 1;
+        if (!a.primaryDate && !b.primaryDate) return 0;
+        return (
+          new Date(b.primaryDate).valueOf() - new Date(a.primaryDate).valueOf()
+        );
+      });
 
       res({ type: OBSERVATION, values: observationEntityList });
     } catch (e) {
@@ -762,4 +831,35 @@ export const getObservation = (accessToken: string) => {
       rej(e);
     }
   });
+};
+
+export const getPatientTimelineData = async (userUid: string) => {
+  const claimsResults = await Promise.allSettled([
+    getClaimsProcedureByUserUid(userUid),
+    getClaimsEncounterByUserUid(userUid),
+  ]);
+  const claimsData = extractClaimsResultsFromPromises(claimsResults);
+
+  claimsData.procedure = claimsData.procedure.sort((a, b) => {
+    if (!b.primaryDate && a.primaryDate) return -1;
+    if (!a.primaryDate && b.primaryDate) return 1;
+    if (!a.primaryDate && !b.primaryDate) return 0;
+    return (
+      new Date(b.primaryDate).valueOf() - new Date(a.primaryDate).valueOf()
+    );
+  });
+
+  claimsData.encounter = claimsData.encounter.sort((a, b) => {
+    if (!b.primaryDate && a.primaryDate) return -1;
+    if (!a.primaryDate && b.primaryDate) return 1;
+    if (!a.primaryDate && !b.primaryDate) return 0;
+    return (
+      new Date(b.primaryDate).valueOf() - new Date(a.primaryDate).valueOf()
+    );
+  });
+
+  return {
+    procedures: claimsData.procedure,
+    encounters: claimsData.encounter,
+  };
 };

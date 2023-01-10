@@ -58,6 +58,7 @@ export const fromFlexpaToEntityMedicationRequest = (
 
   let authoredOn = params.resource?.authoredOn;
   if (authoredOn) medicationRequest.authoredOn = authoredOn;
+  if (authoredOn) medicationRequest.primaryDate = authoredOn;
 
   let requesterIdentifier = params.resource?.requester?.identifier?.value;
   if (requesterIdentifier)
@@ -132,6 +133,12 @@ export const fromFlexpaToEntityAllergyIntolerance = (
   let recordedDate = params.resource?.recordedDate;
   if (recordedDate) allergyIntolerance.recordedDate = recordedDate;
 
+  if (onsetDateTime) {
+    allergyIntolerance.primaryDate = onsetDateTime;
+  } else if (recordedDate) {
+    allergyIntolerance.primaryDate = recordedDate;
+  }
+
   let recorder = params.resource?.recorder?.display;
   if (recorder) allergyIntolerance.recorder = recorder;
 
@@ -169,6 +176,7 @@ export const fromFlexpaToEntityConditionList = (flexpaConditionList: any[]) => {
   return entityConditionList;
 };
 
+// TODO -  conditions can have multiple codes
 export const fromFlexpaToEntityCondition = (params: any): Condition => {
   const condition: Condition = {
     source: CLAIMS,
@@ -231,6 +239,7 @@ export const fromFlexpaToEntityProcedure = (params: any): Procedure => {
 
   let performedDateTime = params.resource?.performedDateTime;
   if (performedDateTime) procedure.performedDateTime = performedDateTime;
+  if (performedDateTime) procedure.primaryDate = performedDateTime;
 
   let recorder = params.resource?.recorder?.display;
   if (recorder) procedure.recorder = recorder;
@@ -294,6 +303,7 @@ export const fromFlexpaToEntityImmunization = (
 
   const occurenceDateTime = params.occurenceDateTime;
   if (occurenceDateTime) immunization.occurenceDateTime = occurenceDateTime;
+  if (occurenceDateTime) immunization.primaryDate = occurenceDateTime;
 
   return immunization;
 };
@@ -351,6 +361,7 @@ export const fromFlexpaToEntityMedicationDispense = (
 
   let whenHandedOver = params.resource?.whenHandedOver;
   if (whenHandedOver) medicationDispense.whenHandedOver = whenHandedOver;
+  if (whenHandedOver) medicationDispense.primaryDate = whenHandedOver;
 
   return medicationDispense;
 };
@@ -369,26 +380,27 @@ export const fromFlexpaToEntityEncounterList = (
 };
 
 export const fromFlexpaToEntityEncounter = (params: any) => {
-  console.log("ENCOUNTER");
-  console.log(params);
   const encounter: Encounter = {
     source: CLAIMS,
     flexpaResourceId: params.flexpaResourceId,
   };
 
-  if (params.status) {
-    encounter.status = params.status;
+  if (params.resource?.status) {
+    encounter.status = params.resource.status;
   }
 
-  if (params.period?.start) {
-    encounter.start = params.period?.start;
+  if (params.resource?.period?.start) {
+    encounter.start = params.resource.period?.start;
   }
-  if (params.period?.end) {
-    encounter.end = params.period?.end;
+  if (params.resource?.period?.start) {
+    encounter.primaryDate = params.resource?.period?.start;
+  }
+  if (params.resource?.period?.end) {
+    encounter.end = params.resource.period?.end;
   }
 
-  if (params.class?.code) {
-    encounter.code = params.class?.code;
+  if (params.resource?.class?.code) {
+    encounter.code = params.resource.class?.code;
   }
 
   return encounter;
@@ -413,11 +425,11 @@ export const fromFlexpaToEntityCareTeam = (params: any) => {
     flexpaResourceId: params.flexpaResourceId,
   };
 
-  if (params.status) careTeam.status = params.status;
+  if (params.resource?.status) careTeam.status = params.resource?.status;
 
-  if (params.participants) {
+  if (params.resource?.participants) {
     careTeam.participants = fromFlexpaToEntityCareTeamParticipants(
-      params.participants
+      params.reousrce?.participants
     );
   }
   return careTeam;
@@ -479,15 +491,28 @@ export const fromFlexpaToEntityObservation = (params: any) => {
     flexpaResourceId: params.flexpaResourceId,
   };
 
-  if (params.status) observation.status = params.status;
+  if (params.resource?.effectiveDateTime) {
+    observation.effectiveDateTime = params.resource?.effectiveDateTime;
+  }
+  if (params.resource?.issued) {
+    observation.issued = params.resource?.issued;
+  }
 
-  const category = params.category?.[0]?.coding?.[0]?.code;
+  if (observation.effectiveDateTime) {
+    observation.primaryDate = observation.effectiveDateTime;
+  } else {
+    observation.primaryDate = observation.issued;
+  }
+
+  if (params.resource?.status) observation.status = params.resource.status;
+
+  const category = params.resource?.category?.[0]?.coding?.[0]?.code;
   if (category) observation.category = category;
 
-  const code = params.code?.coding?.[0]?.code;
+  const code = params.resource?.code?.coding?.[0]?.code;
   if (code) observation.code = code;
 
-  const codeDisplay = params.code?.coding?.[0]?.display;
+  const codeDisplay = params.resource?.code?.coding?.[0]?.display;
   if (codeDisplay) observation.codeDisplay = codeDisplay;
 
   return observation;

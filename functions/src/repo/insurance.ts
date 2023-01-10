@@ -309,6 +309,26 @@ export const getClaimsProcedureByUserUid = async (
   return res;
 };
 
+export const getClaimsEncounterByUserUid = async (
+  userUid: string
+): Promise<Procedure[]> => {
+  const db = admin.firestore();
+
+  const encounterRef = db.collection(encounterCollection);
+  const snapshot = await encounterRef.where("userUid", "==", userUid).get();
+
+  if (snapshot.empty) return [];
+
+  const res: Encounter[] = snapshot.docs.map((doc) => {
+    const data: any = doc.data();
+    return {
+      ...data,
+      uid: doc.id,
+    };
+  });
+  return res;
+};
+
 export const getClaimsConditionByUserUid = async (
   userUid: string
 ): Promise<Condition[]> => {

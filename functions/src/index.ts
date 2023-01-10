@@ -16,6 +16,7 @@ import { sendMedicationsToProvider } from "./send-medications";
 import { getClaimsDataByUserUid } from "./handlers/get-claims-data-by-user-uid";
 import { saveNote } from "./repo/insurance";
 import { getClaimsDataByUserUidForProvider } from "./handlers/get-claims-data-by-user-uid-for-provider";
+import { getPatientTimelineData } from "./handlers/get-patient-timeline-data";
 // import { getMedicationsByPatientUid } from "./get-medications-by-patient-uid";
 const app = express();
 
@@ -49,21 +50,18 @@ const validateFirebaseIdToken = async (req: any, res: any, next: any) => {
   }
 };
 
-// app.get("/hello", (req, res) => {
-//   // @ts-ignore
-//   res.send({ value: process.env.TEST_VALUE });
-// });
-
-// app.post(
-//   "/get-medications-by-patient-uid"
-//   // validateFirebaseIdToken,
-//   // getMedicationsByPatientUid
-// );
 app.post(
   "/add-health-insurance-provider",
   validateFirebaseIdToken,
   addHealthInsuranceProvider
 );
+
+app.get(
+  "/get-patient-timeline-data",
+  validateFirebaseIdToken,
+  getPatientTimelineData
+);
+
 app.get(
   "/get-claims-data-by-user-uid",
   validateFirebaseIdToken,

@@ -65,6 +65,7 @@ export interface MedicationRequest {
   flexpaResourceId?: string;
   insuranceProviderUid?: string;
   userUid?: string;
+  primaryDate?: string;
 }
 
 export interface MedicationDispense {
@@ -82,6 +83,7 @@ export interface MedicationDispense {
   intent?: string;
   source?: string;
   userUid?: string;
+  primaryDate?: string;
 }
 
 export interface AllergyIntolerance {
@@ -101,6 +103,7 @@ export interface AllergyIntolerance {
   recorderIdentifier?: string;
   asserterIdentifier?: string;
   userUid?: string;
+  primaryDate?: string;
 }
 
 export interface Condition {
@@ -114,6 +117,7 @@ export interface Condition {
   code?: string;
   codeDisplay?: string; // the condition
   userUid?: string;
+  primaryDate?: string;
 }
 
 export interface Immunization {
@@ -126,6 +130,7 @@ export interface Immunization {
   codeDisplay?: string; // the vaccine display
   occurenceDateTime?: string;
   userUid?: string;
+  primaryDate?: string;
 }
 
 export interface Procedure {
@@ -142,6 +147,7 @@ export interface Procedure {
   performer?: string;
   performerIdentifier?: string;
   userUid?: string;
+  primaryDate?: string;
 }
 
 export interface Encounter {
@@ -154,6 +160,7 @@ export interface Encounter {
   start?: string;
   end?: string;
   code?: string;
+  primaryDate?: string;
 }
 
 export interface CareTeamParticipant {
@@ -161,6 +168,7 @@ export interface CareTeamParticipant {
   roleCodeDisplay?: string;
   memberCode?: string;
   memberCodeDisplay?: string;
+  primaryDate?: string;
 }
 
 export interface CareTeam {
@@ -197,6 +205,7 @@ export interface Observation {
   issued?: string;
   userUid?: string;
   flexpaResourceId?: string;
+  primaryDate?: string;
 }
 
 export interface Profile {

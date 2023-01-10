@@ -21,17 +21,14 @@ import PatientAuthorizationPage from "./components/patient-authorization-page";
 import PatientSignup from "./components/signup-patient";
 import ForgotPassword from "./components/forgot-password";
 import Settings from "./components/settings";
-import PatientMedicationList from "./components/medication-list-patient";
-import UpdatePassword from "./components/settings-password-update";
+
 import { BrowserRouter as Router, Route, Link, Routes } from "react-router-dom";
-import SendMedications from "./components/send-medications";
 import MedicationListProvider from "./components/medication-list-provider";
 import { ToastContainer } from "react-toastify";
-import Home from "./components/home";
 import VerificationPage from "./components/verification-page";
-import { FirebaseContext } from "./firebase/firebase-context";
 import MedicationListPatient from "./components/medication-list-patient";
 import TermsOfService from "./components/terms-of-service";
+import PatientTimeline from "./components/patient-timeline";
 const ModalShadow = () => {
   // const { isModalOpen } = useContext(FirebaseContext);
   const modal = useRecoilValue(modalState);
@@ -92,6 +89,11 @@ function App() {
             <Route exact path="/patient-login" element={<PatientLogin />} />
             <Route exact path="/settings" element={<Settings />} />
             <Route exact path="/forgot-password" element={<ForgotPassword />} />
+            <Route
+              exact
+              path="/patient-timeline"
+              element={<PatientTimeline />}
+            />
             <Route exact path="/" element={<MedicationListPatient />} />
             <Route
               exact
