@@ -257,3 +257,45 @@ export interface Note {
   parentUid?: string; // what it's a note for
   // role?: string;
 }
+
+export interface TimelineEvent {
+  status?: string;
+  code?: string;
+  codeDisplay?: string; // prodcure
+  primaryDate?: string;
+  start?: string; // encounter
+  end?: string; // encounter
+  type?: string;
+}
+
+/*
+export interface Procedure {
+  uid?: string;
+  flexpaResourceId?: string;
+  insuranceProviderUid?: string;
+  source?: string;
+  status?: string;
+  code?: string;
+  codeDisplay?: string; // the procedure display
+  performedDateTime?: string;
+  recorder?: string;
+  recorderIdentifier?: string;
+  performer?: string;
+  performerIdentifier?: string;
+  userUid?: string;
+  primaryDate?: string;
+}
+
+export interface Encounter {
+  uid?: string;
+  flexpaResourceId?: string;
+  insuranceProviderUid?: string;
+  source?: string;
+  userUid?: string;
+  status?: string;
+  start?: string;
+  end?: string;
+  code?: string;
+  primaryDate?: string;
+}
+ */

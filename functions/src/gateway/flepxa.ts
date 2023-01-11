@@ -113,6 +113,30 @@ export const getConditions = async (accessToken: string) => {
   return entries;
 };
 
+export const getDiagnosticReport = async (accessToken: string) => {
+  const entries = [];
+  let link = "https://api.flexpa.com/fhir/DiagnosticReport";
+
+  while (link) {
+    const res = await axios.get(link, {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+        "accept-encoding": "*",
+      },
+    });
+
+    entries.push(...res.data.entry);
+    link = null;
+    res.data.link.forEach((linkItem: any) => {
+      if (linkItem.relation === "next") {
+        link = linkItem.url;
+      }
+    });
+  }
+
+  return entries;
+};
+
 export const getImmunizations = async (accessToken: string) => {
   const entries = [];
   let link = "https://api.flexpa.com/fhir/Immunization";
@@ -229,6 +253,98 @@ export const getEncounter = async (accessToken: string) => {
 export const getCareTeam = async (accessToken: string) => {
   const entries = [];
   let link = "https://api.flexpa.com/fhir/CareTeam";
+
+  while (link) {
+    const res = await axios.get(link, {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+        "accept-encoding": "*",
+      },
+    });
+    entries.push(...res.data.entry);
+    link = null;
+    res.data.link.forEach((linkItem: any) => {
+      if (linkItem.relation === "next") {
+        link = linkItem.url;
+      }
+    });
+  }
+
+  return entries;
+};
+
+export const getCarePlan = async (accessToken: string) => {
+  const entries = [];
+  let link = "https://api.flexpa.com/fhir/CarePlan";
+
+  while (link) {
+    const res = await axios.get(link, {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+        "accept-encoding": "*",
+      },
+    });
+    entries.push(...res.data.entry);
+    link = null;
+    res.data.link.forEach((linkItem: any) => {
+      if (linkItem.relation === "next") {
+        link = linkItem.url;
+      }
+    });
+  }
+
+  return entries;
+};
+
+export const getDocumentReference = async (accessToken: string) => {
+  const entries = [];
+  let link = "https://api.flexpa.com/fhir/DocumentReference";
+
+  while (link) {
+    const res = await axios.get(link, {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+        "accept-encoding": "*",
+      },
+    });
+    entries.push(...res.data.entry);
+    link = null;
+    res.data.link.forEach((linkItem: any) => {
+      if (linkItem.relation === "next") {
+        link = linkItem.url;
+      }
+    });
+  }
+
+  return entries;
+};
+
+export const getPractitioner = async (accessToken: string) => {
+  const entries = [];
+  let link = "https://api.flexpa.com/fhir/Practitioner";
+
+  while (link) {
+    const res = await axios.get(link, {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+        "accept-encoding": "*",
+      },
+    });
+    entries.push(...res.data.entry);
+    link = null;
+    res.data.link.forEach((linkItem: any) => {
+      if (linkItem.relation === "next") {
+        link = linkItem.url;
+      }
+    });
+  }
+
+  return entries;
+};
+
+export const getPractitionerRole = async (accessToken: string) => {
+  const entries = [];
+  let link = "https://api.flexpa.com/fhir/PractitionerRole";
 
   while (link) {
     const res = await axios.get(link, {

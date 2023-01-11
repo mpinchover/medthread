@@ -6,10 +6,26 @@ import {
   timelineDataState,
 } from "../recoil/timeline/timeline";
 
-const TimelineEvent = () => {
+const colorMap = {
+  PROCEDURE: {
+    bg: "bg-red-700",
+    text: "text-red-700",
+    border: "border-red-600",
+  },
+  ENCOUNTER: {
+    bg: "bg-blue-400",
+    text: "text-blue-700",
+    border: "border-blue-400",
+  },
+};
+
+const TimelineEvent = (e) => {
+  const color = colorMap[e?.event?.type];
+
+  console.log(e.event);
   return (
-    <div className="relative bg-blue-400 p-4 rounded-md text-white w-full">
-      <div>Jan 5th 2023</div>
+    <div className={`relative ${color?.bg} p-4 rounded-md text-white w-full`}>
+      <div className="font-bold">Jan 5th 2023</div>
       <div>Some event</div>
     </div>
   );
@@ -18,19 +34,21 @@ const TimelineEvent = () => {
 const Timeline = ({ timelineData }) => {
   return (
     <div className="space-y-6 w-full">
-      <TimelineEvent />
-      <TimelineEvent />
-      <TimelineEvent />
+      {timelineData.map((e, i) => {
+        return <TimelineEvent key={i} event={e} />;
+      })}
     </div>
   );
 };
 
-const FilterSidebarCheckboxOption = () => {
+const FilterSidebarCheckboxOption = ({ label, color }) => {
+  const coloring = colorMap[color];
+
   return (
     <div className="flex flex-row items-center justify-between">
-      <label>Ambulatory</label>
-      <button className="w-5 h-5 p-1 border-black border rounded-sm">
-        <div className="h-full w-full bg-black rounded-sm"></div>
+      <label className={`text-sm `}>{label}</label>
+      <button className={`w-5 h-5 p-[1px] border-gray-400 border rounded-sm`}>
+        <div className={`h-full w-full  rounded-sm`}></div>
       </button>
     </div>
   );
@@ -39,12 +57,14 @@ const FilterSidebarCheckboxOption = () => {
 const FilterSidebar = () => {
   return (
     <div className="w-60 border p-4">
-      <div>Timeline options</div>
+      <div className="font-bold mb-6">Timeline options</div>
       <div className="space-y-6">
-        <FilterSidebarCheckboxOption />
-        <FilterSidebarCheckboxOption />
-        <FilterSidebarCheckboxOption />
-        <FilterSidebarCheckboxOption />
+        <FilterSidebarCheckboxOption label={"Inpatient"} />
+        <FilterSidebarCheckboxOption label={"Ambulatory"} />
+        <FilterSidebarCheckboxOption label={"Observation"} />
+        <FilterSidebarCheckboxOption label={"Emergency"} />
+        <FilterSidebarCheckboxOption label={"Virtual"} />
+        <FilterSidebarCheckboxOption label={"Home visit"} />
       </div>
     </div>
   );

@@ -17,6 +17,9 @@ import {
   Note,
   MedContext,
   DerivedMedicationHistory,
+  TimelineEvent,
+  Procedure,
+  Encounter,
 } from "../types";
 import {
   fromFlexpaToEntityAllergyIntoleranceList,
@@ -862,4 +865,35 @@ export const getPatientTimelineData = async (userUid: string) => {
     procedures: claimsData.procedure,
     encounters: claimsData.encounter,
   };
+};
+
+export const encounterToTimelineEvent = (
+  encounter: Encounter
+): TimelineEvent => {
+  let codeDisplay = "";
+  // map the code display.
+  const timelineEvent: TimelineEvent = {
+    status: encounter.status,
+    code: encounter.code,
+    start: encounter.start,
+    end: encounter.end,
+    type: ENCOUNTER,
+    primaryDate: encounter.primaryDate,
+  };
+
+  return timelineEvent;
+};
+
+export const procedureToTimelineEvent = (
+  procedure: Procedure
+): TimelineEvent => {
+  const timelineEvent: TimelineEvent = {
+    status: procedure.status,
+    code: procedure.code,
+    codeDisplay: procedure.codeDisplay,
+    type: PROCEDURE,
+    primaryDate: procedure.primaryDate,
+  };
+
+  return timelineEvent;
 };
