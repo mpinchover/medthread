@@ -7,8 +7,6 @@ import {
 } from "../recoil/timeline/timeline";
 
 const TimelineEvent = (e) => {
-  console.log("EVENT IS");
-  console.log(e);
   return (
     <div className={`relative  p-4 rounded-md border w-full`}>
       <div className="font-bold">{e?.event?.primaryDate}</div>
@@ -32,6 +30,16 @@ const TimelineEvent = (e) => {
 };
 
 const Timeline = ({ timelineData }) => {
+  const isLoadingTimeline = useRecoilValue(isLoadingTimelineDataState);
+  if (isLoadingTimeline) {
+    return (
+      <div className=" w-full relative">
+        <div className="absolute top-1/2 right-1/2 -translate-y-1/2">
+          Generating timeline...
+        </div>
+      </div>
+    );
+  }
   return (
     <div className="space-y-6 w-full">
       {timelineData.map((e, i) => {
@@ -72,11 +80,7 @@ const FilterSidebarCheckboxOption = ({
   );
 };
 
-const FilterSidebar = ({
-  timelineFilter,
-  onSelectFilterInput,
-  handleReset,
-}) => {
+const FilterSidebar = ({ timelineFilter, onSelectFilterInput, onReset }) => {
   return (
     <div className="w-60 border p-4">
       <div className="font-bold mb-6">Timeline options</div>
@@ -124,7 +128,7 @@ const FilterSidebar = ({
           label={"Procedure"}
         />
         <button
-          onClick={handleReset}
+          onClick={onReset}
           className="p-3 px-6 font-bold border rounded-lg bg-black text-white"
         >
           Reset
@@ -157,6 +161,7 @@ const PatientTimeline = () => {
 
   const [timelineFilter, setTimelineFilter] = useState(idleFilterState);
 
+  // should refire the query to BE
   const onSelectFilterInput = (e) => {
     const filterInput = e.currentTarget.name;
 
@@ -174,9 +179,7 @@ const PatientTimeline = () => {
         const newEncounterTypes = timelineFilter.encounterTypes.filter(
           (x) => x !== filterInput
         );
-        console.log("GETTING HERE");
-        console.log("NEW ENCOUNTER TPYES");
-        console.log(newEncounterTypes);
+
         setTimelineFilter((prevState) => {
           return {
             ...prevState,
@@ -198,14 +201,18 @@ const PatientTimeline = () => {
     return encounterTypes.includes(filterInput);
   };
 
+  const onReset = () => {
+    setTimelineFilter(idleFilterState);
+  };
   useEffect(() => {
     getPatientTimelineData(timelineFilter);
-  }, []);
+  }, [timelineFilter]);
 
   return (
     <div className=" flex flex-row py-4  w-full text-md px-28 ">
       <section className="mr-4">
         <FilterSidebar
+          onReset={onReset}
           timelineFilter={timelineFilter}
           onSelectFilterInput={onSelectFilterInput}
         />

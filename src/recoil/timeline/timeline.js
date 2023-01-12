@@ -106,8 +106,8 @@ export const getPatientTimelineDataCallback =
     try {
       set(isLoadingTimelineDataState, true);
       let timeline = await getPatientTimeline(filter);
-      //   if (!timeline) timeline = {};
-      //   set(timelineDataState, timeline);
+      if (!timeline) timeline = {};
+      set(timelineDataState, timeline);
     } catch (e) {
       console.log(e);
     } finally {
