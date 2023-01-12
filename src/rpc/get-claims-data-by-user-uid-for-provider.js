@@ -6,6 +6,16 @@ export const getClaimsDataByUserUidForProvider = async (patientUid) => {
   const authUser = JSON.parse(localStorage.getItem("med_thread_auth_user"));
   const { idToken } = authUser;
 
+  const filter = {
+    encounter: true,
+    procedure: true,
+    medicationRequest: true,
+    medicationDispense: true,
+    immunization: true,
+    allergyIntolernace: true,
+    condition: true,
+  };
+
   const res = await axios({
     method: "post",
     url: `${config.baseUrl}/get-claims-data-by-user-uid-for-provider`,
@@ -14,6 +24,7 @@ export const getClaimsDataByUserUidForProvider = async (patientUid) => {
     },
     data: {
       patientUid,
+      filter,
     },
   });
   console.log("RES IS");

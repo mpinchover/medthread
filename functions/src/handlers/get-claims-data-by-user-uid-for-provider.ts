@@ -18,9 +18,10 @@ export const getClaimsDataByUserUidForProvider = async (req: any, res: any) => {
     if (!careProvider)
       throw new Error("care provider not found or not authorized");
 
-    const claimsData = await insuranceController.getClaimsDataByUserUid(
-      patientUid
-    );
+    const { filter } = body;
+    filter.userUid = patientUid;
+
+    const claimsData = await insuranceController.getClaimsDataByUserUid(filter);
     res.send({ claimsData });
   } catch (e) {
     console.log(e);

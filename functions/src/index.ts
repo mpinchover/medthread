@@ -16,7 +16,7 @@ import { sendMedicationsToProvider } from "./send-medications";
 import { getClaimsDataByUserUid } from "./handlers/get-claims-data-by-user-uid";
 import { saveNote } from "./repo/insurance";
 import { getClaimsDataByUserUidForProvider } from "./handlers/get-claims-data-by-user-uid-for-provider";
-import { getPatientTimelineData } from "./handlers/get-patient-timeline-data";
+import { getPatientTimelineData } from "./handlers/get-patient-timeline";
 // import { getMedicationsByPatientUid } from "./get-medications-by-patient-uid";
 const app = express();
 
@@ -56,13 +56,13 @@ app.post(
   addHealthInsuranceProvider
 );
 
-app.get(
+app.post(
   "/get-patient-timeline-data",
   validateFirebaseIdToken,
   getPatientTimelineData
 );
 
-app.get(
+app.post(
   "/get-claims-data-by-user-uid",
   validateFirebaseIdToken,
   getClaimsDataByUserUid

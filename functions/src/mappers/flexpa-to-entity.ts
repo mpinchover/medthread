@@ -17,6 +17,15 @@ const CLAIMS = "CLAIMS";
 const ALLERGY_INTOLERANCE = "ALLERGY_INTOLERANCE";
 const MEDICATION_REQUEST = "MEDICATION_REQUEST";
 
+export const setEncounterPrimaryDate = (encounter: Encounter) => {
+  if (encounter.start) encounter.primaryDate = encounter.start;
+};
+
+export const setProcedurePrimaryDate = (procedure: Procedure) => {
+  if (procedure.performedDateTime)
+    procedure.primaryDate = procedure.performedDateTime;
+};
+
 //medication requests
 export const fromFlexpaToEntityMedicationRequestList = (
   flexpaMedicationRequestList: any[]

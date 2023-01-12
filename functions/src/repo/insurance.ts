@@ -12,6 +12,7 @@ import {
   Encounter,
   Observation,
   CareTeam,
+  PatientRecordsQueryFilter,
 } from "../types";
 const medicationRequestCollection = "medicationRequest";
 const allergyIntoleranceCollection = "allergyIntolerance";
@@ -246,13 +247,13 @@ export const batchWriteAllergyIntolerances = async (
 };
 
 export const getClaimsMedicationRequestByUserUid = async (
-  userUid: string
+  filter: PatientRecordsQueryFilter
 ): Promise<MedicationRequest[]> => {
   const db = admin.firestore();
 
   const medicationsReqRef = db.collection(medicationRequestCollection);
   const snapshot = await medicationsReqRef
-    .where("userUid", "==", userUid)
+    .where("userUid", "==", filter.userUid)
     .get();
 
   if (snapshot.empty) return [];
@@ -268,13 +269,13 @@ export const getClaimsMedicationRequestByUserUid = async (
 };
 
 export const getClaimsMedicationDispenseByUserUid = async (
-  userUid: string
+  filter: PatientRecordsQueryFilter
 ): Promise<MedicationDispense[]> => {
   const db = admin.firestore();
 
   const medicationsDisRef = db.collection(medicationDispenseCollection);
   const snapshot = await medicationsDisRef
-    .where("userUid", "==", userUid)
+    .where("userUid", "==", filter.userUid)
     .get();
 
   if (snapshot.empty) return [];
@@ -290,12 +291,14 @@ export const getClaimsMedicationDispenseByUserUid = async (
 };
 
 export const getClaimsProcedureByUserUid = async (
-  userUid: string
+  filter: PatientRecordsQueryFilter
 ): Promise<Procedure[]> => {
   const db = admin.firestore();
 
   const procedureRef = db.collection(procedureCollection);
-  const snapshot = await procedureRef.where("userUid", "==", userUid).get();
+  const snapshot = await procedureRef
+    .where("userUid", "==", filter.userUid)
+    .get();
 
   if (snapshot.empty) return [];
 
@@ -310,12 +313,17 @@ export const getClaimsProcedureByUserUid = async (
 };
 
 export const getClaimsEncounterByUserUid = async (
-  userUid: string
+  filter: PatientRecordsQueryFilter
 ): Promise<Procedure[]> => {
   const db = admin.firestore();
 
   const encounterRef = db.collection(encounterCollection);
-  const snapshot = await encounterRef.where("userUid", "==", userUid).get();
+
+  let query = encounterRef.where("userUid", "==", filter.userUid);
+  if (filter.encounterTypes?.length > 0) {
+    query = query.where("code", "in", filter.encounterTypes);
+  }
+  const snapshot = await query.get();
 
   if (snapshot.empty) return [];
 
@@ -330,12 +338,14 @@ export const getClaimsEncounterByUserUid = async (
 };
 
 export const getClaimsConditionByUserUid = async (
-  userUid: string
+  filter: PatientRecordsQueryFilter
 ): Promise<Condition[]> => {
   const db = admin.firestore();
 
   const conditionRef = db.collection(conditionCollection);
-  const snapshot = await conditionRef.where("userUid", "==", userUid).get();
+  const snapshot = await conditionRef
+    .where("userUid", "==", filter.userUid)
+    .get();
 
   if (snapshot.empty) return [];
 
@@ -350,13 +360,13 @@ export const getClaimsConditionByUserUid = async (
 };
 
 export const getClaimsAllergyIntoleranceByUserUid = async (
-  userUid: string
+  filter: PatientRecordsQueryFilter
 ): Promise<AllergyIntolerance[]> => {
   const db = admin.firestore();
 
   const allergyIntoleranceRef = db.collection(allergyIntoleranceCollection);
   const snapshot = await allergyIntoleranceRef
-    .where("userUid", "==", userUid)
+    .where("userUid", "==", filter.userUid)
     .get();
 
   if (snapshot.empty) return [];
@@ -372,12 +382,14 @@ export const getClaimsAllergyIntoleranceByUserUid = async (
 };
 
 export const getClaimsImmunizationByUserUid = async (
-  userUid: string
+  filter: PatientRecordsQueryFilter
 ): Promise<Immunization[]> => {
   const db = admin.firestore();
 
   const immunizationRef = db.collection(immunizationCollection);
-  const snapshot = await immunizationRef.where("userUid", "==", userUid).get();
+  const snapshot = await immunizationRef
+    .where("userUid", "==", filter.userUid)
+    .get();
 
   if (snapshot.empty) return [];
 

@@ -1,5 +1,5 @@
 import { atom, selector } from "recoil";
-import { getPatientTimelineData } from "../../rpc/get-patient-timeline-data";
+import { getPatientTimeline } from "../../rpc/get-patient-timeline";
 
 const fakeTimelineData = [
   {
@@ -95,10 +95,17 @@ export const isLoadingTimelineDataState = atom({
 // https://terminology.hl7.org/ValueSet-encounter-class.html
 export const getPatientTimelineDataCallback =
   ({ set, snapshot }) =>
-  async () => {
+  async (timelineFilter) => {
+    const filter = {
+      encounter: timelineFilter.encounterTypes.length > 0,
+      encounterTypes: timelineFilter.encounterTypes,
+      procedure: timelineFilter.procedure,
+    };
+
+    // convert timeline filters to rpc filter
     try {
       set(isLoadingTimelineDataState, true);
-      let timeline = await getPatientTimelineData();
+      let timeline = await getPatientTimeline(filter);
       //   if (!timeline) timeline = {};
       //   set(timelineDataState, timeline);
     } catch (e) {
