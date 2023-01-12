@@ -65,7 +65,6 @@ export interface MedicationRequest {
   flexpaResourceId?: string;
   insuranceProviderUid?: string;
   userUid?: string;
-  primaryDate?: string;
 }
 
 export interface MedicationDispense {
@@ -83,7 +82,6 @@ export interface MedicationDispense {
   intent?: string;
   source?: string;
   userUid?: string;
-  primaryDate?: string;
 }
 
 export interface AllergyIntolerance {
@@ -103,7 +101,6 @@ export interface AllergyIntolerance {
   recorderIdentifier?: string;
   asserterIdentifier?: string;
   userUid?: string;
-  primaryDate?: string;
 }
 
 export interface Condition {
@@ -117,7 +114,6 @@ export interface Condition {
   code?: string;
   codeDisplay?: string; // the condition
   userUid?: string;
-  primaryDate?: string;
 }
 
 export interface Immunization {
@@ -130,7 +126,6 @@ export interface Immunization {
   codeDisplay?: string; // the vaccine display
   occurenceDateTime?: string;
   userUid?: string;
-  primaryDate?: string;
 }
 
 export interface Procedure {
@@ -147,7 +142,6 @@ export interface Procedure {
   performer?: string;
   performerIdentifier?: string;
   userUid?: string;
-  primaryDate?: string;
 }
 
 export interface Encounter {
@@ -160,7 +154,6 @@ export interface Encounter {
   start?: string;
   end?: string;
   code?: string;
-  primaryDate?: string;
 }
 
 export interface CareTeamParticipant {
@@ -168,7 +161,6 @@ export interface CareTeamParticipant {
   roleCodeDisplay?: string;
   memberCode?: string;
   memberCodeDisplay?: string;
-  primaryDate?: string;
 }
 
 export interface CareTeam {
@@ -192,6 +184,12 @@ export interface ClaimsData {
   encounter: Encounter[];
   observation: Observation[];
   careTeam: CareTeam[];
+  carePlan: any[];
+  documentReference: any[];
+  diagnosticReport: any[];
+  practitioner: any[];
+  practitionerRole: any[];
+  // patient: any[];
 }
 
 export interface Observation {
@@ -205,7 +203,6 @@ export interface Observation {
   issued?: string;
   userUid?: string;
   flexpaResourceId?: string;
-  primaryDate?: string;
 }
 
 export interface Profile {
@@ -258,44 +255,24 @@ export interface Note {
   // role?: string;
 }
 
+export interface PatientRecordsQueryFilter {
+  encounterFilter?: QueryEncounterFilter;
+  procedure?: boolean;
+  userUid?: string;
+}
+
+// if no code is provided querying all encounter types will give everything
+export interface QueryEncounterFilter {
+  encounterIMP?: boolean;
+  encounterAMB?: boolean;
+  encounterOBSENC?: boolean;
+  encounterEMER?: boolean;
+  encounterHH?: boolean;
+  encounterVR?: boolean;
+}
+
 export interface TimelineEvent {
-  status?: string;
-  code?: string;
-  codeDisplay?: string; // prodcure
   primaryDate?: string;
-  start?: string; // encounter
-  end?: string; // encounter
+  event?: any;
   type?: string;
 }
-
-/*
-export interface Procedure {
-  uid?: string;
-  flexpaResourceId?: string;
-  insuranceProviderUid?: string;
-  source?: string;
-  status?: string;
-  code?: string;
-  codeDisplay?: string; // the procedure display
-  performedDateTime?: string;
-  recorder?: string;
-  recorderIdentifier?: string;
-  performer?: string;
-  performerIdentifier?: string;
-  userUid?: string;
-  primaryDate?: string;
-}
-
-export interface Encounter {
-  uid?: string;
-  flexpaResourceId?: string;
-  insuranceProviderUid?: string;
-  source?: string;
-  userUid?: string;
-  status?: string;
-  start?: string;
-  end?: string;
-  code?: string;
-  primaryDate?: string;
-}
- */
