@@ -14,7 +14,7 @@ import { getMedicationsByUserUid } from "./get-medications-by-user-uid";
 import { removeMedication } from "./remove-medication";
 import { sendMedicationsToProvider } from "./send-medications";
 import { getClaimsDataByUserUid } from "./handlers/get-claims-data-by-user-uid";
-import { saveNote } from "./repo/insurance";
+
 import { getClaimsDataByUserUidForProvider } from "./handlers/get-claims-data-by-user-uid-for-provider";
 import { getPatientTimelineData } from "./handlers/get-patient-timeline";
 // import { getMedicationsByPatientUid } from "./get-medications-by-patient-uid";
@@ -92,8 +92,6 @@ app.get(
   validateFirebaseIdToken,
   getMedicationsByUserUid
 );
-
-app.post("/save-note", validateFirebaseIdToken, saveNote);
 
 const runtimeOpts = {
   timeoutSeconds: 300,

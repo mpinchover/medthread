@@ -10,6 +10,16 @@ import {
   CareTeamParticipant,
   Observation,
   CareTeam,
+  ExplanationOfBenefit,
+  EOBType,
+  EOBProvider,
+  EOBPrescription,
+  EOBItem,
+  EOBProductOrService,
+  EOBDagnosisCodeableConcept,
+  EOBDiagnosis,
+  EOBProcedure,
+  EOBBillablePeriod,
 } from "../types";
 
 const UNKNOWN = "UNKNOWN";
@@ -24,6 +34,187 @@ export const setEncounterPrimaryDate = (encounter: Encounter) => {
 export const setProcedurePrimaryDate = (procedure: Procedure) => {
   if (procedure.performedDateTime)
     procedure.primaryDate = procedure.performedDateTime;
+};
+
+export const fromFlexpaToEntityEOBList = (
+  flexpaEOBList: any[]
+): ExplanationOfBenefit[] => {
+  const entityEOBList: ExplanationOfBenefit[] = [];
+
+  for (let i = 0; i < flexpaEOBList.length; i++) {
+    const eob = fromFlexpaToEntityEOB(flexpaEOBList[i]);
+    entityEOBList.push(eob);
+  }
+
+  return entityEOBList;
+};
+
+// TODO – can you query provider by npi code
+export const fromFlexpaToEntityEOB = (params: any) => {
+  const eob: ExplanationOfBenefit = {
+    source: CLAIMS,
+    fhirReference: params.resource?.id,
+    jsonResponse: JSON.stringify(params),
+    status: params.resource?.status,
+    type: fromFlexpaToEntityEOBType(params.resource?.type?.coding),
+    use: params.resource?.use,
+    created: params.resource?.created,
+    insurer: params.resource?.insurer?.display,
+    provider: fromFlexpaToEntityEOBProvider(params.resource?.provider),
+    prescription: fromFlexpaToEntityEOBPrescription(
+      params.resource?.prescription
+    ),
+    facilityDisplay: params.resource?.facility?.display,
+    outcome: params.resource?.outcome,
+    items: fromFlexpaToEntityItems(params.resource?.item),
+    diagnosis: fromFlexpaToEntityDiagnosis(params.resource?.diagnosis),
+    procedure: fromFlexpaToEntityEOBProcedure(params.resource?.procedure),
+    billablePeriod: fromFlexpaToEntityEOBBillablePeriod(
+      params.resource?.billablePeriod
+    ),
+  };
+
+  if (eob.billablePeriod?.start) {
+    eob.primaryDate = eob.billablePeriod.start;
+  } else if (eob.created) {
+    eob.primaryDate = eob.created;
+  }
+
+  return eob;
+};
+
+export const fromFlexpaToEntityEOBBillablePeriod = (
+  billablePeriod: any
+): EOBBillablePeriod => {
+  if (!billablePeriod) return null;
+  const period: EOBBillablePeriod = {
+    start: billablePeriod.start,
+    end: billablePeriod.end,
+  };
+  return period;
+};
+
+export const fromFlexpaToEntityEOBProcedure = (
+  procedure: any
+): EOBProcedure[] => {
+  if (!procedure) return null;
+
+  const eobProcedures: EOBProcedure[] = [];
+  procedure.forEach((p: any) => {
+    const eobProcedure: EOBProcedure = {
+      sequence: p.sequence,
+      date: p.date,
+      display: p.procedureReference?.display,
+      reference: p.procedureReference?.reference,
+    };
+    eobProcedures.push(eobProcedure);
+  });
+  return eobProcedures;
+};
+
+export const fromFlexpaToEntityDiagnosis = (
+  diagnosisList: any
+): EOBDiagnosis[] => {
+  if (!diagnosisList) return null;
+
+  const entityDiagnosisItems: EOBDiagnosis[] = [];
+  // for now just get the fisrst coded object
+  diagnosisList.forEach((diagnosis: any) => {
+    const eobDiagnosis: EOBDiagnosis = {
+      sequence: diagnosis.sequence,
+      codeableConcept: fromFlexpaToEntityDiagnosisCodableConcept(
+        diagnosis.diagnosisCodeableConcept
+      ),
+    };
+    entityDiagnosisItems.push(eobDiagnosis);
+  });
+
+  return entityDiagnosisItems;
+};
+
+export const fromFlexpaToEntityDiagnosisCodableConcept = (
+  diagnosisCodeableConcept: any
+): EOBDagnosisCodeableConcept => {
+  if (!diagnosisCodeableConcept) return null;
+
+  const codeableConcept: EOBDagnosisCodeableConcept = {
+    codeSystem: diagnosisCodeableConcept.coding?.[0].system,
+    code: diagnosisCodeableConcept.coding?.[0]?.code,
+    display: diagnosisCodeableConcept.coding?.[0]?.display,
+  };
+
+  return codeableConcept;
+};
+
+export const fromFlexpaToEntityItems = (items: any): EOBItem[] => {
+  if (!items) return null;
+
+  const eobItems: EOBItem[] = [];
+  items.forEach((item: any) => {
+    const eobItem: EOBItem = {
+      sequence: item.sequence,
+      productOrService: fromFlexpaToEntityProductOrService(
+        item.productOrService.coding
+      ),
+    };
+    eobItems.push(eobItem);
+  });
+  return eobItems;
+};
+
+export const fromFlexpaToEntityProductOrService = (
+  coding: any
+): EOBProductOrService[] => {
+  if (!coding) return null;
+
+  const entityEOBProductOrService: EOBProductOrService[] = [];
+  coding.forEach((code: any) => {
+    const pos: EOBProductOrService = {
+      system: code.system,
+      code: code.code,
+      codeDisplay: code.display,
+    };
+    entityEOBProductOrService.push(pos);
+  });
+  return entityEOBProductOrService;
+};
+
+export const fromFlexpaToEntityEOBPrescription = (
+  params: any
+): EOBPrescription => {
+  if (!params) return null;
+
+  // TODO add system
+  const eobPrescription: EOBPrescription = {
+    ndcCode: params.identifier?.value,
+    display: params.display,
+  };
+  return eobPrescription;
+};
+
+export const fromFlexpaToEntityEOBProvider = (params: any): EOBProvider => {
+  if (!params) return null;
+
+  const entityEOBProvider: EOBProvider = {
+    npiCode: params.identifier?.value,
+    display: params.display,
+  };
+  return entityEOBProvider;
+};
+
+export const fromFlexpaToEntityEOBType = (params: any): EOBType[] => {
+  if (!params) return null;
+
+  const eobTypes: EOBType[] = [];
+  params.forEach((code: any) => {
+    const eobType: EOBType = {
+      code: code?.code,
+      display: code?.display,
+    };
+    eobTypes.push(eobType);
+  });
+
+  return eobTypes;
 };
 
 //medication requests

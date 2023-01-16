@@ -13,6 +13,7 @@ import {
   Observation,
   CareTeam,
   PatientRecordsQueryFilter,
+  ExplanationOfBenefit,
 } from "../types";
 const medicationRequestCollection = "medicationRequest";
 const allergyIntoleranceCollection = "allergyIntolerance";
@@ -24,6 +25,7 @@ const insuranceProvidersCollection = "insuranceProviders";
 const encounterCollection = "encounters";
 const careTeamCollection = "careTeams";
 const observationCollection = "observations";
+const explanationOfBenefitCollection = "explanationOfBenefit";
 
 export const addInsuranceProviderForPatient = async (
   params: InsuranceProvider
@@ -129,6 +131,15 @@ export const batchWriteClaimsData = async (
   try {
     const db = admin.firestore();
     const batch = db.batch();
+
+    for (let i = 0; i < claimsDataToWrite.explanationOfBenefit.length; i++) {
+      const doc: ExplanationOfBenefit =
+        claimsDataToWrite.explanationOfBenefit[i];
+      const docRef = db.collection(explanationOfBenefitCollection).doc();
+      doc.uid = docRef.id;
+      batch.set(docRef, doc);
+      claimsDataToWrite.explanationOfBenefit[i] = doc;
+    }
 
     for (let i = 0; i < claimsDataToWrite.medicationRequest.length; i++) {
       const doc: MedicationRequest = claimsDataToWrite.medicationRequest[i];

@@ -192,6 +192,7 @@ export interface ClaimsData {
   encounter: Encounter[];
   observation: Observation[];
   careTeam: CareTeam[];
+  explanationOfBenefit: ExplanationOfBenefit[];
   // carePlan: any[];
   // documentReference: any[];
   // diagnosticReport: any[];
@@ -280,4 +281,82 @@ export interface TimelineEvent {
   primaryDate?: string;
   event?: any;
   type?: string;
+}
+
+// TODO
+// use npi code api?
+// https://clinicaltables.nlm.nih.gov/apidoc/npi_org/v3/doc.html
+export interface ExplanationOfBenefit {
+  uid?: string;
+  userUid?: string;
+  source?: string;
+  jsonResponse?: string;
+  fhirReference?: string;
+  status?: string;
+  type?: EOBType[];
+  use?: string;
+  patientReference?: string;
+  insurer?: string;
+  provider?: EOBProvider;
+  prescription?: EOBPrescription;
+  facilityDisplay?: string;
+  outcome?: string;
+  items?: EOBItem[];
+  billablePeriod?: EOBBillablePeriod;
+  created?: string;
+  diagnosis?: EOBDiagnosis[];
+  procedure?: EOBProcedure[];
+  primaryDate?: string;
+}
+
+export interface EOBItem {
+  sequence?: number;
+  productOrService: EOBProductOrService[];
+}
+
+export interface EOBType {
+  code?: string;
+  display?: string;
+}
+
+export interface EOBProvider {
+  npiCode?: string;
+  display?: string; // name
+}
+
+export interface EOBPrescription {
+  ndcCode?: string;
+  display?: string;
+}
+
+export interface EOBBillablePeriod {
+  start?: string;
+  end?: string;
+}
+
+export interface EOBDiagnosis {
+  sequence: number;
+  codeableConcept: EOBDagnosisCodeableConcept;
+}
+
+// loop through teh cdes
+export interface EOBDagnosisCodeableConcept {
+  codeSystem?: string;
+  code?: string;
+  codeType?: string; // here put ICD or whatever
+  display?: string; // TODO – check to make sure the icd code is there
+}
+
+export interface EOBProcedure {
+  sequence?: number;
+  date?: string;
+  reference?: string;
+  display?: string;
+}
+
+// TODO – add code system
+export interface EOBProductOrService {
+  code?: string;
+  codeDisplay?: string;
+  system?: string;
 }

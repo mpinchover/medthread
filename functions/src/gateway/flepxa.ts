@@ -56,6 +56,46 @@ export const getMetadata = async (
   return metadata;
 };
 
+export const getFHIRResourceByReference = async (
+  accessToken: string,
+  link: string
+) => {
+  const res = await axios.get(`https://api.flexpa.com/fhir/${link}`, {
+    headers: {
+      Authorization: `Bearer ${accessToken}`,
+      "accept-encoding": "*",
+    },
+  });
+  return res.data;
+};
+
+// TODO – short circuit in case of inifnite loop
+export const getExplanationOfBenefit = async (accessToken: string) => {
+  const entries = [];
+
+  let link =
+    "https://api.flexpa.com/fhir/ExplanationOfBenefit?patient=$PATIENT_ID";
+
+  while (link) {
+    const res = await axios.get(link, {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+        "Content-Type": "application/json",
+        "accept-encoding": "*",
+      },
+    });
+    entries.push(...res.data.entry);
+    link = null;
+    res.data.link.forEach((linkItem: any) => {
+      if (linkItem.relation === "next") {
+        link = linkItem.url;
+      }
+    });
+  }
+
+  return entries;
+};
+
 export const getMedicationByAccessToken = async (accessToken: string) => {
   const res = await axios.get("https://api.flexpa.com/fhir/MedicationRequest", {
     headers: {

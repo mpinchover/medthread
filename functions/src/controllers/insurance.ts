@@ -21,6 +21,7 @@ import {
   Procedure,
   Encounter,
   PatientRecordsQueryFilter,
+  ExplanationOfBenefit,
 } from "../types";
 import {
   fromFlexpaToEntityAllergyIntoleranceList,
@@ -35,6 +36,8 @@ import {
   fromFlexpaToEntityCareTeamList,
   setEncounterPrimaryDate,
   setProcedurePrimaryDate,
+  fromFlexpaToEntityEOBList,
+  fromFlexpaToEntityProcedure,
 } from "../mappers/flexpa-to-entity";
 import { promises } from "nodemailer/lib/xoauth2";
 import { stringify } from "uuid";
@@ -48,6 +51,7 @@ const CONDITION = "CONDITION";
 const ENCOUNTER = "ENCOUNTER";
 const CARE_TEAM = "CARE_TEAM";
 const OBSERVATION = "OBSERVATION";
+const EXPLANATION_OF_BENEFIT = "EXPLANATION_OF_BENEFIT";
 
 const medicationRequestCapability = "MedicationRequest";
 const medicationDispenseCapbility = "MedicationDispense";
@@ -58,6 +62,7 @@ const allergyIntoleranceCapability = "AllergyIntolerance";
 const encounterCapability = "Encounter";
 const careTeamCapability = "CareTeam";
 const observationCapability = "Observation";
+const explanationOfBenefitCapability = "ExplanationOfBenefit";
 
 export const getPatientTimeline = async (filter: PatientRecordsQueryFilter) => {
   const timelineResults = await Promise.allSettled([
@@ -401,6 +406,11 @@ export const appendInsuranceAndUserUidToClaims = (
   );
 
   _appendInsuranceAndUseUidToClaims(userUid, providerUid, claimsData.careTeam);
+  _appendInsuranceAndUseUidToClaims(
+    userUid,
+    providerUid,
+    claimsData.explanationOfBenefit
+  );
 };
 
 export const _appendInsuranceAndUseUidToClaims = (
@@ -632,6 +642,12 @@ export const getClaimsFromInsuranceProvider = async (
     concurrentPromisesToExecute.push(getObservation);
   }
 
+  if (insuranceProvider.capabilities.includes(explanationOfBenefitCapability)) {
+    concurrentPromisesToExecute.push(
+      getExplanationOfBenefitFromFlexpaInPromise
+    );
+  }
+
   const claimsResults = await Promise.allSettled(
     concurrentPromisesToExecute.map((fn) =>
       fn(insuranceProvider.accessToken, insuranceProvider.uid)
@@ -656,6 +672,7 @@ export const extractClaimsResultsFromPromises = (
     encounter: [],
     careTeam: [],
     observation: [],
+    explanationOfBenefit: [],
   };
 
   for (let i = 0; i < claimsResults.length; i++) {
@@ -685,6 +702,8 @@ export const extractClaimsResultsFromPromises = (
       claimsData.observation = values;
     } else if (type === CARE_TEAM) {
       claimsData.careTeam = values;
+    } else if (type === EXPLANATION_OF_BENEFIT) {
+      claimsData.explanationOfBenefit = values;
     }
   }
   return claimsData;
@@ -863,11 +882,6 @@ export const getProcedures = (accessToken: string) => {
   });
 };
 
-export const saveNote = async (note: Note) => {
-  const savedNote = await insuranceRepo.saveNote(note);
-  return savedNote;
-};
-
 export const getCareTeam = (accessToken: string) => {
   return new Promise(async (res, rej) => {
     try {
@@ -882,6 +896,94 @@ export const getCareTeam = (accessToken: string) => {
       rej(e);
     }
   });
+};
+
+// TODO – create hydrated explanation of benefits
+// get procedure and save them as a Procedure.
+// then, map to fhir ref
+// so when you pull you can get it.
+//
+
+export const getHydratedExplantionOfBenefitFromFlexpa = (
+  accessToken: string
+) => {
+  return new Promise(async (res, rej) => {
+    const entityListEOB = await getExplanationOfBenefitFromFlepxa(accessToken);
+
+    // now iterate through all of the procedures and query them as well.
+    const procedureReferences = extractProcedureRefsFromEOB(entityListEOB);
+    const entityProcedures: Procedure[] = [];
+    const procedureResults = await Promise.allSettled(
+      procedureReferences.map((ref) => {
+        return flexpaGateway.getFHIRResourceByReference(accessToken, ref);
+      })
+    );
+
+    for (let i = 0; i < procedureResults.length; i++) {
+      const result = procedureResults[i];
+      if (result.status === "rejected") continue;
+      const entityProcedure = fromFlexpaToEntityProcedure(result.value);
+      entityProcedures.push(entityProcedure);
+    }
+    // reinsert the procedures by the fhir resource id
+
+    // TODO – consider a way to not double query
+    try {
+    } catch (e) {
+      rej(e);
+    }
+  });
+};
+
+export const extractProcedureRefsFromEOB = (
+  eobs: ExplanationOfBenefit[]
+): string[] => {
+  const procedureReferences: string[] = [];
+  eobs.forEach((eob) => {
+    eob.procedure?.forEach((procedure) => {
+      if (procedure.reference) {
+        procedureReferences.push(procedure.reference);
+      }
+    });
+  });
+  return procedureReferences;
+};
+
+// https://stackoverflow.com/questions/40639432/what-is-the-best-way-to-limit-concurrency-when-using-es6s-promise-all
+// limit concurrency
+// flexpa resource id == the reference
+export const getExplanationOfBenefitFromFlexpaInPromise = (
+  accessToken: string
+) => {
+  return new Promise(async (res, rej) => {
+    try {
+      const entityListEOB = getExplanationOfBenefitFromFlepxa(accessToken);
+
+      res({ type: EXPLANATION_OF_BENEFIT, values: entityListEOB });
+    } catch (e) {
+      console.log(e);
+      rej(e);
+    }
+  });
+};
+
+export const getExplanationOfBenefitFromFlepxa = async (
+  accessToken: string
+): Promise<ExplanationOfBenefit[]> => {
+  const flexpaEOB = await flexpaGateway.getExplanationOfBenefit(accessToken);
+  let entityListEOB = fromFlexpaToEntityEOBList(flexpaEOB);
+
+  // sort by primary date
+  // you should also check any procedures here to be the primary date
+  entityListEOB = entityListEOB.sort((a, b) => {
+    if (!b.primaryDate && a.primaryDate) return -1;
+    if (!a.primaryDate && b.primaryDate) return 1;
+    if (!a.primaryDate && !b.primaryDate) return 0;
+    return (
+      new Date(b.primaryDate).valueOf() - new Date(a.primaryDate).valueOf()
+    );
+  });
+  return entityListEOB;
 };
 
 export const getObservation = (accessToken: string) => {
