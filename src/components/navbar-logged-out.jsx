@@ -60,15 +60,15 @@ const NavbarLoggedOut = () => {
   return (
     <div
       id="navbar"
-      className="shadow-sm py-7 px-2 md:px-28 flex flex-row sticky top-0 z-50 bg-white"
+      className="shadow-sm py-7 px-2 md:px-28 flex flex-row sticky top-0 z-50  bg-[#030c1a] "
     >
       <div className="flex-1 flex flex-row ">
         <button
           onClick={() => navigate("/")}
           className="flex flex-row items-center"
         >
-          <AiOutlineRadiusUpleft style={{ fontSize: 26, color: "blue" }} />
-          <div className="text-lg hidden md:block ml-2 font-thin text-blue-700">
+          <AiOutlineRadiusUpleft style={{ fontSize: 26, color: "lightgray" }} />
+          <div className="text-lg hidden md:block ml-2 font-thin text-gray-300 ">
             <span className="font-bold">medthread</span>
             <span>
               {process.env.REACT_APP_MEDTHREAD_ENV === "STAGING"
@@ -83,9 +83,9 @@ const NavbarLoggedOut = () => {
         <button
           onClick={handleToggleOpen}
           ref={mainDropdownRefBtn}
-          className="rounded-full border relative flex flex-row items-center justify-center space-x-2 p-2 px-4 "
+          className="rounded-full  relative flex flex-row items-center justify-center space-x-2 p-2 px-4 "
         >
-          <AiOutlineMenu size={16} />
+          <AiOutlineMenu size={20} color="lightgray" />
         </button>
         <HeadlessDropdown
           options={navbarDropdownMenuOptions}

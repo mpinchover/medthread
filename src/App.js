@@ -29,6 +29,7 @@ import VerificationPage from "./components/verification-page";
 import MedicationListPatient from "./components/medication-list-patient";
 import TermsOfService from "./components/terms-of-service";
 import PatientTimeline from "./components/patient-timeline";
+import Home from "./components/home";
 const ModalShadow = () => {
   // const { isModalOpen } = useContext(FirebaseContext);
   const modal = useRecoilValue(modalState);
@@ -94,7 +95,7 @@ function App() {
               path="/patient-timeline"
               element={<PatientTimeline />}
             />
-            <Route exact path="/" element={<MedicationListPatient />} />
+            <Route exact path="/" element={<Home />} />
             <Route
               exact
               path="/terms-of-service"
