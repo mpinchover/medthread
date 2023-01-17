@@ -129,7 +129,7 @@ export default ImmunizationsTable;
 
 //   export interface Immunization {
 //     uid?: string;
-//     flexpaResourceId?: string;
+//     fhirReference?: string;
 //     insuranceProviderUid?: string;
 //     source?: string;
 //     status?: string;

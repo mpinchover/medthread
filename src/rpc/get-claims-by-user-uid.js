@@ -27,6 +27,6 @@ export const getClaimsDataByUserUid = async () => {
       filter,
     },
   });
-  console.log("GOT CLAIMS DATA");
+
   return res?.data?.claimsData;
 };

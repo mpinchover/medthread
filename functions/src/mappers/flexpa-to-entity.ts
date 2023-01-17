@@ -26,7 +26,19 @@ const UNKNOWN = "UNKNOWN";
 const CLAIMS = "CLAIMS";
 const ALLERGY_INTOLERANCE = "ALLERGY_INTOLERANCE";
 const MEDICATION_REQUEST = "MEDICATION_REQUEST";
-
+export const setEOBPrimaryDate = (eob: ExplanationOfBenefit) => {
+  if (eob.billablePeriod?.start) {
+    eob.primaryDate = eob.billablePeriod.start;
+  } else if (eob.created) {
+    eob.primaryDate = eob.created;
+  } else if (eob.procedure?.length > 0) {
+    eob.procedure.forEach((procedure) => {
+      if (procedure.date) {
+        eob.primaryDate = procedure.date;
+      }
+    });
+  }
+};
 export const setEncounterPrimaryDate = (encounter: Encounter) => {
   if (encounter.start) encounter.primaryDate = encounter.start;
 };
@@ -238,8 +250,8 @@ export const fromFlexpaToEntityMedicationRequest = (
     source: CLAIMS,
   };
 
-  let flexpaResourceId = params.resource?.id;
-  if (flexpaResourceId) medicationRequest.flexpaResourceId = flexpaResourceId;
+  let fhirReference = params.resource?.id;
+  if (fhirReference) medicationRequest.fhirReference = fhirReference;
 
   let status = params.resource?.status;
   if (status) medicationRequest.status = status;
@@ -358,8 +370,8 @@ export const fromFlexpaToEntityAllergyIntolerance = (
   if (reactionManifestation)
     allergyIntolerance.reactionManifestation = reactionManifestation;
 
-  let flexpaResourceId = params.resource?.id;
-  if (flexpaResourceId) allergyIntolerance.flexpaResourceId = flexpaResourceId;
+  let fhirReference = params.resource?.id;
+  if (fhirReference) allergyIntolerance.fhirReference = fhirReference;
 
   return allergyIntolerance;
 };
@@ -381,8 +393,8 @@ export const fromFlexpaToEntityCondition = (params: any): Condition => {
   const condition: Condition = {
     source: CLAIMS,
   };
-  let flexpaResourceId = params.resource?.id;
-  if (flexpaResourceId) condition.flexpaResourceId = flexpaResourceId;
+  let fhirReference = params.resource?.id;
+  if (fhirReference) condition.fhirReference = fhirReference;
 
   let clinicalStatus = params.resource?.clinicalStatus?.coding?.[0]?.code;
   if (clinicalStatus) condition.clinicalStatus = clinicalStatus;
@@ -424,8 +436,8 @@ export const fromFlexpaToEntityProcedure = (params: any): Procedure => {
     source: CLAIMS,
   };
 
-  let flexpaResourceId = params.resource?.id;
-  if (flexpaResourceId) procedure.flexpaResourceId = flexpaResourceId;
+  let fhirReference = params.resource?.id;
+  if (fhirReference) procedure.fhirReference = fhirReference;
 
   let status = params.resource.status;
   if (status) procedure.status = status;
@@ -453,6 +465,24 @@ export const fromFlexpaToEntityProcedure = (params: any): Procedure => {
   let performerIdentifier = params.resource?.performer?.identifier?.value;
   if (performerIdentifier) procedure.performerIdentifier = performerIdentifier;
 
+  return procedure;
+};
+
+export const fromFlexpaReferenceProcedureToEntityProcedure = (
+  params: any
+): Procedure => {
+  const procedure: Procedure = {
+    source: CLAIMS,
+    fhirReference: params.id,
+    code: params.code?.coding?.[0].code,
+    performedDateTime: params.performedPeriod?.start,
+    performerIdentifier: params.performer?.[0]?.actor?.identifier?.value,
+    performer: params.performer?.[0]?.actor?.display,
+  };
+
+  let codeDisplay = params.code?.coding?.[0].display;
+  if (!codeDisplay) codeDisplay = params.code?.text;
+  procedure.codeDisplay = codeDisplay;
   return procedure;
 };
 
@@ -529,8 +559,8 @@ export const fromFlexpaToEntityMedicationDispense = (
     source: CLAIMS,
   };
 
-  let flexpaResourceId = params.resource?.id;
-  if (flexpaResourceId) medicationDispense.flexpaResourceId = flexpaResourceId;
+  let fhirReference = params.resource?.id;
+  if (fhirReference) medicationDispense.fhirReference = fhirReference;
 
   let status = params.resource?.status;
   if (status) medicationDispense.status = status;
@@ -582,7 +612,7 @@ export const fromFlexpaToEntityEncounterList = (
 export const fromFlexpaToEntityEncounter = (params: any) => {
   const encounter: Encounter = {
     source: CLAIMS,
-    flexpaResourceId: params.flexpaResourceId,
+    fhirReference: params.fhirReference,
   };
 
   if (params.resource?.status) {
@@ -622,7 +652,7 @@ export const fromFlexpaToEntityCareTeamList = (
 export const fromFlexpaToEntityCareTeam = (params: any) => {
   const careTeam: CareTeam = {
     source: CLAIMS,
-    flexpaResourceId: params.flexpaResourceId,
+    fhirReference: params.fhirReference,
   };
 
   if (params.resource?.status) careTeam.status = params.resource?.status;
@@ -688,7 +718,7 @@ export const fromFlexpaToEntityObservationList = (
 export const fromFlexpaToEntityObservation = (params: any) => {
   const observation: Observation = {
     source: CLAIMS,
-    flexpaResourceId: params.flexpaResourceId,
+    fhirReference: params.fhirReference,
   };
 
   if (params.resource?.effectiveDateTime) {

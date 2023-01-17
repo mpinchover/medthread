@@ -2381,7 +2381,7 @@ const WriterSignup = () => {
     e.preventDefault();
     console.log(e.target.id);
     if (e.target.id === "back" && activeIndex > 0) setActiveIndex(idx => idx - 1);else if (e.target.id === "next" && activeIndex === 0) setActiveIndex(idx => idx + 1);else if (e.target.id === "submit") {
-      console.log("SUBMITTED");
+
     }
   };
   // should do this differnetly,

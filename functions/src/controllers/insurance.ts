@@ -38,6 +38,8 @@ import {
   setProcedurePrimaryDate,
   fromFlexpaToEntityEOBList,
   fromFlexpaToEntityProcedure,
+  setEOBPrimaryDate,
+  fromFlexpaReferenceProcedureToEntityProcedure,
 } from "../mappers/flexpa-to-entity";
 import { promises } from "nodemailer/lib/xoauth2";
 import { stringify } from "uuid";
@@ -64,35 +66,60 @@ const careTeamCapability = "CareTeam";
 const observationCapability = "Observation";
 const explanationOfBenefitCapability = "ExplanationOfBenefit";
 
+/*
+
+  /*
+  
+      // insert the queried procedure into the EOB procedure
+      for (let i = 0; i < entityListEOB.length; i++) {
+        const eob = entityListEOB[i];
+
+        for (let j = 0; j < eob.procedure?.length; j++) {
+          const eobProcedure = eob.procedure[j];
+          if (entityProcedures.has(eobProcedure.reference)) {
+            eobProcedure.procedure = entityProcedures.get(
+              eobProcedure.reference
+            );
+          }
+        }
+      }
+
+      TODO – get the procedures as well and add them in 
+*/
 export const getPatientTimeline = async (filter: PatientRecordsQueryFilter) => {
-  const timelineResults = await Promise.allSettled([
-    getClaimsEncounterByFilter(filter),
-    getClaimsProcedureByFilter(filter),
-  ]);
-
-  let timelineEvents: TimelineEvent[] = [];
-  for (let i = 0; i < timelineResults.length; i++) {
-    const result: any = timelineResults[i];
-    if (result.status === "rejected") {
-      // TODO –  log here
-      continue;
-    }
-
-    // check what the type is
-    const convertedTimelineEvents = toTimelineEvents(
-      result.value.values,
-      result.value.type
-    );
-    timelineEvents.push(...convertedTimelineEvents);
-  }
-
-  timelineEvents = timelineEvents.sort((a, b) => {
-    return (
-      new Date(b.primaryDate).valueOf() - new Date(a.primaryDate).valueOf()
-    );
-  });
-  return timelineEvents;
+  const timeline = await getTimelineClaimsExplanationOfBenefit(filter);
+  return timeline;
 };
+
+// export const getPatientTimeline = async (filter: PatientRecordsQueryFilter) => {
+//   const timelineResults = await Promise.allSettled([
+//     getClaimsEncounterByFilter(filter),
+//     getClaimsProcedureByFilter(filter),
+//   ]);
+
+//   let timelineEvents: TimelineEvent[] = [];
+//   for (let i = 0; i < timelineResults.length; i++) {
+//     const result: any = timelineResults[i];
+//     if (result.status === "rejected") {
+//       // TODO –  log here
+//       continue;
+//     }
+
+//     // check what the type is
+//     const convertedTimelineEvents = toTimelineEvents(
+//       result.value.values,
+//       result.value.type
+//     );
+//     timelineEvents.push(...convertedTimelineEvents);
+//   }
+
+//   timelineEvents = timelineEvents.sort((a, b) => {
+//     return (
+//       new Date(b.primaryDate).valueOf() - new Date(a.primaryDate).valueOf()
+//     );
+//   });
+//   return timelineEvents;
+// };
 
 // take in a claims data array and covnert it to a timeline event
 const toTimelineEvents = (events: [], type: string): TimelineEvent[] => {
@@ -197,6 +224,65 @@ export const getClaimsEncounterByFilter = async (
       rej(e);
     }
   });
+};
+
+export const getTimelineClaimsExplanationOfBenefit = async (
+  filter: PatientRecordsQueryFilter
+) => {
+  // if everything is selected, them just don't filter by any types
+  let explanationofBenefits =
+    await insuranceRepo.getExplanationOfBenefitByUserUid(filter);
+  const procedureReferences = extractProcedureRefsFromEOB(
+    explanationofBenefits
+  );
+
+  for (let i = 0; i < procedureReferences.length; i++) {
+    procedureReferences[i] = procedureReferences[i].slice(
+      procedureReferences[i].lastIndexOf("/") + 1
+    );
+  }
+
+  const entityProcedures = await insuranceRepo.getProceduresByFhirReference(
+    procedureReferences
+  );
+
+  for (let i = 0; i < entityProcedures.length; i++) {
+    setProcedurePrimaryDate(entityProcedures[i]);
+  }
+
+  const procedureMap = new Map<string, Procedure>();
+  entityProcedures.forEach((pro: Procedure) => {
+    procedureMap.set(pro.fhirReference, pro);
+  });
+
+  // set the primary date
+  for (let i = 0; i < explanationofBenefits.length; i++) {
+    const eobItem = explanationofBenefits[i];
+    eobItem.jsonResponse = null;
+    setEOBPrimaryDate(eobItem);
+
+    // iterate through the procedures
+    const eobProcedures = eobItem.procedure;
+    for (let j = 0; j < eobProcedures?.length; j++) {
+      const p = eobProcedures[j];
+
+      const ref: string = p.reference.slice(p.reference.lastIndexOf("/") + 1);
+      if (procedureMap.has(ref)) {
+        p.procedure = procedureMap.get(ref);
+      }
+    }
+  }
+
+  explanationofBenefits = explanationofBenefits.sort((a: any, b: any) => {
+    if (!b.primaryDate && a.primaryDate) return -1;
+    if (!a.primaryDate && b.primaryDate) return 1;
+    if (!a.primaryDate && !b.primaryDate) return 0;
+    return (
+      new Date(b.primaryDate).valueOf() - new Date(a.primaryDate).valueOf()
+    );
+  });
+
+  return explanationofBenefits;
 };
 
 export const getClaimsConditionByFilter = async (
@@ -643,9 +729,7 @@ export const getClaimsFromInsuranceProvider = async (
   }
 
   if (insuranceProvider.capabilities.includes(explanationOfBenefitCapability)) {
-    concurrentPromisesToExecute.push(
-      getExplanationOfBenefitFromFlexpaInPromise
-    );
+    concurrentPromisesToExecute.push(getHydratedExplantionOfBenefitFromFlexpa);
   }
 
   const claimsResults = await Promise.allSettled(
@@ -675,6 +759,8 @@ export const extractClaimsResultsFromPromises = (
     explanationOfBenefit: [],
   };
 
+  const procedureMap = new Map<string, Procedure>();
+
   for (let i = 0; i < claimsResults.length; i++) {
     const promiseResult: any = claimsResults[i];
     if (promiseResult.status === "rejected") {
@@ -691,7 +777,11 @@ export const extractClaimsResultsFromPromises = (
     } else if (type === MEDICATION_DISPENSE) {
       claimsData.medicationDispense = values;
     } else if (type === PROCEDURE) {
-      claimsData.procedure = values;
+      values.forEach((proc: Procedure) => {
+        if (proc.fhirReference) {
+          procedureMap.set(proc.fhirReference, proc);
+        }
+      });
     } else if (type === CONDITION) {
       claimsData.condition = values;
     } else if (type === IMMUNIZATION) {
@@ -703,9 +793,23 @@ export const extractClaimsResultsFromPromises = (
     } else if (type === CARE_TEAM) {
       claimsData.careTeam = values;
     } else if (type === EXPLANATION_OF_BENEFIT) {
-      claimsData.explanationOfBenefit = values;
+      const explanationOfBenefit: ExplanationOfBenefit[] =
+        values.explanationOfBenefit;
+
+      const procedures: Procedure[] = Array.from(values?.procedures?.values());
+
+      procedures.forEach((proc: Procedure) => {
+        if (proc.fhirReference) {
+          procedureMap.set(proc.fhirReference, proc);
+        }
+      });
+      claimsData.explanationOfBenefit = explanationOfBenefit;
     }
   }
+
+  // get the procedures from EOB and procedures
+  claimsData.procedure = Array.from(procedureMap.values());
+
   return claimsData;
 };
 
@@ -755,10 +859,7 @@ export const getEncounter = (accessToken: string) => {
   });
 };
 
-export const getMedicationDispense = (
-  accessToken: string,
-  insuranceProviderUid: string
-) => {
+export const getMedicationDispense = (accessToken: string) => {
   return new Promise(async (res, rej) => {
     try {
       const flexpaMedDispense = await flexpaGateway.getMedicationDispense(
@@ -908,28 +1009,43 @@ export const getHydratedExplantionOfBenefitFromFlexpa = (
   accessToken: string
 ) => {
   return new Promise(async (res, rej) => {
-    const entityListEOB = await getExplanationOfBenefitFromFlepxa(accessToken);
-
-    // now iterate through all of the procedures and query them as well.
-    const procedureReferences = extractProcedureRefsFromEOB(entityListEOB);
-    const entityProcedures: Procedure[] = [];
-    const procedureResults = await Promise.allSettled(
-      procedureReferences.map((ref) => {
-        return flexpaGateway.getFHIRResourceByReference(accessToken, ref);
-      })
-    );
-
-    for (let i = 0; i < procedureResults.length; i++) {
-      const result = procedureResults[i];
-      if (result.status === "rejected") continue;
-      const entityProcedure = fromFlexpaToEntityProcedure(result.value);
-      entityProcedures.push(entityProcedure);
-    }
-    // reinsert the procedures by the fhir resource id
-
-    // TODO – consider a way to not double query
     try {
+      // get EOB
+      const entityListEOB = await getExplanationOfBenefitFromFlepxa(
+        accessToken
+      );
+
+      // extract all the procedure references from EOB
+      const procedureReferences = extractProcedureRefsFromEOB(entityListEOB);
+      const entityProcedures = new Map<string, Procedure>();
+
+      // get all the procedure by fhir ref
+      const procedureResults = await Promise.allSettled(
+        procedureReferences.map((ref) => {
+          return getFHIRResourceByReference(accessToken, ref);
+        })
+      );
+
+      // convert to entity procedure
+      for (let i = 0; i < procedureResults.length; i++) {
+        const result = procedureResults[i];
+        if (result.status === "rejected") continue;
+        const entityProcedure = fromFlexpaReferenceProcedureToEntityProcedure(
+          result.value
+        );
+        entityProcedures.set(entityProcedure.fhirReference, entityProcedure);
+      }
+
+      res({
+        type: EXPLANATION_OF_BENEFIT,
+        values: {
+          explanationOfBenefit: entityListEOB,
+          procedures: entityProcedures,
+        },
+      });
     } catch (e) {
+      console.log("ERROR IS");
+      console.log(e);
       rej(e);
     }
   });
@@ -957,9 +1073,32 @@ export const getExplanationOfBenefitFromFlexpaInPromise = (
 ) => {
   return new Promise(async (res, rej) => {
     try {
-      const entityListEOB = getExplanationOfBenefitFromFlepxa(accessToken);
+      const entityListEOB = await getExplanationOfBenefitFromFlepxa(
+        accessToken
+      );
 
+      console.log("EOBS");
+      console.log(entityListEOB);
       res({ type: EXPLANATION_OF_BENEFIT, values: entityListEOB });
+    } catch (e) {
+      console.log(e);
+      rej(e);
+    }
+  });
+};
+
+export const getFHIRResourceByReference = (
+  accessToken: string,
+  ref: string
+) => {
+  return new Promise(async (res, rej) => {
+    try {
+      const fhirResource = await flexpaGateway.getFHIRResourceByReference(
+        accessToken,
+        ref
+      );
+
+      res(fhirResource);
     } catch (e) {
       console.log(e);
       rej(e);

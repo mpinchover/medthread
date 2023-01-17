@@ -17,5 +17,6 @@ export const getPatientTimeline = async (filter) => {
       Authorization: `Bearer ${idToken}`,
     },
   });
+
   return res.data?.timeline;
 };

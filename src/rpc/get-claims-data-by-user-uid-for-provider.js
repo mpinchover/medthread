@@ -27,7 +27,6 @@ export const getClaimsDataByUserUidForProvider = async (patientUid) => {
       filter,
     },
   });
-  console.log("RES IS");
-  console.log(res.data);
+
   return res?.data?.claimsData;
 };

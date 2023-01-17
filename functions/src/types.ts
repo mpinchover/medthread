@@ -10,7 +10,7 @@ export interface Medication {
   dateStarted?: Date;
   medicationName?: string;
   source?: string;
-  flexpaResourceId?: string;
+  fhirReference?: string;
   insuranceProviderUid?: string;
 }
 
@@ -62,7 +62,7 @@ export interface MedicationRequest {
   dosageInstructionRoute?: string;
   doseAndRateQuantityValue?: number;
   doseAndRateQuantityUnit?: string;
-  flexpaResourceId?: string;
+  fhirReference?: string;
   insuranceProviderUid?: string;
   userUid?: string;
   primaryDate?: string;
@@ -70,7 +70,7 @@ export interface MedicationRequest {
 
 export interface MedicationDispense {
   uid?: string;
-  flexpaResourceId?: string;
+  fhirReference?: string;
   insuranceProviderUid?: string;
   status?: string;
   code?: string;
@@ -88,7 +88,7 @@ export interface MedicationDispense {
 
 export interface AllergyIntolerance {
   uid?: string;
-  flexpaResourceId?: string;
+  fhirReference?: string;
   insuranceProviderUid?: string;
   source?: string;
   clinicalStatus?: string;
@@ -108,7 +108,7 @@ export interface AllergyIntolerance {
 
 export interface Condition {
   uid?: string;
-  flexpaResourceId?: string;
+  fhirReference?: string;
   insuranceProviderUid?: string;
   source?: string;
   clinicalStatus?: string;
@@ -122,7 +122,7 @@ export interface Condition {
 
 export interface Immunization {
   uid?: string;
-  flexpaResourceId?: string;
+  fhirReference?: string;
   insuranceProviderUid?: string;
   source?: string;
   status?: string;
@@ -135,7 +135,7 @@ export interface Immunization {
 
 export interface Procedure {
   uid?: string;
-  flexpaResourceId?: string;
+  fhirReference?: string;
   insuranceProviderUid?: string;
   source?: string;
   status?: string;
@@ -145,14 +145,14 @@ export interface Procedure {
   recorder?: string;
   recorderIdentifier?: string;
   performer?: string;
-  performerIdentifier?: string;
+  performerIdentifier?: string; // NPI code
   userUid?: string;
   primaryDate?: string;
 }
 
 export interface Encounter {
   uid?: string;
-  flexpaResourceId?: string;
+  fhirReference?: string;
   insuranceProviderUid?: string;
   source?: string;
   userUid?: string;
@@ -172,7 +172,7 @@ export interface CareTeamParticipant {
 
 export interface CareTeam {
   uid?: string;
-  flexpaResourceId?: string;
+  fhirReference?: string;
   insuranceProviderUid?: string;
   source?: string;
   userUid?: string;
@@ -211,7 +211,7 @@ export interface Observation {
   effectiveDateTime?: string;
   issued?: string;
   userUid?: string;
-  flexpaResourceId?: string;
+  fhirReference?: string;
   primaryDate?: string;
 }
 
@@ -352,6 +352,7 @@ export interface EOBProcedure {
   date?: string;
   reference?: string;
   display?: string;
+  procedure?: Procedure;
 }
 
 // TODO – add code system

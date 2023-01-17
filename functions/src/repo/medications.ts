@@ -70,14 +70,14 @@ export const removeMedicationsByUids = async (docUids: string[]) => {
 
 export const getMedicationsByFlepxaResourceIds = async (
   uid: string,
-  flexpaResourceIds: string[]
+  fhirReferences: string[]
 ): Promise<Medication[]> => {
   const db = admin.firestore();
 
   const medicationsRef = db.collection("medications");
   const snapshot = await medicationsRef
     .where("userUid", "==", uid)
-    .where("flexpaResourceId", "in", flexpaResourceIds)
+    .where("fhirReference", "in", fhirReferences)
     .get();
 
   if (snapshot.empty) return [];

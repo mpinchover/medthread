@@ -154,7 +154,7 @@ export default AllergiesTable;
 
 //   export interface AllergyIntolerance {
 //     uid?: string;
-//     flexpaResourceId?: string;
+//     fhirReference?: string;
 //     insuranceProviderUid?: string;
 //     source?: string;
 //     clinicalStatus?: string;

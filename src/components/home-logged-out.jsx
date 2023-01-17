@@ -30,7 +30,3 @@ const LoggedOutHome = () => {
 };
 
 export default LoggedOutHome;
-/*
- onClick={() => navigate("/patient-login")}
-          className="p-3 px-8 font-bold border rounded-lg "
-           */

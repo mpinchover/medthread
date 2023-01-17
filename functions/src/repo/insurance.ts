@@ -257,6 +257,22 @@ export const batchWriteAllergyIntolerances = async (
   return params;
 };
 
+export const getExplanationOfBenefitByUserUid = async (
+  filter: PatientRecordsQueryFilter
+): Promise<ExplanationOfBenefit[]> => {
+  const db = admin.firestore();
+
+  const explanationOfBenefit = db.collection(explanationOfBenefitCollection);
+  const snapshot = await explanationOfBenefit
+    .where("userUid", "==", filter.userUid)
+    .get();
+
+  if (snapshot.empty) return [];
+
+  const res: ExplanationOfBenefit[] = snapshot.docs.map((doc) => doc.data());
+  return res;
+};
+
 export const getClaimsMedicationRequestByUserUid = async (
   filter: PatientRecordsQueryFilter
 ): Promise<MedicationRequest[]> => {
@@ -391,7 +407,19 @@ export const getClaimsAllergyIntoleranceByUserUid = async (
   });
   return res;
 };
+export const getProceduresByFhirReference = async (references: string[]) => {
+  const db = admin.firestore();
 
+  const proceduresRef = db.collection(procedureCollection);
+  const snapshot = await proceduresRef
+    .where("fhirReference", "in", references)
+    .get();
+
+  if (snapshot.empty) return [];
+
+  const res: Procedure[] = snapshot.docs.map((doc) => doc.data());
+  return res;
+};
 export const getClaimsImmunizationByUserUid = async (
   filter: PatientRecordsQueryFilter
 ): Promise<Immunization[]> => {

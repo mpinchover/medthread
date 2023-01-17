@@ -140,7 +140,7 @@ export default ProceduresTable;
 
 //   export interface Procedure {
 //     uid?: string;
-//     flexpaResourceId?: string;
+//     fhirReference?: string;
 //     insuranceProviderUid?: string;
 //     source?: string;
 //     status?: string;

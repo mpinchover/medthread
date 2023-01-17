@@ -6,25 +6,92 @@ import {
   timelineDataState,
 } from "../recoil/timeline/timeline";
 
-const TimelineEvent = (e) => {
+const DiagnosisInfo = ({ display }) => {
   return (
-    <div className={`relative  p-4 rounded-md border w-full`}>
-      <div className="font-bold">{e?.event?.primaryDate}</div>
-      <div className=" font-bold text-xs mt-1">{e?.event?.type}</div>
-      {e?.event?.status && (
-        <div className=" font-bold text-xs mt-1">Status {e?.event?.status}</div>
-      )}
-      {(e?.event?.start || e?.event?.end) && (
-        <div className="flex flex-row font-bold text-xs mt-1 space-x-2">
-          <div className="">Period</div>
-          <div>{e?.event?.start ? e?.event?.start : "UNKNOWN"}</div>
-          <div>–</div>
-          <div>{e?.event?.end ? e?.event?.end : "UNKNOWN"}</div>
+    <div className="relative flex flex-row ">
+      <div>
+        <div className="absolute top-2 border-gray-400 border-b w-4    "></div>
+      </div>
+      <div className="text-xs ml-6">{display}</div>
+    </div>
+  );
+};
+
+const ProcedureInfo = ({ display }) => {
+  return (
+    <div className="relative flex flex-row">
+      <div>
+        <div className="absolute top-2 border-gray-400 border-b w-4    "></div>
+      </div>
+      <div className="text-xs ml-6">{display}</div>
+    </div>
+  );
+};
+
+const PrescriptionDisplay = ({ display }) => {
+  return (
+    <div className=" relative flex flex-row">
+      <div>
+        <div className="absolute top-2 border-gray-400 border-b w-4    "></div>
+      </div>
+      <div className="ml-6 text-xs">{display}</div>
+    </div>
+  );
+};
+
+const TimelineEvent = (e) => {
+  console.log("EVENT IS");
+  console.log(e);
+  return (
+    <div className={`relative rounded-md border w-full`}>
+      <div className="font-bold p-4 border-b text-xs">
+        {e?.event?.primaryDate}
+      </div>
+      <div className="p-4">
+        <div className=" font-bold text-xs mt-1">
+          {e?.event?.provider?.display}
         </div>
-      )}
-      {e?.event?.codeDisplay && (
-        <div className="mt-4">{e?.event?.codeDisplay}</div>
-      )}
+        <div className=" text-xs mt-1">
+          NPI code: {e?.event?.provider?.npiCode}
+        </div>
+        {e?.event?.diagnosis?.length > 0 && (
+          <div className="mt-6">
+            <div className=" font-bold text-xs">Diagnosis</div>
+            <div className="space-y-4 mt-2">
+              {e?.event?.diagnosis?.map((e, i) => {
+                if (e?.codeableConcept?.display) {
+                  return (
+                    <DiagnosisInfo
+                      key={i}
+                      display={e?.codeableConcept?.display}
+                    />
+                  );
+                }
+              })}
+            </div>
+          </div>
+        )}
+        {e.event?.procedure?.length > 0 && (
+          <div className="mt-6">
+            <div className=" font-bold text-xs">Procedures</div>
+
+            <div className="space-y-4 mt-2">
+              {e.event?.procedure?.map((e, i) => {
+                let display = e.procedure?.codeDisplay;
+                if (!display) display = e.display;
+                return <ProcedureInfo key={i} display={display} />;
+              })}
+            </div>
+          </div>
+        )}
+
+        {e?.event?.prescription?.display && (
+          <div className="mt-6">
+            <div className=" font-bold text-xs mb-2">Prescription</div>
+            <PrescriptionDisplay display={e?.event?.prescription?.display} />
+          </div>
+        )}
+      </div>
     </div>
   );
 };
@@ -159,6 +226,8 @@ const PatientTimeline = () => {
   const isLoadingTimelineData = useRecoilValue(isLoadingTimelineDataState);
   const timelineData = useRecoilValue(timelineDataState);
 
+  console.log("TIMELINE DATA IS");
+  console.log(timelineData);
   const [timelineFilter, setTimelineFilter] = useState(idleFilterState);
 
   // should refire the query to BE
@@ -210,13 +279,13 @@ const PatientTimeline = () => {
 
   return (
     <div className=" flex flex-row py-4  w-full text-md px-28 ">
-      <section className="mr-4">
+      {/* <section className="mr-4">
         <FilterSidebar
           onReset={onReset}
           timelineFilter={timelineFilter}
           onSelectFilterInput={onSelectFilterInput}
         />
-      </section>
+      </section> */}
       <Timeline timelineData={timelineData} />
     </div>
   );

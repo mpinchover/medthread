@@ -82,7 +82,7 @@ export const addHealthcareProviderCallback =
 
 export const createPatientCallback =
   ({ set, snapshot }) =>
-  async (params) => {
+  async (params, auth) => {
     try {
       let { email, password, confirmPassword, displayName } = params;
 
@@ -94,7 +94,6 @@ export const createPatientCallback =
       });
 
       set(isLoggingInUserState, true);
-      const auth = getAuth();
       const res = await createUserWithEmailAndPassword(auth, email, password);
 
       const idToken = await res.user.getIdToken(/* forceRefresh */ true);
@@ -108,6 +107,7 @@ export const createPatientCallback =
         },
       };
 
+      // TODO – create hydrated user profile on backend
       let hydratedUserProfile;
       try {
         hydratedUserProfile = await createHydratedUserProfile(newUser);

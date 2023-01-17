@@ -132,7 +132,7 @@ export default ConditionsTable;
 
 //   export interface Condition {
 //     uid?: string;
-//     flexpaResourceId?: string;
+//     fhirReference?: string;
 //     insuranceProviderUid?: string;
 //     source?: string;
 //     clinicalStatus?: string;
