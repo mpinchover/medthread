@@ -33,6 +33,7 @@ import ImmunizationsTable from "./table-immunizations";
 import ConditionsTable from "./table-conditions";
 import ProceduresTable from "./table-procedures";
 import { modalState } from "../recoil/utils/utils";
+import PatientTimeline from "./patient-timeline";
 const MedicationList = ({
   meds,
   onChange,
@@ -81,18 +82,18 @@ const MedicationList = ({
     });
   };
 
-  const handleToggleOpen = (e) => {
-    const name = e.currentTarget.name;
+  // const handleToggleOpen = (e) => {
+  //   const name = e.currentTarget.name;
 
-    if (name === "SEND_RECORDS") {
-      setModal((prevModal) => {
-        return {
-          ...prevModal,
-          isSendRecordsModalOpen: true,
-        };
-      });
-    }
-  };
+  //   if (name === "SEND_RECORDS") {
+  //     setModal((prevModal) => {
+  //       return {
+  //         ...prevModal,
+  //         isSendRecordsModalOpen: true,
+  //       };
+  //     });
+  //   }
+  // };
 
   const onSendMedications = (e) => {
     e.preventDefault();
@@ -139,12 +140,19 @@ const MedicationList = ({
     if (recordsActiveCategory === "PROCEDURES") {
       return <ProceduresTable procedures={claimsProcedures} />;
     }
+
+    if (recordsActiveCategory === "TIMELINE") {
+      return <PatientTimeline />;
+    }
   };
 
   return (
     <div className="flex-1 relative ">
       <div className="flex-1 relative">
-        <div className="py-6   px-2 md:px-28 flex flex-row relative">
+        <section className="mt-6">
+          <MedicationListFilterBar />
+        </section>
+        <div className="mt-6   px-2 md:px-28 flex flex-row relative">
           <input
             // onChange={(e) => setSearchTerm(e.target.value)}
             onChange={(e) => onChange(e.target.value)}
@@ -152,34 +160,11 @@ const MedicationList = ({
             className=" focus:outline-none p-4 text-sm border rounded-full flex-1 "
             placeholder="Search records..."
           />
-          {role === "PATIENT" ? (
-            <div className="flex flex-row ">
-              <button
-                name="SEND_RECORDS"
-                onClick={handleToggleOpen}
-                // ref={mainDropdownRefBtn}
-                className="ml-4 flex flex-row border rounded-full py-4 px-6 items-center"
-              >
-                <RiSendPlaneFill size={20} />
-                <span className="text-xs ml-1">Send records</span>
-              </button>
-
-              {/* <button
-                name="add_medication"
-                onClick={handleToggleOpen}
-                //  ref={mainDropdownRefBtn}
-                className="ml-2 text-white bg-black flex flex-row border rounded-full py-4 px-6 items-center"
-              >
-                <AiOutlinePlus size={20} />
-                <span className="text-xs ml-1">Add item</span>
-              </button> */}
-            </div>
-          ) : null}
         </div>
 
         {/* {renderMedicationList()} */}
       </div>
-      <MedicationListFilterBar />
+
       <div className="py-4  w-full text-md  ">
         {/* <div className="flex flex-row">
           <div className="flex-1 font-bold">Medication</div>

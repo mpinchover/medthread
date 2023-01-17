@@ -408,6 +408,7 @@ export const getClaimsAllergyIntoleranceByUserUid = async (
   return res;
 };
 export const getProceduresByFhirReference = async (references: string[]) => {
+  if (references.length === 0) return [];
   const db = admin.firestore();
 
   const proceduresRef = db.collection(procedureCollection);

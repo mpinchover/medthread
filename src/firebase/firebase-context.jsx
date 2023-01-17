@@ -81,24 +81,14 @@ export const FirebaseProvider = ({ children }) => {
   useEffect(() => {
     const auth = getAuth();
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
+      console.log("USER IS");
+      console.log(user);
+
+      console.log("AUTH USER IS");
+      console.log(authorizedProfile);
       if (!user) {
-        // window.location.reload();
-        // const curAuthUserCache = getAuthUser();
-        // if (curAuthUserCache?.uid !== user?.uid) {
-        // localStorage.clear();
-        //   setAuthorizedProfile(null);
-        // }
         return;
       }
-
-      // const curAuthUserCache = getAuthUser();
-      // if (curAuthUserCache?.uid !== user?.uid) {
-      //   localStorage.clear();
-      //   setAuthorizedProfile(null);
-      //   return;
-      // }
-
-      // might be this
 
       const hydratedUserProfile = await hydrateUserProfile(user.uid);
       const idToken = await auth.currentUser.getIdToken(
@@ -113,6 +103,11 @@ export const FirebaseProvider = ({ children }) => {
         ...hydratedUserProfile,
         idToken,
       };
+
+      // // might be this
+      // if (authUser?.role || getAuthUser()?.uid !== authUser?.uid) {
+      //   signOutUser();
+      // }
 
       localStorage.setItem("med_thread_auth_user", JSON.stringify(authUser));
 

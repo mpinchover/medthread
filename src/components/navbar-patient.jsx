@@ -9,10 +9,13 @@ import { MdAccountCircle } from "react-icons/md";
 import { FiLogOut } from "react-icons/fi";
 import { RiSendPlaneFill } from "react-icons/ri";
 import { AiOutlinePlus, AiOutlineHistory } from "react-icons/ai";
+import { modalState } from "../recoil/utils/utils";
+import { useRecoilState } from "recoil";
 
 const navbarDropdownMenuOptions = [
   { name: "RECORDS", display: "Records", icon: TbFiles },
   { name: "ACCOUNT", display: "Account", icon: MdAccountCircle },
+  { name: "SEND_RECORDS", display: "Send records", icon: RiSendPlaneFill },
   {
     name: "CONTACT",
     link: "mailto:info@usemedthread.com",
@@ -29,6 +32,7 @@ const PatientNavbar = ({ authUser }) => {
   const pathname = location.pathname;
   const [activeTab, setActiveTab] = useState(null);
 
+  const [modal, setModal] = useRecoilState(modalState);
   const [isOpen, toggleOpen] = useState(false);
 
   const onDropdownClick = (e) => {
@@ -37,6 +41,9 @@ const PatientNavbar = ({ authUser }) => {
     if (name === "PATIENT_LOGIN") navigate("/patient-login");
     if (name === "PREVIOUS_PATIENTS") navigate("/previous-patients");
     if (name === "ACCOUNT") navigate("/settings");
+    if (name === "SEND_RECORDS") {
+      openSendRecordsModal();
+    }
     if (name === "RECORDS") {
       navigate("/records");
     }
@@ -48,6 +55,15 @@ const PatientNavbar = ({ authUser }) => {
   const handleToggleOpen = (e) => {
     e.preventDefault();
     toggleOpen(!isOpen);
+  };
+
+  const openSendRecordsModal = () => {
+    setModal((prevModal) => {
+      return {
+        ...prevModal,
+        isSendRecordsModalOpen: true,
+      };
+    });
   };
 
   const mainDropdownRefBtn = useRef(null);

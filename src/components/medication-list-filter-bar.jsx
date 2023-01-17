@@ -8,10 +8,12 @@ import {
   FaProcedures,
   FaAllergies,
 } from "react-icons/fa";
+import { AiOutlineHistory } from "react-icons/ai";
 import {
   recordsActiveCategoryState,
   recordsSearchQueryState,
 } from "../recoil/claims/claims";
+
 
 const FilterButton = ({ Icon, title, active, name, onClick }) => {
   return (
@@ -79,6 +81,14 @@ const MedicationListFilterBar = () => {
         name="ALLERGIES"
         title="Allergies"
         Icon={FaAllergies}
+        onClick={handleClick}
+        active={recordsActiveCategory}
+      />
+
+      <FilterButton
+        name="TIMELINE"
+        title="Timeline"
+        Icon={AiOutlineHistory}
         onClick={handleClick}
         active={recordsActiveCategory}
       />

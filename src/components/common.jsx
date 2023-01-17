@@ -238,7 +238,7 @@ export const HeadlessDropdown = ({
       ref={dropDownRef}
       className={`${
         isOpen ? "flex" : "hidden"
-      } absolute top-full w-72 bg-white shadow-md flex-col right-0 `}
+      }  absolute top-full w-72 bg-white shadow-md flex-col right-0 `}
     >
       {options.map((e, i) => {
         if (e.link) {
