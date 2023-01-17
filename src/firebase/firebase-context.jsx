@@ -168,7 +168,11 @@ export const FirebaseProvider = ({ children }) => {
     displayName
   ) => {
     try {
-      await _createProvider({ email, password, confirmPassword, displayName });
+      const auth = getAuth();
+      await _createProvider(
+        { email, password, confirmPassword, displayName },
+        auth
+      );
       verifyEmailAddress();
       navigate("/settings", { replace: true });
       // window.location.reload();
@@ -184,7 +188,11 @@ export const FirebaseProvider = ({ children }) => {
     displayName
   ) => {
     try {
-      await _createPatient({ email, password, confirmPassword, displayName });
+      const auth = getAuth();
+      await _createPatient(
+        { email, password, confirmPassword, displayName },
+        auth
+      );
       navigate("/settings", { replace: true });
       // window.location.reload();
     } catch (e) {

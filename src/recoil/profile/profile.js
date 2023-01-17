@@ -200,7 +200,7 @@ export const signInCallback =
 
 export const createProviderCallback =
   ({ set, snapshot }) =>
-  async (params) => {
+  async (params, auth) => {
     try {
       let { email, password, confirmPassword, displayName } = params;
       validateCreatePatient({
@@ -211,7 +211,6 @@ export const createProviderCallback =
       });
 
       set(isLoggingInUserState, true);
-      const auth = getAuth();
       const res = await createUserWithEmailAndPassword(auth, email, password);
 
       const idToken = await res.user.getIdToken(/* forceRefresh */ true);
