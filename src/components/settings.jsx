@@ -22,7 +22,6 @@ const Settings = () => {
   const insuranceProviders = useRecoilValue(insuranceProvidersState);
   const healthcareProviders = useRecoilValue(healthcareProvidersState);
   const authProfile = useRecoilValue(authorizedProfileState);
-  const getPatientProfileCbk = useRecoilCallback(getPatientProfileCallback);
   const getAccountSettings = useRecoilCallback(getAccountSettingsCallback);
   const accountSettings = useRecoilValue(accountSettingsState);
   

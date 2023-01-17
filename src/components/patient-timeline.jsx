@@ -5,6 +5,7 @@ import {
   isLoadingTimelineDataState,
   timelineDataState,
 } from "../recoil/timeline/timeline";
+import { getFormattedDate } from "./utils";
 
 const DiagnosisInfo = ({ display }) => {
   return (
@@ -39,13 +40,46 @@ const PrescriptionDisplay = ({ display }) => {
   );
 };
 
+const claimTypeEvent = {
+  institutional: {
+    title: "Inpatient",
+    textColor: "text-red-600",
+  },
+  oral: {
+    title: "Dentist",
+    textColor: "text-blue-600",
+  },
+  pharmacy: {
+    title: "Pharmacy",
+    textColor: "text-blue-600",
+  },
+  professional: {
+    title: "Outpatient",
+    textColor: "text-blue-600",
+  },
+  vision: {
+    title: "Vision",
+    textColor: "text-blue-600",
+  },
+};
+
+// https://www.hl7.org/fhir/valueset-claim-type.html
+// claim tpyes
 const TimelineEvent = (e) => {
   console.log("EVENT IS");
-  console.log(e);
+  console.log(e.event?.type?.[0]?.code);
+  const claimType = claimTypeEvent[e.event?.type?.[0]?.code];
   return (
-    <div className={`relative rounded-md border w-full`}>
-      <div className="font-bold p-4 border-b text-xs">
-        {e?.event?.primaryDate}
+    <div className={` rounded-md border w-full`}>
+      <div className="relative p-4 border-b ">
+        <div className="font-bold text-xs">
+          {getFormattedDate(e?.event?.primaryDate)}
+        </div>
+        <div
+          className={`top-1/2 -translate-y-1/2 right-4 text-xs font-bold absolute ${claimType.textColor}`}
+        >
+          {claimType.title}
+        </div>
       </div>
       <div className="p-4">
         <div className=" font-bold text-xs mt-1">

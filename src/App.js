@@ -95,6 +95,7 @@ function App() {
               path="/patient-timeline"
               element={<PatientTimeline />}
             />
+            <Route exact path="/records" element={<MedicationListPatient />} />
             <Route exact path="/" element={<Home />} />
             <Route
               exact

@@ -38,7 +38,7 @@ const PatientNavbar = ({ authUser }) => {
     if (name === "PREVIOUS_PATIENTS") navigate("/previous-patients");
     if (name === "ACCOUNT") navigate("/settings");
     if (name === "RECORDS") {
-      navigate("/");
+      navigate("/records");
     }
     if (name === "LOGOUT") {
       signOutUser();
