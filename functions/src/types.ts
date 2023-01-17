@@ -218,6 +218,11 @@ export interface Observation {
 export interface Profile {
   uid?: string;
   role?: string;
+  account?: UserAccount;
+  userUid?: string;
+}
+export interface UserAccount {
+  displayName?: string;
 }
 
 export interface AuthProfile {

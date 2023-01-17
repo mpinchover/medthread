@@ -14,7 +14,7 @@ import { getMedicationsByUserUid } from "./get-medications-by-user-uid";
 import { removeMedication } from "./remove-medication";
 import { sendMedicationsToProvider } from "./send-medications";
 import { getClaimsDataByUserUid } from "./handlers/get-claims-data-by-user-uid";
-
+import { createHydratedUserProfile } from "./handlers/create-hydrated-user";
 import { getClaimsDataByUserUidForProvider } from "./handlers/get-claims-data-by-user-uid-for-provider";
 import { getPatientTimelineData } from "./handlers/get-patient-timeline";
 // import { getMedicationsByPatientUid } from "./get-medications-by-patient-uid";
@@ -67,6 +67,8 @@ app.post(
   validateFirebaseIdToken,
   getClaimsDataByUserUid
 );
+
+app.post("/create-hydrated-profile", createHydratedUserProfile);
 
 app.post(
   "/get-claims-data-by-user-uid-for-provider",

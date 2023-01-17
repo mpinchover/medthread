@@ -1,5 +1,5 @@
 import * as admin from "firebase-admin";
-import {AuthorizedProvider, Medication, Profile, AuthProfile} from "../types";
+import { AuthorizedProvider, Medication, Profile, AuthProfile } from "../types";
 
 export const getUserProfile = async (uid: string): Promise<Profile> => {
   try {
@@ -39,20 +39,20 @@ export const getAuthProfile = async (uid: string) => {
 };
 
 export const addAuthorizedHealthcareProvider = async (
-    patientUid: string,
-    providerEmail: string
+  patientUid: string,
+  providerEmail: string
 ) => {
   // first check to see if the document exists
   const existingHealthcareProvider = await getAuthorizedHealthcareProvider(
-      patientUid,
-      providerEmail
+    patientUid,
+    providerEmail
   );
   if (existingHealthcareProvider) return existingHealthcareProvider;
 
   const authorizedProviderDoc = admin
-      .firestore()
-      .collection("authorizedProviders")
-      .doc();
+    .firestore()
+    .collection("authorizedProviders")
+    .doc();
 
   const params: AuthorizedProvider = {
     healthcareProviderEmail: providerEmail,
@@ -64,18 +64,29 @@ export const addAuthorizedHealthcareProvider = async (
   return params;
 };
 
+export const createHydratedUserProfile = async (
+  params: Profile
+): Promise<Profile> => {
+  const db = admin.firestore();
+
+  const profilesDocRef = db.collection("profiles").doc();
+  params.uid = profilesDocRef.id;
+  await profilesDocRef.set(params);
+  return params;
+};
+
 export const getAuthorizedHealthcareProvider = async (
-    patientUid: string,
-    providerEmail: string
+  patientUid: string,
+  providerEmail: string
 ) => {
   const authorizedProvidersRef = await admin
-      .firestore()
-      .collection("authorizedProviders");
+    .firestore()
+    .collection("authorizedProviders");
 
   const snapshot = await authorizedProvidersRef
-      .where("healthcareProviderEmail", "==", providerEmail)
-      .where("patientUid", "==", patientUid)
-      .get();
+    .where("healthcareProviderEmail", "==", providerEmail)
+    .where("patientUid", "==", patientUid)
+    .get();
 
   if (snapshot.empty) return null;
 
@@ -90,20 +101,20 @@ export const getPatientsByProviderUid = async (providerUid: string) => {
   // first get the provider auth profile to get the email
 
   const providerAuthProfile: AuthProfile = await admin
-      .auth()
-      .getUser(providerUid);
+    .auth()
+    .getUser(providerUid);
   // if (!providerAuthProfile.emailVerified) throw new Error("provider is not verified")
   const providerEmail = providerAuthProfile.email;
   // now query all the authorized healthcare docs that this provider has been authorized for
   const authorizedProvidersRef = await admin
-      .firestore()
-      .collection("authorizedProviders");
+    .firestore()
+    .collection("authorizedProviders");
 
   let snapshot = await authorizedProvidersRef
-      .where("healthcareProviderEmail", "==", providerEmail)
-      .get();
+    .where("healthcareProviderEmail", "==", providerEmail)
+    .get();
   const patientUids: string[] = snapshot.docs.map(
-      (doc: any) => doc.data().patientUid
+    (doc: any) => doc.data().patientUid
   );
 
   if (patientUids.length == 0) {
@@ -124,7 +135,7 @@ export const getPatientsByProviderUid = async (providerUid: string) => {
 export const getPatientsForProvider = async (providerUid: string) => {
   try {
     const authProfile: AuthProfile = await getAuthProfile(providerUid);
-    const {email} = authProfile;
+    const { email } = authProfile;
     if (!email) {
       throw new Error("email is required for getting previous patients");
     }
