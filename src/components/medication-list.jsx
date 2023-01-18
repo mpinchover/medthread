@@ -47,11 +47,9 @@ const MedicationList = ({
   claimsProcedures,
   claimsDerivedMedications,
 }) => {
-  const { role, account } = authUser;
   const [medToBeUpdated, setMedToBeUpdated] = useState(null);
   const [isAddMedModalOpen, setIsAddMedModalOpen] = useState(false);
-  const [isSendMedsModalOpen, setIsSendMedsModalOpen] = useState(false);
-  const [isAccountModalOpen, setIsAccountModalOpen] = useState(true);
+
   const removeMedication = useRecoilCallback(removeMedicationCallback);
   const recordsActiveCategory = useRecoilValue(recordsActiveCategoryState);
   const [modal, setModal] = useRecoilState(modalState);

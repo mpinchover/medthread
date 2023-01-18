@@ -81,11 +81,6 @@ export const FirebaseProvider = ({ children }) => {
   useEffect(() => {
     const auth = getAuth();
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
-      console.log("USER IS");
-      console.log(user);
-
-      console.log("AUTH USER IS");
-      console.log(authorizedProfile);
       if (!user) {
         return;
       }

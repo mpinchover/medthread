@@ -1,11 +1,15 @@
 import { useRecoilValue, useRecoilCallback } from "recoil";
 import { useEffect, useState } from "react";
+import { FaPen, FaPlus, FaMinusCircle } from "react-icons/fa";
 import {
   getPatientTimelineDataCallback,
   isLoadingTimelineDataState,
   timelineDataState,
 } from "../recoil/timeline/timeline";
+import { AiOutlinePlus, AiOutlineMinus } from "react-icons/ai";
 import { getFormattedDate } from "./utils";
+import { activeTimelineEventState } from "../recoil/timeline/timeline";
+import { useRecoilState } from "recoil";
 
 const DiagnosisInfo = ({ display }) => {
   return (
@@ -63,75 +67,107 @@ const claimTypeEvent = {
   },
 };
 
+const TimelineEventHeader = ({ event, claimType }) => {
+  const [activeTimelineEvent, setActiveTimelineEvent] = useRecoilState(
+    activeTimelineEventState
+  );
+
+  const isSelected = activeTimelineEvent.includes(event.uid);
+
+  const handleClick = () => {
+    setActiveTimelineEvent((prevState) => {
+      if (prevState.includes(event.uid)) {
+        const newActiveElements = prevState.filter((x) => x !== event.uid);
+        return newActiveElements;
+      } else {
+        return [...prevState, event.uid];
+      }
+    });
+  };
+  return (
+    <button
+      onClick={handleClick}
+      className="w-full relative p-4 border-b flex flex-row justify-between"
+    >
+      <div className=" items-center flex flex-row">
+        <div className="font-thin mr-2 ">
+          {isSelected ? <AiOutlineMinus /> : <AiOutlinePlus />}
+        </div>
+        <div className="font-bold text-xs">
+          {getFormattedDate(event?.primaryDate)}
+        </div>
+      </div>
+
+      <div className={` text-xs font-bold  ${claimType.textColor}`}>
+        {claimType.title}
+      </div>
+    </button>
+  );
+};
+
+const TimelineEventContent = ({ event }) => {
+  const [activeTimelineEvent, setActiveTimelineEvent] = useRecoilState(
+    activeTimelineEventState
+  );
+
+  const isSelected = activeTimelineEvent.includes(event.uid);
+  return (
+    <div className={`${isSelected ? "block" : "hidden"} p-4`}>
+      <div className=" font-bold text-xs mt-1">{event?.provider?.display}</div>
+      <div className=" text-xs mt-1">NPI code: {event?.provider?.npiCode}</div>
+      {event?.diagnosis?.length > 0 && (
+        <div className="mt-6">
+          <div className=" font-bold text-xs">Diagnosis</div>
+          <div className="space-y-4 mt-2">
+            {event?.diagnosis?.map((e, i) => {
+              if (e.codeableConcept?.display) {
+                return (
+                  <DiagnosisInfo key={i} display={e.codeableConcept?.display} />
+                );
+              }
+            })}
+          </div>
+        </div>
+      )}
+      {event?.procedure?.length > 0 && (
+        <div className="mt-6">
+          <div className=" font-bold text-xs">Procedures</div>
+
+          <div className="space-y-4 mt-2">
+            {event?.procedure?.map((e, i) => {
+              let display = e.procedure?.codeDisplay;
+              if (!display) display = display;
+              return <ProcedureInfo key={i} display={display} />;
+            })}
+          </div>
+        </div>
+      )}
+
+      {event?.prescription?.display && (
+        <div className="mt-6">
+          <div className=" font-bold text-xs mb-2">Prescription</div>
+          <PrescriptionDisplay display={event?.prescription?.display} />
+        </div>
+      )}
+    </div>
+  );
+};
+
 // https://www.hl7.org/fhir/valueset-claim-type.html
 // claim tpyes
-const TimelineEvent = (e) => {
-  console.log("EVENT IS");
-  console.log(e.event?.type?.[0]?.code);
-  const claimType = claimTypeEvent[e.event?.type?.[0]?.code];
+const TimelineEvent = ({ event }) => {
+  const claimType = claimTypeEvent[event?.type?.[0]?.code];
   return (
     <div className={` rounded-md border w-full`}>
-      <div className="relative p-4 border-b ">
-        <div className="font-bold text-xs">
-          {getFormattedDate(e?.event?.primaryDate)}
-        </div>
-        <div
-          className={`top-1/2 -translate-y-1/2 right-4 text-xs font-bold absolute ${claimType.textColor}`}
-        >
-          {claimType.title}
-        </div>
-      </div>
-      <div className="p-4">
-        <div className=" font-bold text-xs mt-1">
-          {e?.event?.provider?.display}
-        </div>
-        <div className=" text-xs mt-1">
-          NPI code: {e?.event?.provider?.npiCode}
-        </div>
-        {e?.event?.diagnosis?.length > 0 && (
-          <div className="mt-6">
-            <div className=" font-bold text-xs">Diagnosis</div>
-            <div className="space-y-4 mt-2">
-              {e?.event?.diagnosis?.map((e, i) => {
-                if (e?.codeableConcept?.display) {
-                  return (
-                    <DiagnosisInfo
-                      key={i}
-                      display={e?.codeableConcept?.display}
-                    />
-                  );
-                }
-              })}
-            </div>
-          </div>
-        )}
-        {e.event?.procedure?.length > 0 && (
-          <div className="mt-6">
-            <div className=" font-bold text-xs">Procedures</div>
-
-            <div className="space-y-4 mt-2">
-              {e.event?.procedure?.map((e, i) => {
-                let display = e.procedure?.codeDisplay;
-                if (!display) display = e.display;
-                return <ProcedureInfo key={i} display={display} />;
-              })}
-            </div>
-          </div>
-        )}
-
-        {e?.event?.prescription?.display && (
-          <div className="mt-6">
-            <div className=" font-bold text-xs mb-2">Prescription</div>
-            <PrescriptionDisplay display={e?.event?.prescription?.display} />
-          </div>
-        )}
-      </div>
+      <TimelineEventHeader claimType={claimType} event={event} />
+      <TimelineEventContent event={event} />
     </div>
   );
 };
 
 const Timeline = ({ timelineData }) => {
   const isLoadingTimeline = useRecoilValue(isLoadingTimelineDataState);
+
   if (isLoadingTimeline) {
     return (
       <div className=" w-full relative">
@@ -239,12 +275,6 @@ const FilterSidebar = ({ timelineFilter, onSelectFilterInput, onReset }) => {
   );
 };
 
-// export interface TimelineEvent {
-//   primaryDate?: string;
-//   event?: any;
-//   type?: string;
-// }
-
 const encounterTypes = ["HH", "IMP", "VR", "EMER", "AMB", "OBSENC"];
 const idleFilterState = {
   encounter: true,
@@ -260,8 +290,6 @@ const PatientTimeline = () => {
   const isLoadingTimelineData = useRecoilValue(isLoadingTimelineDataState);
   const timelineData = useRecoilValue(timelineDataState);
 
-  console.log("TIMELINE DATA IS");
-  console.log(timelineData);
   const [timelineFilter, setTimelineFilter] = useState(idleFilterState);
 
   // should refire the query to BE

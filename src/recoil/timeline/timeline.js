@@ -92,6 +92,11 @@ export const isLoadingTimelineDataState = atom({
   default: false,
 });
 
+export const activeTimelineEventState = atom({
+  key: "activeTimelineEventState",
+  default: [],
+});
+
 // https://terminology.hl7.org/ValueSet-encounter-class.html
 export const getPatientTimelineDataCallback =
   ({ set, snapshot }) =>
