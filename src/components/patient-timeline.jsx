@@ -87,14 +87,22 @@ const TimelineEventHeader = ({ event, claimType }) => {
   return (
     <button
       onClick={handleClick}
-      className="w-full relative p-4 border-b flex flex-row justify-between"
+      className={`w-full relative p-4 ${
+        isSelected ? "border-b" : "border-b-0"
+      } flex flex-row justify-between`}
     >
       <div className=" items-center flex flex-row">
         <div className="font-thin mr-2 ">
           {isSelected ? <AiOutlineMinus /> : <AiOutlinePlus />}
         </div>
-        <div className="font-bold text-xs">
-          {getFormattedDate(event?.primaryDate)}
+        <div className="text-xs text-left flex flex-row items-center">
+          <div className="font-bold ">
+            {getFormattedDate(event?.primaryDate)}
+          </div>
+          <div className="ml-2  text-xs">{event?.provider?.display}</div>
+          {/* <div className=" text-xs mt-1">
+            NPI code: {event?.provider?.npiCode}
+          </div> */}
         </div>
       </div>
 
@@ -110,10 +118,12 @@ const TimelineEventContent = ({ event }) => {
     activeTimelineEventState
   );
 
+  console.log("EVENT IS");
+  console.log(event);
   const isSelected = activeTimelineEvent.includes(event.uid);
   return (
     <div className={`${isSelected ? "block" : "hidden"} p-4`}>
-      <div className=" font-bold text-xs mt-1">{event?.provider?.display}</div>
+      {/* <div className=" font-bold text-xs mt-1">{event?.provider?.display}</div> */}
       <div className=" text-xs mt-1">NPI code: {event?.provider?.npiCode}</div>
       {event?.diagnosis?.length > 0 && (
         <div className="mt-6">
@@ -136,7 +146,7 @@ const TimelineEventContent = ({ event }) => {
           <div className="space-y-4 mt-2">
             {event?.procedure?.map((e, i) => {
               let display = e.procedure?.codeDisplay;
-              if (!display) display = display;
+              if (!display) display = e.display;
               return <ProcedureInfo key={i} display={display} />;
             })}
           </div>

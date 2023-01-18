@@ -242,9 +242,10 @@ export const getTimelineClaimsExplanationOfBenefit = async (
     );
   }
 
-  const entityProcedures = await insuranceRepo.getProceduresByFhirReference(
-    procedureReferences
-  );
+  const entityProcedures =
+    await insuranceRepo.getProceduresByFhirReferencesInBatch(
+      procedureReferences
+    );
 
   for (let i = 0; i < entityProcedures.length; i++) {
     setProcedurePrimaryDate(entityProcedures[i]);

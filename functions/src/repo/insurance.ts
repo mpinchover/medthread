@@ -407,20 +407,77 @@ export const getClaimsAllergyIntoleranceByUserUid = async (
   });
   return res;
 };
-export const getProceduresByFhirReference = async (references: string[]) => {
+
+// need make this in batches
+// https://stackoverflow.com/questions/61354866/is-there-a-workaround-for-the-firebase-query-in-limit-to-10
+// export const getProceduresByFhirReference = async (references: string[]) => {
+//   if (references.length === 0) return [];
+//   const db = admin.firestore();
+
+//   const proceduresRef = db.collection(procedureCollection);
+//   const snapshot = await proceduresRef
+//     .where("fhirReference", "in", references)
+//     .get();
+
+//   if (snapshot.empty) return [];
+
+//   const res: Procedure[] = snapshot.docs.map((doc) => doc.data());
+//   return res;
+// };
+
+export const getProceduresByFhirReferencesInBatch = async (
+  references: string[]
+) => {
   if (references.length === 0) return [];
-  const db = admin.firestore();
 
-  const proceduresRef = db.collection(procedureCollection);
-  const snapshot = await proceduresRef
-    .where("fhirReference", "in", references)
-    .get();
+  const batchSize = 10;
+  const refs = references.slice();
+  const batches: string[][] = [];
 
-  if (snapshot.empty) return [];
+  while (refs.length > 0) {
+    const batch = refs.splice(0, batchSize);
+    batches.push(batch);
+  }
 
-  const res: Procedure[] = snapshot.docs.map((doc) => doc.data());
-  return res;
+  const promiseResults: any = await Promise.allSettled(
+    batches.map((batch) => {
+      return getProceduresByFhirReferences(batch);
+    })
+  );
+
+  const procedures: Procedure[] = [];
+  for (let i = 0; i < promiseResults.length; i++) {
+    if (promiseResults[i].status === "rejected") continue;
+
+    const procedure: Procedure = promiseResults[i].value;
+    procedures.push(procedure);
+  }
+
+  return procedures;
 };
+
+export const getProceduresByFhirReferences = async (references: string[]) => {
+  return new Promise(async (res, rej) => {
+    try {
+      if (references.length === 0) return res([]);
+      const db = admin.firestore();
+
+      const proceduresRef = db.collection(procedureCollection);
+      const snapshot = await proceduresRef
+        .where("fhirReference", "in", references)
+        .get();
+
+      if (snapshot.empty) res([]);
+
+      const result: Procedure[] = snapshot.docs.map((doc) => doc.data());
+      res(result);
+    } catch (e) {
+      console.log(e);
+      rej(e);
+    }
+  });
+};
+
 export const getClaimsImmunizationByUserUid = async (
   filter: PatientRecordsQueryFilter
 ): Promise<Immunization[]> => {

@@ -10,17 +10,6 @@ const ProceduresTable = ({ procedures }) => {
   const [activeNote, setActiveNote] = useState(null);
   const [noteValue, setNoteValue] = useState("");
 
-  const handleAddNote = (e) => {
-    const name = e.currentTarget.name;
-    if (activeNote === name) {
-      setActiveProcedures([]);
-      setActiveNote(null);
-    } else {
-      setActiveProcedures([name]);
-      setActiveNote(name);
-    }
-  };
-
   const renderProcedureDetails = (procedure) => {
     return (
       <div
