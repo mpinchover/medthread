@@ -18,6 +18,8 @@ import { createHydratedUserProfile } from "./handlers/create-hydrated-user";
 import { getClaimsDataByUserUidForProvider } from "./handlers/get-claims-data-by-user-uid-for-provider";
 import { getPatientTimelineData } from "./handlers/get-patient-timeline";
 import { hydrateUserProfile } from "./handlers/hydrate-user-profile";
+import { getPatientTimelineDataForProvider } from "./handlers/get-patient-timeline-for-provider";
+
 // import { getMedicationsByPatientUid } from "./get-medications-by-patient-uid";
 const app = express();
 
@@ -58,6 +60,12 @@ app.post(
 );
 
 app.post(
+  "/get-patient-timeline-data-for-provider",
+  validateFirebaseIdToken,
+  getPatientTimelineDataForProvider
+);
+
+app.get(
   "/get-patient-timeline-data",
   validateFirebaseIdToken,
   getPatientTimelineData

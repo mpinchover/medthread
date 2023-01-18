@@ -34,6 +34,7 @@ import ConditionsTable from "./table-conditions";
 import ProceduresTable from "./table-procedures";
 import { modalState } from "../recoil/utils/utils";
 import PatientTimeline from "./patient-timeline";
+
 const MedicationList = ({
   meds,
   onChange,
@@ -180,12 +181,12 @@ const MedicationList = ({
         onClose={handleAddMedModalClose}
         onRemoveMedication={(uid) => handleRemoveMedication(uid)}
       />*/}
-      <SendMedicationsModal
+      {/* <SendMedicationsModal
         healthcareProviders={accountSettings.healthcareProviders}
         isOpen={modal.isSendRecordsModalOpen}
         onSend={onSendMedications}
         onClose={handleSendMedsModalClose}
-      />
+      /> */}
       {/* <AccountModal isOpen={true} /> */}
     </div>
   );

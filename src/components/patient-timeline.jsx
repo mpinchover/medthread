@@ -10,6 +10,7 @@ import { AiOutlinePlus, AiOutlineMinus } from "react-icons/ai";
 import { getFormattedDate } from "./utils";
 import { activeTimelineEventState } from "../recoil/timeline/timeline";
 import { useRecoilState } from "recoil";
+import { useParams } from "react-router-dom";
 
 const DiagnosisInfo = ({ display }) => {
   return (
@@ -118,8 +119,6 @@ const TimelineEventContent = ({ event }) => {
     activeTimelineEventState
   );
 
-  console.log("EVENT IS");
-  console.log(event);
   const isSelected = activeTimelineEvent.includes(event.uid);
   return (
     <div className={`${isSelected ? "block" : "hidden"} p-4`}>
@@ -345,9 +344,17 @@ const PatientTimeline = () => {
   const onReset = () => {
     setTimelineFilter(idleFilterState);
   };
+
+  const { patientUid } = useParams();
+
+  // TODO – add in a filter for inpatient, outpatient, etc
   useEffect(() => {
-    getPatientTimelineData(timelineFilter);
-  }, [timelineFilter]);
+    if (patientUid) {
+      getPatientTimelineData(patientUid);
+    } else {
+      getPatientTimelineData();
+    }
+  }, []);
 
   return (
     <div className=" flex flex-row py-4  w-full text-md px-28 ">

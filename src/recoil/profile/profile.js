@@ -59,7 +59,6 @@ export const isLoadingSettingsState = atom({
 
 // pass in auth
 export const hydrateUserProfileCallback =
-  () =>
   ({ set, snapshot }) =>
   async (auth, user) => {
     try {
@@ -70,6 +69,8 @@ export const hydrateUserProfileCallback =
       const idToken = await auth.currentUser.getIdToken(
         /* forceRefresh */ true
       );
+
+   
       const hydratedProfile = await hydrateUserProfile(idToken);
 
       if (!idToken) {
@@ -285,7 +286,9 @@ export const createProviderCallback =
       if (hydratedUserProfile?.account)
         set(profileAccountState, hydratedUserProfile.account);
       set(authorizedProfileState, authUser);
+      console.log("CREATED PROVIDER NO PROBLE M");
     } catch (e) {
+      console.log("WE HAVE A PROVLEM");
       console.log(e);
       let msg = e.message;
 

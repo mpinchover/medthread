@@ -64,13 +64,11 @@ export const FirebaseProvider = ({ children }) => {
 
   useEffect(() => {
     const auth = getAuth();
+
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
       if (!user) {
         return;
       }
-
-      console.log("USER IS");
-      console.log(user);
 
       const auth = getAuth();
       hydrateUserProfile(auth, user);
@@ -105,7 +103,7 @@ export const FirebaseProvider = ({ children }) => {
         auth
       );
       verifyEmailAddress();
-      navigate("/settings", { replace: true });
+      navigate("/", { replace: true });
     } catch (e) {
       console.log(e);
     }
@@ -132,7 +130,7 @@ export const FirebaseProvider = ({ children }) => {
   const signIn = async (email, password) => {
     try {
       await _signIn({ email, password });
-      navigate("/settings", { replace: true });
+      navigate("/", { replace: true });
     } catch (e) {
       console.log(e);
     }

@@ -146,6 +146,7 @@ export const getAccountSettingsCallback =
       set(isAccountLoadingState, true);
 
       const account = await getAccountSettings();
+
       set(accountSettingsState, account);
     } catch (e) {
       console.log(e);

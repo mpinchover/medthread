@@ -7,7 +7,7 @@ import { collection, addDoc } from "firebase/firestore";
 import { useEffect, useState, useContext } from "react";
 import axios from "axios";
 import { modalState } from "./recoil/utils/utils";
-import { useRecoilCallback, useRecoilValue } from "recoil";
+import { useRecoilCallback, useRecoilValue, useRecoilState } from "recoil";
 import { FirebaseProvider } from "./firebase/firebase-context";
 import Navbar from "./components/navbar";
 import RecordsFeed from "./components/active-patient";
@@ -30,6 +30,9 @@ import MedicationListPatient from "./components/medication-list-patient";
 import TermsOfService from "./components/terms-of-service";
 import PatientTimeline from "./components/patient-timeline";
 import Home from "./components/home";
+import { accountSettingsState } from "./recoil/account/account";
+
+import SendMedicationsModal from "./components/medication-modal-send-meds";
 const ModalShadow = () => {
   // const { isModalOpen } = useContext(FirebaseContext);
   const modal = useRecoilValue(modalState);
@@ -55,9 +58,29 @@ const ModalShadow = () => {
 
 function App() {
   const [open, setOpen] = useState(null);
-
+  const accountSettings = useRecoilValue(accountSettingsState);
+  const [modal, setModal] = useRecoilState(modalState);
   const [accessToken, setAccessToken] = useState(null);
   const [publicToken, setPublicToken] = useState(null);
+
+  const onSendMedications = (e) => {
+    e.preventDefault();
+    setModal((prevModal) => {
+      return {
+        ...prevModal,
+        isSendRecordsModalOpen: false,
+      };
+    });
+  };
+
+  const handleSendMedsModalClose = () => {
+    setModal((prevModal) => {
+      return {
+        ...prevModal,
+        isSendRecordsModalOpen: false,
+      };
+    });
+  };
 
   function resetHeight() {
     // reset the body height to that of the inner browser
@@ -95,6 +118,11 @@ function App() {
               path="/patient-timeline"
               element={<PatientTimeline />}
             />
+            <Route
+              exact
+              path="/records/:patientUid"
+              element={<MedicationListProvider />}
+            />
             <Route exact path="/records" element={<MedicationListPatient />} />
             <Route exact path="/" element={<Home />} />
             <Route
@@ -102,16 +130,18 @@ function App() {
               path="/terms-of-service"
               element={<TermsOfService />}
             />
-            <Route
-              exact
-              path="/patient-data/:patientUid"
-              element={<MedicationListProvider />}
-            />
+
             {/* <Route exact path="/update-password" element={<UpdatePassword />} /> */}
 
             <Route exact path="/verification" element={<VerificationPage />} />
           </Routes>
 
+          <SendMedicationsModal
+            healthcareProviders={accountSettings?.healthcareProviders}
+            isOpen={modal?.isSendRecordsModalOpen}
+            onSend={onSendMedications}
+            onClose={handleSendMedsModalClose}
+          />
           <ToastContainer />
         </FirebaseProvider>
       </Router>

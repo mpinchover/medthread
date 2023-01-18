@@ -8,13 +8,13 @@ import { authorizedProfileState } from "../recoil/auth/auth";
 import LoggedOutHome from "./home-logged-out";
 
 const Home = () => {
+  console.log("HOME PAGE");
   // const { getAuthUser } = useContext(FirebaseContext);
   // const authUser = getAuthUser();
   const authorizedProfile = useRecoilValue(authorizedProfileState);
-
   if (!authorizedProfile) return <LoggedOutHome />;
   const { role } = authorizedProfile;
-  if (role === "PROVIDER") return <PreviousPatients />;
+  if (role === "PROVIDER") return <Settings />;
   return <Settings />;
 };
 

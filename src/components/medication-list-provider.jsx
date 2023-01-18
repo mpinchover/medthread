@@ -60,6 +60,8 @@ const MedicationListProvider = () => {
   // get the patient uis from the params
   useEffect(() => {
     // getMedications();
+    console.log("USER IS");
+    console.log(patientUid);
     getClaimsDatabyUserUid(patientUid);
   }, []);
 

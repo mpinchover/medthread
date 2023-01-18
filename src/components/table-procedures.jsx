@@ -11,8 +11,6 @@ const ProceduresTable = ({ procedures }) => {
   const [noteValue, setNoteValue] = useState("");
 
   const renderProcedureDetails = (procedure) => {
-    console.log("PROCEDURE IS");
-    console.log(procedure);
     return (
       <div
         className={`${

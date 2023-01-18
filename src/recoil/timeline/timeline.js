@@ -1,6 +1,6 @@
 import { atom, selector } from "recoil";
 import { getPatientTimeline } from "../../rpc/get-patient-timeline";
-
+import { getPatientTimelineForProvider } from "../../rpc/get-patient-timeline-for-provider";
 // const fakeTimelineData = [
 //   {
 //     code: "IMP",
@@ -100,17 +100,23 @@ export const activeTimelineEventState = atom({
 // https://terminology.hl7.org/ValueSet-encounter-class.html
 export const getPatientTimelineDataCallback =
   ({ set, snapshot }) =>
-  async (timelineFilter) => {
-    const filter = {
-      encounter: timelineFilter.encounterTypes.length > 0,
-      encounterTypes: timelineFilter.encounterTypes,
-      procedure: timelineFilter.procedure,
-    };
+  async (patientUid) => {
+    // const filter = {
+    //   encounter: timelineFilter.encounterTypes.length > 0,
+    //   encounterTypes: timelineFilter.encounterTypes,
+    //   procedure: timelineFilter.procedure,
+    // };
 
     // convert timeline filters to rpc filter
     try {
       set(isLoadingTimelineDataState, true);
-      let timeline = await getPatientTimeline(filter);
+
+      let timeline;
+      if (patientUid) {
+        timeline = await getPatientTimelineForProvider(patientUid);
+      } else {
+        timeline = await getPatientTimeline();
+      }
       if (!timeline) timeline = [];
       set(timelineDataState, timeline);
     } catch (e) {
