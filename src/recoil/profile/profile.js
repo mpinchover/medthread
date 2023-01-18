@@ -13,6 +13,7 @@ import { createHydratedUserProfile } from "../../rpc/create-hydrated-user";
 import { authorizedProfileState } from "../auth/auth";
 import { validateCreatePatient } from "../../validation/validation";
 import { hydrateUserProfile } from "../../rpc/hydrate-user-profile";
+import { capitalizeFirstLetter } from "../../components/utils";
 
 export const profileAccountState = atom({
   key: "profileAccountState",
@@ -65,12 +66,11 @@ export const hydrateUserProfileCallback =
       // const config = getServerConfig();
       // const authUser = JSON.parse(localStorage.getItem("med_thread_auth_user"));
       // const { idToken } = authUser;
-
+      set(isLoadingSettingsState, true);
       const idToken = await auth.currentUser.getIdToken(
         /* forceRefresh */ true
       );
 
-   
       const hydratedProfile = await hydrateUserProfile(idToken);
 
       if (!idToken) {
@@ -93,6 +93,8 @@ export const hydrateUserProfileCallback =
     } catch (e) {
       console.log("ERROR IS");
       console.log(e);
+    } finally {
+      set(isLoadingSettingsState, false);
     }
   };
 
@@ -123,7 +125,9 @@ export const createPatientCallback =
   async (params, auth) => {
     try {
       let { email, password, confirmPassword, displayName } = params;
-
+      if (displayName !== "") {
+        displayName = capitalizeFirstLetter(displayName);
+      }
       validateCreatePatient({
         email,
         password,
@@ -241,6 +245,10 @@ export const createProviderCallback =
   async (params, auth) => {
     try {
       let { email, password, confirmPassword, displayName } = params;
+      if (displayName !== "") {
+        displayName = capitalizeFirstLetter(displayName);
+      }
+
       validateCreatePatient({
         email,
         password,
