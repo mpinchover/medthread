@@ -17,6 +17,7 @@ import { getClaimsDataByUserUid } from "./handlers/get-claims-data-by-user-uid";
 import { createHydratedUserProfile } from "./handlers/create-hydrated-user";
 import { getClaimsDataByUserUidForProvider } from "./handlers/get-claims-data-by-user-uid-for-provider";
 import { getPatientTimelineData } from "./handlers/get-patient-timeline";
+import { hydrateUserProfile } from "./handlers/hydrate-user-profile";
 // import { getMedicationsByPatientUid } from "./get-medications-by-patient-uid";
 const app = express();
 
@@ -76,6 +77,7 @@ app.post(
   getClaimsDataByUserUidForProvider
 );
 
+app.get("/hydrate-user-profile", validateFirebaseIdToken, hydrateUserProfile);
 app.post(
   "/remove-health-insurance-provider",
   validateFirebaseIdToken,

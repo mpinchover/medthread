@@ -1,8 +1,6 @@
 import { atom, selector } from "recoil";
 import axios from "axios";
-import { collection, query, where, getDocs } from "firebase/firestore";
 import { getAuth, updateEmail } from "firebase/auth";
-import { getUserProfile } from "../../rpc/get-user-profile";
 import { addAuthorizedHealthcareProviderdicationsByUid } from "../../rpc/add-authorized-healthcare-provider";
 import { updateAccountSettings } from "../../rpc/update-account-settings";
 import {
@@ -11,9 +9,10 @@ import {
 } from "firebase/auth";
 import { ToastContainer, toast } from "react-toastify";
 import { createHydratedUserProfile } from "../../rpc/create-hydrated-user";
-import { useNavigate } from "react-router-dom";
+
 import { authorizedProfileState } from "../auth/auth";
 import { validateCreatePatient } from "../../validation/validation";
+import { hydrateUserProfile } from "../../rpc/hydrate-user-profile";
 
 export const profileAccountState = atom({
   key: "profileAccountState",
@@ -57,6 +56,44 @@ export const isLoadingSettingsState = atom({
   key: "isloadingsettingsstate",
   default: false,
 });
+
+// pass in auth
+export const hydrateUserProfileCallback =
+  () =>
+  ({ set, snapshot }) =>
+  async (auth, user) => {
+    try {
+      // const config = getServerConfig();
+      // const authUser = JSON.parse(localStorage.getItem("med_thread_auth_user"));
+      // const { idToken } = authUser;
+
+      const idToken = await auth.currentUser.getIdToken(
+        /* forceRefresh */ true
+      );
+      const hydratedProfile = await hydrateUserProfile(idToken);
+
+      if (!idToken) {
+        throw new Error("No auth token");
+      }
+
+      const authUser = {
+        uid: user.uid,
+        email: user.email,
+        emailVerified: user.emailVerified,
+        providerData: user.providerData,
+        ...hydratedProfile,
+        idToken,
+      };
+
+      localStorage.setItem("med_thread_auth_user", JSON.stringify(authUser));
+
+      set(profileAccountState, hydratedProfile?.account);
+      set(authorizedProfileState, authUser);
+    } catch (e) {
+      console.log("ERROR IS");
+      console.log(e);
+    }
+  };
 
 export const addHealthcareProviderCallback =
   ({ set, snapshot }) =>
@@ -163,9 +200,9 @@ export const signInCallback =
 
       const auth = getAuth();
       const res = await signInWithEmailAndPassword(auth, email, password);
-      const hydratedUserProfile = await getUserProfile(res.user.uid);
       const idToken = await res.user.getIdToken(/* forceRefresh */ true);
 
+      const hydratedUserProfile = await hydrateUserProfile(idToken);
       const authUser = {
         uid: res.user.uid,
         email: res.user.email,
@@ -317,7 +354,7 @@ export const getPatientProfileCallback =
 
     try {
       set(isLoadingSettingsState, true);
-      const patientProfile = await getUserProfile(uid);
+      const patientProfile = await hydrateUserProfile(authUser.idToken);
 
       const listOfInsuranceProviders = getInsuranceProviders(patientProfile);
       set(insuranceProvidersState, listOfInsuranceProviders);

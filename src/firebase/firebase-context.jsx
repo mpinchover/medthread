@@ -21,6 +21,7 @@ import {
   createProviderCallback,
   isLoggingInUserState,
   signInCallback,
+  hydrateUserProfileCallback,
 } from "../recoil/profile/profile";
 import {
   updateEmailCallback,
@@ -59,24 +60,7 @@ export const FirebaseProvider = ({ children }) => {
   const _updateUserPasswordCallback = useRecoilCallback(updatePasswordCallback);
   const _signIn = useRecoilCallback(signInCallback);
   const navigate = useNavigate();
-
-  const getAccountSettings = useRecoilCallback(getAccountSettingsCallback);
-
-  const hydrateUserProfile = async (uid) => {
-    if (!uid) return;
-
-    const db = getFirestore();
-    const profilesRef = collection(db, "profiles");
-    const q = query(profilesRef, where("userUid", "==", uid), limit(1));
-    const querySnapshot = await getDocs(q);
-    if (!querySnapshot || querySnapshot.docs.length === 0) {
-      return;
-    }
-
-    const hydratedUser = querySnapshot.docs[0].data();
-    hydratedUser.profileUid = querySnapshot.docs[0].id;
-    return hydratedUser;
-  };
+  const hydrateUserProfile = useRecoilCallback(hydrateUserProfileCallback);
 
   useEffect(() => {
     const auth = getAuth();
@@ -85,30 +69,11 @@ export const FirebaseProvider = ({ children }) => {
         return;
       }
 
-      const hydratedUserProfile = await hydrateUserProfile(user.uid);
-      const idToken = await auth.currentUser.getIdToken(
-        /* forceRefresh */ true
-      );
+      console.log("USER IS");
+      console.log(user);
 
-      const authUser = {
-        uid: user.uid,
-        email: user.email,
-        emailVerified: user.emailVerified,
-        providerData: user.providerData,
-        ...hydratedUserProfile,
-        idToken,
-      };
-
-      // // might be this
-      // if (authUser?.role || getAuthUser()?.uid !== authUser?.uid) {
-      //   signOutUser();
-      // }
-
-      localStorage.setItem("med_thread_auth_user", JSON.stringify(authUser));
-
-      setProfileAccount(hydratedUserProfile.account);
-      // _setAuthorizedProfileState(authUser);
-      setAuthorizedProfile(authUser);
+      const auth = getAuth();
+      hydrateUserProfile(auth, user);
     });
 
     const removeIdTokenListener = onIdTokenChanged(auth, async (user) => {
@@ -117,32 +82,8 @@ export const FirebaseProvider = ({ children }) => {
         return;
       }
 
-      const curAuthUserCache = getAuthUser();
-      // if (curAuthUserCache && curAuthUserCache.uid !== user?.uid) {
-      //   localStorage.clear();
-      //   setAuthorizedProfile(null);
-      //   return;
-      // }
-
-      const hydratedUserProfile = await hydrateUserProfile(user.uid);
-      const idToken = await auth.currentUser.getIdToken(
-        /* forceRefresh */ true
-      );
-
-      const authUser = {
-        uid: user.uid,
-        email: user.email,
-        emailVerified: user.emailVerified,
-        providerData: user.providerData,
-        ...hydratedUserProfile,
-        idToken,
-      };
-
-      localStorage.setItem("med_thread_auth_user", JSON.stringify(authUser));
-
-      setProfileAccount(hydratedUserProfile.account);
-      // _setAuthorizedProfileState(authUser);
-      setAuthorizedProfile(authUser);
+      const auth = getAuth();
+      hydrateUserProfile(auth, user);
     });
 
     return () => {
@@ -165,7 +106,6 @@ export const FirebaseProvider = ({ children }) => {
       );
       verifyEmailAddress();
       navigate("/settings", { replace: true });
-      // window.location.reload();
     } catch (e) {
       console.log(e);
     }
@@ -184,7 +124,6 @@ export const FirebaseProvider = ({ children }) => {
         auth
       );
       navigate("/settings", { replace: true });
-      // window.location.reload();
     } catch (e) {
       console.log(e);
     }
@@ -194,17 +133,10 @@ export const FirebaseProvider = ({ children }) => {
     try {
       await _signIn({ email, password });
       navigate("/settings", { replace: true });
-      // window.location.reload();
-      // await navigate("/");
     } catch (e) {
       console.log(e);
     }
   };
-
-  // const updateAccountInformation = async (params) => {
-  //   const auth = getAuth();
-  //   updateAccountSettingsCbk(auth, params);
-  // };
 
   const updateUserEmail = async (email) => {
     const auth = getAuth();

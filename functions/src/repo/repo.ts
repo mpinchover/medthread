@@ -63,6 +63,16 @@ export const addAuthorizedHealthcareProvider = async (
   await authorizedProviderDoc.set(params);
   return params;
 };
+export const hydrateUserProfile = async (userUid: string): Promise<Profile> => {
+  if (!userUid) return null;
+
+  const db = admin.firestore();
+  const profilesRef = db.collection("profiles");
+  const snapshot = await profilesRef.where("userUid", "==", userUid).get();
+
+  if (snapshot.empty) return null;
+  return snapshot.docs[0].data();
+};
 
 export const createHydratedUserProfile = async (
   params: Profile
