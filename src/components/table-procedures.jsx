@@ -11,19 +11,21 @@ const ProceduresTable = ({ procedures }) => {
   const [noteValue, setNoteValue] = useState("");
 
   const renderProcedureDetails = (procedure) => {
+    console.log("PROCEDURE IS");
+    console.log(procedure);
     return (
       <div
         className={`${
-          activeProcedures.includes(procedure.code) ? "block" : "hidden"
+          activeProcedures.includes(procedure.uid) ? "block" : "hidden"
         } mt-2 bg-gray-100 p-4`}
       >
         <div className="mb-2 text-xs">{procedure.codeDisplay}</div>
         <div className="flex flex-row">
-          <div className="font-bold text-sm w-52">Recorder</div>
-          <div className="font-bold text-sm w-52">Performer</div>
+          <div className="font-bold text-xs w-52">Recorder</div>
+          <div className="font-bold text-xs w-52">Performer</div>
         </div>
         <div className="flex flex-row  py-2 border-b last:border-none">
-          <div className=" text-sm w-52">
+          <div className=" text-xs w-52">
             {procedure.recorder
               ? capitalizeFirstLetter(procedure.recorder)
               : null}
@@ -40,16 +42,16 @@ const ProceduresTable = ({ procedures }) => {
 
   const renderProceduresList = () => {
     const handleClick = (e) => {
-      const procedureCode = e.currentTarget.name;
-      if (activeProcedures.includes(procedureCode)) {
+      const procedureUid = e.currentTarget.name;
+      if (activeProcedures.includes(procedureUid)) {
         setActiveProcedures((active) =>
-          active.filter((code) => code !== procedureCode)
+          active.filter((uid) => uid !== procedureUid)
         );
-        setActiveNote(null);
+
         return;
       }
-      setActiveNote(null);
-      setActiveProcedures([...activeProcedures, procedureCode]);
+
+      setActiveProcedures([...activeProcedures, procedureUid]);
     };
     return (
       <div className="w-full  ">
@@ -59,7 +61,7 @@ const ProceduresTable = ({ procedures }) => {
               <div className="relative">
                 <button
                   onClick={handleClick}
-                  name={e.code}
+                  name={e.uid}
                   className=" text-left  flex w-full flex-row "
                 >
                   <div className="pr-6 w-72 text-ellipsis overflow-hidden whitespace-nowrap">
@@ -70,41 +72,8 @@ const ProceduresTable = ({ procedures }) => {
                     {getFormattedDate(e.performedDateTime)}
                   </div>
                 </button>
-                {/* <div className="absolute top-1/2 right-0 -translate-y-1/2 flex-row items-center justify-end ">
-                  {activeNote === e.code ? (
-                    <button
-                      name={e.code}
-                      onClick={handleAddNote}
-                      className={`font-bold`}
-                    >
-                      Cancel
-                    </button>
-                  ) : (
-                    <button
-                      name={e.code}
-                      onClick={handleAddNote}
-                      className={`font-bold`}
-                    >
-                      Add note
-                    </button>
-                  )}
-                </div> */}
               </div>
               <div>{renderProcedureDetails(e)}</div>
-              <div className={`${activeNote === e.code ? "block" : "hidden"}`}>
-                <textarea
-                  value={noteValue}
-                  onChange={(e) => setNoteValue(e.target.value)}
-                  className="w-full resize-none mt-6 border focus:outline-none p-6"
-                  rows={4}
-                />
-                <button
-                  //   onClick={handleSaveNote}
-                  className="mt-6 p-3 px-8 font-bold border rounded-lg bg-black text-white"
-                >
-                  Save
-                </button>
-              </div>
             </div>
           );
         })}
@@ -113,7 +82,7 @@ const ProceduresTable = ({ procedures }) => {
   };
 
   return (
-    <div className="py-4  w-full text-md px-28 ">
+    <div className="py-4 text-xs w-full text-md px-28 ">
       <div className="flex flex-row">
         <div className="w-72 font-bold">Procedure</div>
 

@@ -21,12 +21,12 @@ const MedicationsTable = ({ meds, handleSaveNote }) => {
       >
         <div className="mb-2 text-xs">{codeDisplay}</div>
         <div className="flex flex-row">
-          <div className="font-bold text-sm w-32">Type</div>
-          <div className="font-bold text-sm w-32">Date</div>
-          <div className="font-bold text-sm w-32">Dosage</div>
+          <div className="font-bold text-xs w-32">Type</div>
+          <div className="font-bold text-xs w-32">Date</div>
+          <div className="font-bold text-xs w-32">Dosage</div>
 
-          <div className="font-bold text-sm w-32">Days supply</div>
-          <div className="font-bold text-sm w-32">Quantity</div>
+          <div className="font-bold text-xs w-32">Days supply</div>
+          <div className="font-bold text-xs w-32">Quantity</div>
         </div>
         <div>
           {derivedMedicationHistory.map((e, i) => {
@@ -35,14 +35,14 @@ const MedicationsTable = ({ meds, handleSaveNote }) => {
                 key={i}
                 className="flex flex-row  py-2 border-b last:border-none"
               >
-                <div className=" text-sm w-32">
+                <div className=" text-xs w-32">
                   {capitalizeFirstLetter(e.type)}
                 </div>
-                <div className=" text-sm w-32">{getFormattedDate(e.date)}</div>
+                <div className=" text-xs w-32">{getFormattedDate(e.date)}</div>
 
-                <div className=" text-sm w-32">{e.dosage}</div>
-                <div className=" text-sm w-32">{e.daysSupply}</div>
-                <div className=" text-sm w-32">{e.quantity}</div>
+                <div className=" text-xs w-32">{e.dosage}</div>
+                <div className=" text-xs w-32">{e.daysSupply}</div>
+                <div className=" text-xs w-32">{e.quantity}</div>
               </div>
             );
           })}
@@ -61,21 +61,6 @@ const MedicationsTable = ({ meds, handleSaveNote }) => {
       }
       setActiveNote(null);
       setActiveMeds([...activeMeds, medCode]);
-    };
-
-    const handleAddNote = (e) => {
-      const name = e.currentTarget.name;
-      if (activeNote === name) {
-        setActiveMeds([]);
-        setActiveNote(null);
-      } else {
-        setActiveMeds([name]);
-        setActiveNote(name);
-      }
-    };
-
-    const _handleSaveNote = () => {
-      // handleSaveNote()
     };
 
     return (
@@ -133,7 +118,7 @@ const MedicationsTable = ({ meds, handleSaveNote }) => {
   };
 
   return (
-    <div className="py-4  w-full text-md px-28 ">
+    <div className="py-4 text-xs w-full text-md px-28 ">
       <div className="flex flex-row">
         <div className="w-72   font-bold">Medication</div>
 
