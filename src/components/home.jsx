@@ -8,7 +8,6 @@ import { authorizedProfileState } from "../recoil/auth/auth";
 import LoggedOutHome from "./home-logged-out";
 
 const Home = () => {
-  console.log("HOME PAGE");
   // const { getAuthUser } = useContext(FirebaseContext);
   // const authUser = getAuthUser();
   const authorizedProfile = useRecoilValue(authorizedProfileState);

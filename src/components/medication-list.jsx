@@ -148,6 +148,13 @@ const MedicationList = ({
   return (
     <div className="flex-1 relative ">
       <div className="flex-1 relative">
+        {authUser.role === "PROVIDER" && (
+          <div className=" mt-6 px-2 md:px-28 flex flex-row relative">
+            <button className="p-3 px-8 font-bold border rounded-lg bg-black text-white">
+              Get EMR records
+            </button>
+          </div>
+        )}
         <section className="mt-6">
           <MedicationListFilterBar />
         </section>

@@ -123,7 +123,11 @@ const TimelineEventContent = ({ event }) => {
   return (
     <div className={`${isSelected ? "block" : "hidden"} p-4`}>
       {/* <div className=" font-bold text-xs mt-1">{event?.provider?.display}</div> */}
-      <div className=" text-xs mt-1">NPI code: {event?.provider?.npiCode}</div>
+      {event?.provider?.npiCode && (
+        <div className=" text-xs mt-1">
+          NPI code: {event?.provider?.npiCode}
+        </div>
+      )}
       {event?.diagnosis?.length > 0 && (
         <div className="mt-6">
           <div className=" font-bold text-xs">Diagnosis</div>
@@ -165,7 +169,12 @@ const TimelineEventContent = ({ event }) => {
 // https://www.hl7.org/fhir/valueset-claim-type.html
 // claim tpyes
 const TimelineEvent = ({ event }) => {
-  const claimType = claimTypeEvent[event?.type?.[0]?.code];
+  const claimTypeCode = event?.type?.[0]?.code;
+  console.log(claimTypeCode);
+  if (claimTypeCode === "oral" || claimTypeCode === "pharmacy") return null;
+
+  const claimType = claimTypeEvent[claimTypeCode];
+
   return (
     <div className={` rounded-md border w-full`}>
       <TimelineEventHeader claimType={claimType} event={event} />

@@ -67,6 +67,7 @@ export const FirebaseProvider = ({ children }) => {
 
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
       if (!user) {
+        console.log("NO USER FOUND");
         return;
       }
 

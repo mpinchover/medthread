@@ -9,7 +9,6 @@ export const getAccountSettings = async (uid) => {
 
   let res;
   try {
-    console.log("WAITING FOR ACCOUNT");
     res = await axios({
       method: "get",
       url: `${config.baseUrl}/get-user-account`,
@@ -18,7 +17,6 @@ export const getAccountSettings = async (uid) => {
         Authorization: `Bearer ${idToken}`,
       },
     });
-    console.log("RETRIEVED");
   } catch (e) {
     console.log(e);
     throw e;
