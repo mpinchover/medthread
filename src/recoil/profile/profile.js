@@ -63,6 +63,14 @@ export const hydrateUserProfileCallback =
   ({ set, snapshot }) =>
   async (auth, user) => {
     try {
+      const curAuthProfile = snapshot.getLoadable(
+        authorizedProfileState
+      ).contents;
+      if (!curAuthProfile?.role) {
+        localStorage.clear();
+        set(authorizedProfileState, null);
+        return null;
+      }
       // const config = getServerConfig();
       // const authUser = JSON.parse(localStorage.getItem("med_thread_auth_user"));
       // const { idToken } = authUser;
@@ -294,9 +302,7 @@ export const createProviderCallback =
       if (hydratedUserProfile?.account)
         set(profileAccountState, hydratedUserProfile.account);
       set(authorizedProfileState, authUser);
-      console.log("CREATED PROVIDER NO PROBLE M");
     } catch (e) {
-      console.log("WE HAVE A PROVLEM");
       console.log(e);
       let msg = e.message;
 

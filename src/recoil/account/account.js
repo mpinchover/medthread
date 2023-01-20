@@ -80,6 +80,8 @@ export const updatePasswordCallback =
     }
   };
 
+  
+
 export const removeInsuranceProviderCallback =
   ({ set, snapshot }) =>
   async (healthInsuranceProviderUid) => {
