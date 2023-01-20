@@ -13,36 +13,15 @@ import { useRecoilState } from "recoil";
 import { useParams } from "react-router-dom";
 
 const DiagnosisInfo = ({ display }) => {
-  return (
-    <div className="relative flex flex-row ">
-      <div>
-        <div className="absolute top-2 border-gray-400 border-b w-4    "></div>
-      </div>
-      <div className="text-xs ml-6">{display}</div>
-    </div>
-  );
+  return <div className="text-xs p-4 rounded-md bg-gray-100">{display}</div>;
 };
 
 const ProcedureInfo = ({ display }) => {
-  return (
-    <div className="relative flex flex-row">
-      <div>
-        <div className="absolute top-2 border-gray-400 border-b w-4    "></div>
-      </div>
-      <div className="text-xs ml-6">{display}</div>
-    </div>
-  );
+  return <div className="text-xs p-4 rounded-md bg-gray-100">{display}</div>;
 };
 
 const PrescriptionDisplay = ({ display }) => {
-  return (
-    <div className=" relative flex flex-row">
-      <div>
-        <div className="absolute top-2 border-gray-400 border-b w-4    "></div>
-      </div>
-      <div className="ml-6 text-xs">{display}</div>
-    </div>
-  );
+  return <div className="text-xs p-4 rounded-md bg-gray-100">{display}</div>;
 };
 
 const claimTypeEvent = {
@@ -88,22 +67,17 @@ const TimelineEventHeader = ({ event, claimType }) => {
   return (
     <button
       onClick={handleClick}
-      className={`w-full relative p-4 ${
-        isSelected ? "border-b" : "border-b-0"
-      } flex flex-row justify-between`}
+      className={`w-full relative  flex flex-row justify-between`}
     >
       <div className=" items-center flex flex-row">
         <div className="font-thin mr-2 ">
           {isSelected ? <AiOutlineMinus /> : <AiOutlinePlus />}
         </div>
-        <div className="text-xs text-left flex flex-row items-center">
+        <div className="text-xs text-left flex  flex-row items-center">
           <div className="font-bold ">
             {getFormattedDate(event?.primaryDate)}
           </div>
           <div className="ml-2  text-xs">{event?.provider?.display}</div>
-          {/* <div className=" text-xs mt-1">
-            NPI code: {event?.provider?.npiCode}
-          </div> */}
         </div>
       </div>
 
@@ -121,17 +95,16 @@ const TimelineEventContent = ({ event }) => {
 
   const isSelected = activeTimelineEvent.includes(event.uid);
   return (
-    <div className={`${isSelected ? "block" : "hidden"} p-4`}>
+    <div className={`${isSelected ? "block" : "hidden"} mt-8`}>
       {/* <div className=" font-bold text-xs mt-1">{event?.provider?.display}</div> */}
+      {/* 
       {event?.provider?.npiCode && (
-        <div className=" text-xs mt-1">
-          NPI code: {event?.provider?.npiCode}
-        </div>
-      )}
+        <div className="py-2 text-xs">NPI code: {event?.provider?.npiCode}</div>
+      )} */}
       {event?.diagnosis?.length > 0 && (
-        <div className="mt-6">
+        <div className=" ">
           <div className=" font-bold text-xs">Diagnosis</div>
-          <div className="space-y-4 mt-2">
+          <div className="space-y-2 mt-2">
             {event?.diagnosis?.map((e, i) => {
               if (e.codeableConcept?.display) {
                 return (
@@ -143,10 +116,10 @@ const TimelineEventContent = ({ event }) => {
         </div>
       )}
       {event?.procedure?.length > 0 && (
-        <div className="mt-6">
+        <div className="mt-8">
           <div className=" font-bold text-xs">Procedures</div>
 
-          <div className="space-y-4 mt-2">
+          <div className="space-y-2 mt-2">
             {event?.procedure?.map((e, i) => {
               let display = e.procedure?.codeDisplay;
               if (!display) display = e.display;
@@ -157,11 +130,19 @@ const TimelineEventContent = ({ event }) => {
       )}
 
       {event?.prescription?.display && (
-        <div className="mt-6">
+        <div className="mt-8">
           <div className=" font-bold text-xs mb-2">Prescription</div>
           <PrescriptionDisplay display={event?.prescription?.display} />
         </div>
       )}
+      <div className="mt-8">
+        <button
+          // onClick={handleSubmit}
+          className="text-xs p-3 px-8 font-bold border rounded-lg bg-black text-white"
+        >
+          Get EMR records
+        </button>
+      </div>
     </div>
   );
 };
@@ -176,7 +157,7 @@ const TimelineEvent = ({ event }) => {
   const claimType = claimTypeEvent[claimTypeCode];
 
   return (
-    <div className={` rounded-md border w-full`}>
+    <div className={` border-b py-8 w-full`}>
       <TimelineEventHeader claimType={claimType} event={event} />
       <TimelineEventContent event={event} />
     </div>
@@ -196,7 +177,7 @@ const Timeline = ({ timelineData }) => {
     );
   }
   return (
-    <div className="space-y-6 w-full">
+    <div className=" w-full">
       {timelineData.map((e, i) => {
         return <TimelineEvent key={i} event={e} />;
       })}
@@ -366,7 +347,7 @@ const PatientTimeline = () => {
   }, []);
 
   return (
-    <div className=" flex flex-row py-4  w-full text-md px-28 ">
+    <div className=" flex flex-row  w-full text-md px-28 ">
       {/* <section className="mr-4">
         <FilterSidebar
           onReset={onReset}

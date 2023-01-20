@@ -42,12 +42,15 @@ const PatientSettings = ({ authProfile, accountSettings }) => {
     removeInsuranceProviderCallback
   );
 
+  console.log("AUTHORIZED PROFILE IS");
+  console.log(authProfile);
+
   useEffect(() => {
     // set the eamil from the auth profile state
     // make dependencies on email
   });
 
-  window.FlexpaLink.create({
+  window?.FlexpaLink?.create({
     publishableKey: "pk_test_pKDGhsAjAOiDxw6LdHuoogYupzm9VNnQh113WuCoK6I",
     onSuccess: async (publicToken) => {
       addInsuranceProvider(publicToken);

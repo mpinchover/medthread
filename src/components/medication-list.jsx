@@ -120,6 +120,20 @@ const MedicationList = ({
 
   const navigate = useNavigate();
 
+  const renderSearchBar = () => {
+    if (recordsActiveCategory === "TIMELINE") return null;
+    return (
+      <div className="mt-6   px-2 md:px-28 flex flex-row relative">
+        <input
+          // onChange={(e) => setSearchTerm(e.target.value)}
+          onChange={(e) => onChange(e.target.value)}
+          value={searchTerm}
+          className=" focus:outline-none p-4 text-sm border rounded-full flex-1 "
+          placeholder="Search records..."
+        />
+      </div>
+    );
+  };
   const renderRecordsTable = () => {
     if (recordsActiveCategory === "MEDICATIONS") {
       return <MedicationsTable meds={claimsDerivedMedications} />;
@@ -158,16 +172,7 @@ const MedicationList = ({
         <section className="mt-6">
           <MedicationListFilterBar />
         </section>
-        <div className="mt-6   px-2 md:px-28 flex flex-row relative">
-          <input
-            // onChange={(e) => setSearchTerm(e.target.value)}
-            onChange={(e) => onChange(e.target.value)}
-            value={searchTerm}
-            className=" focus:outline-none p-4 text-sm border rounded-full flex-1 "
-            placeholder="Search records..."
-          />
-        </div>
-
+        {renderSearchBar()}
         {/* {renderMedicationList()} */}
       </div>
 
