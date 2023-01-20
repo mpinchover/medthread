@@ -1,5 +1,5 @@
 import { useContext } from "react";
-import PreviousPatients from "./previous-patients";
+import PreviousPatients from "./care-provider-patients";
 import { FirebaseContext } from "../firebase/firebase-context";
 import Settings from "./settings";
 import PatientSignup from "./signup-patient";

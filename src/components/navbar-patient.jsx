@@ -68,7 +68,7 @@ const PatientNavbar = ({ authUser }) => {
 
   const mainDropdownRefBtn = useRef(null);
 
-  let name = authUser?.account?.displayName;
+  let name = authUser?.account?.nameValue;
   if (name && name.length > 0) name = name[0].toUpperCase();
   return (
     <div

@@ -12,8 +12,8 @@ import { AiOutlinePlus, AiOutlineHistory } from "react-icons/ai";
 
 const navbarDropdownMenuOptions = [
   {
-    name: "PREVIOUS_PATIENTS",
-    display: "Previous patients",
+    name: "PATIENTS",
+    display: "Patients",
     icon: AiOutlineHistory,
   },
   { name: "ACCOUNT", display: "Account", icon: MdAccountCircle },
@@ -37,7 +37,7 @@ const ProviderNavbar = ({ authUser }) => {
 
   const onDropdownClick = (e) => {
     const name = e.currentTarget.name;
-    if (name === "PREVIOUS_PATIENTS") navigate("/previous-patients");
+    if (name === "PATIENTS") navigate("/patients");
 
     if (name === "PREVIOUS_PATIENTS") navigate("/previous-patients");
     if (name === "ACCOUNT") navigate("/settings");
@@ -56,7 +56,7 @@ const ProviderNavbar = ({ authUser }) => {
 
   const mainDropdownRefBtn = useRef(null);
 
-  let name = authUser?.account?.displayName;
+  let name = authUser?.account?.nameValue;
   if (name && name.length > 0) name = name[0].toUpperCase();
   return (
     <div

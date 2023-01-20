@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import { AiOutlineCloseCircle } from "react-icons/ai";
-import previousPatients from "./previous-patients";
+import previousPatients from "./care-provider-patients";
 import { TextInput, DatePicker } from "./common";
 import { FaTrash } from "react-icons/fa";
 import {

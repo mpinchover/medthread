@@ -33,6 +33,7 @@ import Home from "./components/home";
 import { accountSettingsState } from "./recoil/account/account";
 
 import SendMedicationsModal from "./components/medication-modal-send-meds";
+import CareProviderPatients from "./components/care-provider-patients";
 const ModalShadow = () => {
   // const { isModalOpen } = useContext(FirebaseContext);
   const modal = useRecoilValue(modalState);
@@ -104,7 +105,7 @@ function App() {
           <ModalShadow />
           <Navbar />
           <Routes className="">
-            <Route exact path="/previous-patients" element={<PatientFeed />} />
+            <Route exact path="/patients" element={<CareProviderPatients />} />
             <Route exact path="/active-patient" element={<RecordsFeed />} />
 
             <Route exact path="/provider-login" element={<ProviderLogin />} />

@@ -12,13 +12,14 @@ import { removeHealthInsuranceProvider } from "./remove-health-insurance-provide
 import { saveMedication } from "./save-medication";
 import { getMedicationsByUserUid } from "./get-medications-by-user-uid";
 import { removeMedication } from "./remove-medication";
-import { sendMedicationsToProvider } from "./send-medications";
+// import { sendMedicationsToProvider } from "./send-medications";
 import { getClaimsDataByUserUid } from "./handlers/get-claims-data-by-user-uid";
 import { createHydratedUserProfile } from "./handlers/create-hydrated-user";
 import { getClaimsDataByUserUidForProvider } from "./handlers/get-claims-data-by-user-uid-for-provider";
 import { getPatientTimelineData } from "./handlers/get-patient-timeline";
 import { hydrateUserProfile } from "./handlers/hydrate-user-profile";
 import { getPatientTimelineDataForProvider } from "./handlers/get-patient-timeline-for-provider";
+import { getPatientsByHealthcareProviderUid } from "./handlers/get-patients-by-healthcare-provider-uid";
 
 // import { getMedicationsByPatientUid } from "./get-medications-by-patient-uid";
 const app = express();
@@ -52,6 +53,12 @@ const validateFirebaseIdToken = async (req: any, res: any, next: any) => {
     return;
   }
 };
+
+app.post(
+  "/get-patients-by-healthcare-provider-uid",
+  validateFirebaseIdToken,
+  getPatientsByHealthcareProviderUid
+);
 
 app.post(
   "/add-health-insurance-provider",
@@ -91,11 +98,11 @@ app.post(
   validateFirebaseIdToken,
   removeHealthInsuranceProvider
 );
-app.post(
-  "/send-medications-to-provider",
-  validateFirebaseIdToken,
-  sendMedicationsToProvider
-);
+// app.post(
+//   "/send-medications-to-provider",
+//   validateFirebaseIdToken,
+//   sendMedicationsToProvider
+// );
 app.post("/remove-medication", validateFirebaseIdToken, removeMedication);
 app.post("/save-medication", validateFirebaseIdToken, saveMedication);
 app.get("/get-user-account", validateFirebaseIdToken, getUserAccount);

@@ -50,7 +50,7 @@ const ProviderSettings = ({ authProfile }) => {
   const accountSettings = useRecoilValue(profileAccountState);
 
   const [email, setEmail] = useState(auth?.currentUser?.email);
-  const [displayName, setDisplayName] = useState(accountSettings.displayName);
+  const [nameValue, setnameValue] = useState(accountSettings.nameValue);
   const [mobile, setMobile] = useState(accountSettings.mobile);
   const [isEditMode, setIsEditMode] = useState(false);
 
@@ -64,7 +64,7 @@ const ProviderSettings = ({ authProfile }) => {
     if (e.target.id === "email") {
       setEmail(e.target.value);
     } else if (e.target.id === "name") {
-      setDisplayName(e.target.value);
+      setnameValue(e.target.value);
     } else if (e.target.id === "mobile") {
       setMobile(e.target.value);
     }
@@ -77,7 +77,7 @@ const ProviderSettings = ({ authProfile }) => {
   const handleSaveAccountInformation = (e) => {
     e.preventDefault();
     updateAccountInformation({
-      displayName,
+      nameValue,
       email,
       mobile,
     });
@@ -88,7 +88,7 @@ const ProviderSettings = ({ authProfile }) => {
     e.preventDefault();
 
     setEmail(auth?.currentUser?.email);
-    setDisplayName(accountSettings.displayName);
+    setnameValue(accountSettings.nameValue);
     setMobile(accountSettings.mobile);
 
     setIsEditMode(false);
@@ -105,7 +105,7 @@ const ProviderSettings = ({ authProfile }) => {
               id={"name"}
               onChange={onAccountSettingsChange}
               disabled={!isEditMode}
-              value={displayName}
+              value={nameValue}
               label={"Name"}
             />
           </section>

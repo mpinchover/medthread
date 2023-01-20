@@ -1,15 +1,11 @@
 import { InvalidArgumentError } from "../errors/errors";
 
-export const validateCreatePatient = ({
-  name,
-  password,
-  confirmPassword,
-  email,
-}) => {
-  if (!email) throw new Error("Email is required");
-  if (!password) throw new Error("Password is required");
-  if (password !== confirmPassword) throw new Error("Passwords do not match");
-  if (!name) throw new Error("Name is required");
+export const validateCreatePatient = (params) => {
+  if (!params?.emailValue) throw new Error("Email is required");
+  if (!params?.passwordValue) throw new Error("Password is required");
+  if (params?.passwordValue !== params?.confirmPasswordValue)
+    throw new Error("Passwords do not match");
+  if (!params?.nameValue) throw new Error("Name is required");
 };
 
 export const validateSaveMedication = (params) => {

@@ -3,12 +3,12 @@ import * as admin from "firebase-admin";
 import {
   getUserProfile,
   getDerivedMedications,
-  getAuthorizedHealthcareProvider,
+  // getAuthorizedHealthcareProvider,
 } from "./repo/repo";
 
 export const getPatientMedicationsForProvider = async (req: any, res: any) => {
-  const {body} = req;
-  const {patientUid} = body;
+  const { body } = req;
+  const { patientUid } = body;
   try {
     const tokenId = req.get("Authorization").split("Bearer ")[1];
 
@@ -26,21 +26,21 @@ export const getPatientMedicationsForProvider = async (req: any, res: any) => {
     }
 
     // check to see if this healthcare provider is an authorized provider for this patient
-    const authorizedHealthcareProfileDoc =
-      await getAuthorizedHealthcareProvider(patientUid, authProfile.email);
-    if (!authorizedHealthcareProfileDoc) {
-      throw new Error("provider not authorized for patient");
-    }
+    // const authorizedHealthcareProfileDoc =
+    // await getAuthorizedHealthcareProvider(patientUid, authProfile.email);
+    // if (!authorizedHealthcareProfileDoc) {
+    //   throw new Error("provider not authorized for patient");
+    // }
 
     let medications = await getDerivedMedications(patientUid);
     medications = medications.sort(
-        (a, b) =>
-          new Date(b.dateStarted).valueOf() - new Date(a.dateStarted).valueOf()
+      (a, b) =>
+        new Date(b.dateStarted).valueOf() - new Date(a.dateStarted).valueOf()
     );
-    res.send({medications});
+    res.send({ medications });
   } catch (e) {
     console.log(e);
-    res.status(500).send({error: e});
+    res.status(500).send({ error: e });
   }
 };
 

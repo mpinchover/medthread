@@ -347,7 +347,7 @@ const PatientTimeline = () => {
   }, []);
 
   return (
-    <div className=" flex flex-row  w-full text-md px-28 ">
+    <div className=" flex flex-row  w-full text-md px-2 md:px-28 ">
       {/* <section className="mr-4">
         <FilterSidebar
           onReset={onReset}

@@ -1,5 +1,6 @@
-export interface AuthorizedProvider {
-  healthcareProviderEmail?: string;
+export interface AuthorizedCareProviderLink {
+  careProviderUid?: string;
+  careProviderEmail?: string;
   patientUid?: string;
   providerName?: string;
   uid?: string;
@@ -222,7 +223,7 @@ export interface Profile {
   userUid?: string;
 }
 export interface UserAccount {
-  displayName?: string;
+  nameValue?: string;
 }
 
 export interface AuthProfile {
@@ -248,7 +249,7 @@ export interface InsuranceProvider {
 
 export interface Account {
   insuranceProviders: InsuranceProvider[];
-  healthcareProviders: AuthorizedProvider[];
+  healthcareProviders: AuthorizedCareProviderLink[];
 }
 
 export interface InsuranceMetadata {

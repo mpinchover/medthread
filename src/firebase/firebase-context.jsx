@@ -67,8 +67,10 @@ export const FirebaseProvider = ({ children }) => {
 
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
       if (!user) {
+        // could be this issue here.
         console.log("NO USER FOUND");
-        return;
+        localStorage.clear();
+        setAuthorizedProfile(null);
       }
 
       const auth = getAuth();
@@ -77,7 +79,6 @@ export const FirebaseProvider = ({ children }) => {
 
     const removeIdTokenListener = onIdTokenChanged(auth, async (user) => {
       if (!user) {
-        // localStorage.clear();
         return;
       }
 
@@ -95,12 +96,12 @@ export const FirebaseProvider = ({ children }) => {
     email,
     password,
     confirmPassword,
-    displayName
+    nameValue
   ) => {
     try {
       const auth = getAuth();
       await _createProvider(
-        { email, password, confirmPassword, displayName },
+        { email, password, confirmPassword, nameValue },
         auth
       );
       verifyEmailAddress();
@@ -110,18 +111,12 @@ export const FirebaseProvider = ({ children }) => {
     }
   };
 
-  const createPatient = async (
-    email,
-    password,
-    confirmPassword,
-    displayName
-  ) => {
+  const createPatient = async (params, providerUid) => {
     try {
       const auth = getAuth();
-      await _createPatient(
-        { email, password, confirmPassword, displayName },
-        auth
-      );
+      const { email, password, confirmPassword, nameValue } = params;
+
+      await _createPatient(params, auth, providerUid);
       navigate("/settings", { replace: true });
     } catch (e) {
       console.log(e);
@@ -165,11 +160,12 @@ export const FirebaseProvider = ({ children }) => {
 
   const signOutUser = async () => {
     try {
+      console.log("SIGN OUT");
       const auth = getAuth();
       await signOut(auth);
       localStorage.clear();
       setAuthorizedProfile(null);
-      window.location.reload();
+      // window.location.reload();
     } catch (e) {
       console.log(e);
     }

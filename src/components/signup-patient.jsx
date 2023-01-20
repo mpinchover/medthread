@@ -12,29 +12,31 @@ import { isLoggingInUserState } from "../recoil/profile/profile";
 import { authorizedProfileState } from "../recoil/auth/auth";
 import { withPublicRoute } from "./hocs";
 import { TextInput } from "./common";
+import { useSearchParams } from "react-router-dom";
 
 const PatientSignup = () => {
   const navigate = useNavigate();
-  const auth = getAuth();
-
+  const [searchParams, setSearchParams] = useSearchParams();
   const { createPatient } = useContext(FirebaseContext);
-
+  const [providerUid, setProviderUid] = useState(
+    searchParams.get("providerUid")
+  );
   const [nameValue, setNameValue] = useState("");
   const [emailValue, setEmailValue] = useState("");
   const [passwordValue, setPasswordValue] = useState("");
   const [confirmPasswordValue, setConfirmPasswordValue] = useState("");
   const isLoggingInUser = useRecoilValue(isLoggingInUserState);
-  const authorizedUser = useRecoilValue(authorizedProfileState);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await createPatient(
+      const params = {
         emailValue,
         passwordValue,
         confirmPasswordValue,
-        nameValue
-      );
+        nameValue,
+      };
+      await createPatient(params, providerUid);
     } catch (e) {
       console.log(e);
     }

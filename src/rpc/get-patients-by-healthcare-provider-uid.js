@@ -1,19 +1,19 @@
 import axios from "axios";
 import { getServerConfig } from "../config/config";
-export const getPreviousPatients = async () => {
+export const getPatientsByHealthcareProviderUid = async () => {
   try {
     const authUser = JSON.parse(localStorage.getItem("med_thread_auth_user"));
     const { idToken } = authUser;
     const config = getServerConfig();
 
     const res = await axios({
-      method: "get",
-      url: `${config.baseUrl}/get-previous-patients`,
+      method: "post",
+      url: `${config.baseUrl}/get-patients-by-healthcare-provider-uid`,
       headers: {
         Authorization: `Bearer ${idToken}`,
       },
     });
-    return res.data.previousPatients;
+    return res.data?.patients;
   } catch (e) {
     console.log(e);
   }

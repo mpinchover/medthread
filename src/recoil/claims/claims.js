@@ -113,7 +113,6 @@ export const getClaimsDataByUserUidCallback =
   ({ set, snapshot }) =>
   async (patientUid) => {
     try {
-      // set(isLoadingClaimsDataState, true);
       set(isLoadingClaimsDataState, true);
 
       let claimsData;
@@ -154,6 +153,7 @@ export const getClaimsDataByUserUidCallback =
         set(claimsConditionsState, claimsData.condition);
       }
     } catch (e) {
+      set(isLoadingClaimsDataState, false);
     } finally {
       set(isLoadingClaimsDataState, false);
     }

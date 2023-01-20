@@ -7,7 +7,6 @@ import { sendMedicationsToProvider } from "../../rpc/send-medications";
 import { getMedicationsForProvider } from "../../rpc/get-medications-for-provider";
 import { getMedicationsForPatient } from "../../rpc/get-medications-by-patient-uid";
 import { removeHealthcareProvider } from "../../rpc/remove-healthcare-provider";
-import { activePatientState } from "../provider/provider";
 import { saveMedication } from "../../rpc/save-medication";
 import { getPatientProfileForProviderByUid } from "../../rpc/get-patient-profile-for-provider-by-uid";
 import { getMedicationsByUserUid } from "../../rpc/get-medications-by-user-uid";
@@ -195,7 +194,7 @@ export const getMedicationsForProviderCallback =
       const patientProfile = await getPatientProfileForProviderByUid(
         patientUid
       );
-      set(activePatientState, patientProfile);
+      //  set(activePatientState, patientProfile);
     } catch (e) {
       console.log(e);
     } finally {

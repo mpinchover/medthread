@@ -18,7 +18,7 @@ import { capitalizeFirstLetter } from "../../components/utils";
 export const profileAccountState = atom({
   key: "profileAccountState",
   default: {
-    displayName: "",
+    nameValue: "",
     mobile: "",
   },
 });
@@ -63,10 +63,14 @@ export const hydrateUserProfileCallback =
   ({ set, snapshot }) =>
   async (auth, user) => {
     try {
+      // i think its this
       const curAuthProfile = snapshot.getLoadable(
         authorizedProfileState
       ).contents;
       if (!curAuthProfile?.role) {
+        console.log("AUTH PROFILE");
+        console.log(curAuthProfile);
+        console.log("LOGGING USER OUT");
         localStorage.clear();
         set(authorizedProfileState, null);
         return null;
@@ -93,6 +97,9 @@ export const hydrateUserProfileCallback =
         ...hydratedProfile,
         idToken,
       };
+
+      console.log("AUTH USER IS");
+      console.log(authUser);
 
       localStorage.setItem("med_thread_auth_user", JSON.stringify(authUser));
 
@@ -130,37 +137,41 @@ export const addHealthcareProviderCallback =
 
 export const createPatientCallback =
   ({ set, snapshot }) =>
-  async (params, auth) => {
+  async (params, auth, providerUid) => {
     try {
-      let { email, password, confirmPassword, displayName } = params;
-      if (displayName !== "") {
-        displayName = capitalizeFirstLetter(displayName);
+      let { emailValue, passwordValue, confirmPasswordValue, nameValue } =
+        params;
+      if (nameValue !== "") {
+        nameValue = capitalizeFirstLetter(nameValue);
       }
-      validateCreatePatient({
-        email,
-        password,
-        confirmPassword,
-        name: displayName,
-      });
+
+      validateCreatePatient(params);
 
       set(isLoggingInUserState, true);
-      const res = await createUserWithEmailAndPassword(auth, email, password);
+      const res = await createUserWithEmailAndPassword(
+        auth,
+        emailValue,
+        passwordValue
+      );
 
       const idToken = await res.user.getIdToken(/* forceRefresh */ true);
-      if (!displayName) displayName = "";
+      if (!nameValue) nameValue = "";
 
-      const newUser = {
+      const newUserParams = {
         role: "PATIENT",
         userUid: res.user.uid,
         account: {
-          displayName,
+          nameValue,
         },
       };
 
       // TODO – create hydrated user profile on backend
       let hydratedUserProfile;
       try {
-        hydratedUserProfile = await createHydratedUserProfile(newUser);
+        hydratedUserProfile = await createHydratedUserProfile(
+          newUserParams,
+          providerUid
+        );
       } catch (e) {
         console.log(e);
         let msg = e.message;
@@ -252,29 +263,29 @@ export const createProviderCallback =
   ({ set, snapshot }) =>
   async (params, auth) => {
     try {
-      let { email, password, confirmPassword, displayName } = params;
-      if (displayName !== "") {
-        displayName = capitalizeFirstLetter(displayName);
+      let { emailValue, passwordValue, confirmPasswordValue, nameValue } =
+        params;
+      if (nameValue !== "") {
+        nameValue = capitalizeFirstLetter(nameValue);
       }
 
-      validateCreatePatient({
-        email,
-        password,
-        confirmPassword,
-        name: displayName,
-      });
+      validateCreatePatient(params);
 
       set(isLoggingInUserState, true);
-      const res = await createUserWithEmailAndPassword(auth, email, password);
+      const res = await createUserWithEmailAndPassword(
+        auth,
+        emailValue,
+        passwordValue
+      );
 
       const idToken = await res.user.getIdToken(/* forceRefresh */ true);
-      if (!displayName) displayName = "";
+      if (!nameValue) nameValue = "";
 
       const newUser = {
         role: "PROVIDER",
         userUid: res.user.uid,
         account: {
-          displayName,
+          nameValue,
         },
       };
 
