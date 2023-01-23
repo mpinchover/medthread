@@ -2,6 +2,7 @@ import React, { useState, useEffect, useContext, useRef } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { AiOutlineRadiusUpleft } from "react-icons/ai";
 import { FirebaseContext } from "../firebase/firebase-context";
+import { useRecoilValue, useRecoilCallback, useRecoilState } from "recoil";
 import { AiOutlineMenu, AiOutlineMail } from "react-icons/ai";
 import { HeadlessDropdown } from "./common";
 import { TbPill, TbFiles } from "react-icons/tb";
@@ -9,7 +10,7 @@ import { MdAccountCircle } from "react-icons/md";
 import { FiLogOut } from "react-icons/fi";
 import { RiSendPlaneFill } from "react-icons/ri";
 import { AiOutlinePlus, AiOutlineHistory } from "react-icons/ai";
-
+import { activeCareProviderPatientState } from "../recoil/provider/provider";
 const navbarDropdownMenuOptions = [
   {
     name: "PATIENTS",
@@ -32,6 +33,9 @@ const ProviderNavbar = ({ authUser }) => {
   const location = useLocation();
   const pathname = location.pathname;
   const [activeTab, setActiveTab] = useState(null);
+  const activeCareProviderActivePatient = useRecoilValue(
+    activeCareProviderPatientState
+  );
 
   const [isOpen, toggleOpen] = useState(false);
 
@@ -54,14 +58,16 @@ const ProviderNavbar = ({ authUser }) => {
     toggleOpen(!isOpen);
   };
 
+  const isPatientDashboardTab = pathname.includes("/records/");
+
   const mainDropdownRefBtn = useRef(null);
 
   let name = authUser?.account?.nameValue;
-  if (name && name.length > 0) name = name[0].toUpperCase();
+  if (name && name.length > 0) name[0].toUpperCase();
   return (
     <div
       id="navbar"
-      className="shadow-sm py-7 px-2 md:px-28 flex flex-row sticky top-0 z-50  bg-[#030c1a] "
+      className="relative shadow-sm py-7 px-2 md:px-28 flex flex-row sticky top-0 z-50  bg-[#030c1a] "
     >
       <div className="flex-1 flex flex-row ">
         <button
@@ -79,8 +85,11 @@ const ProviderNavbar = ({ authUser }) => {
           </div>
         </button>
       </div>
+      <div className="absolute top-1/2 -translate-y-1/2 left-1/2 -translate-x-1/2 text-gray-300">
+        {activeCareProviderActivePatient?.account?.nameValue}
+      </div>
 
-      <div className="relative">
+      <div className="relativ">
         <button
           onClick={handleToggleOpen}
           ref={mainDropdownRefBtn}

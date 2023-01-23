@@ -3,7 +3,7 @@ import { getClaimsDataByUserUid } from "../../rpc/get-claims-by-user-uid";
 import { getClaimsDataByUserUidForProvider } from "../../rpc/get-claims-data-by-user-uid-for-provider";
 import { saveNote } from "../../rpc/save-note";
 import { isLoadingClaimsDataState } from "../utils/utils";
-
+import { activeCareProviderPatientState } from "../provider/provider";
 export const recordsSearchQueryState = atom({
   key: "recordsSearchQueryState",
   default: "",

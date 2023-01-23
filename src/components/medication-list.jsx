@@ -63,7 +63,6 @@ const MedicationList = ({
   };
 
   const { setIsModalOpen } = useContext(FirebaseContext);
-
   const handleAddMedModalClose = () => {
     setMedToBeUpdated(null);
     setIsAddMedModalOpen(false);

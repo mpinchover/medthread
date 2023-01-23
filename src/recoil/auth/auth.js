@@ -2,8 +2,7 @@ import { atom, selector } from "recoil";
 
 const getDefaultValue = () => {
   const authUser = JSON.parse(localStorage.getItem("med_thread_auth_user"));
-  console.log("SETTING THE AUTH STATE");
-  console.log(authUser);
+
   return authUser;
 };
 

@@ -20,6 +20,7 @@ import {
   filteredClaimsConditionsState,
   recordsSearchQueryState,
 } from "../recoil/claims/claims";
+import { activeCareProviderPatientState } from "../recoil/provider/provider";
 import { LoadingMedicationData, LoadingWindow } from "./common";
 import { FirebaseContext } from "../firebase/firebase-context";
 import { withPrivateRoute } from "./hocs";
@@ -34,6 +35,8 @@ const MedicationListProvider = () => {
   const getClaimsDatabyUserUid = useRecoilCallback(
     getClaimsDataByUserUidCallback
   );
+  const [activeCareProviderPatient, setActiveCareProviderPatient] =
+    useRecoilState(activeCareProviderPatientState);
   const claimsAllergyIntolerance = useRecoilValue(
     filteredClaimsAllergyIntolerancesState
   );
@@ -60,8 +63,6 @@ const MedicationListProvider = () => {
   // get the patient uis from the params
   useEffect(() => {
     // getMedications();
-    console.log("USER IS");
-    console.log(patientUid);
     getClaimsDatabyUserUid(patientUid);
   }, []);
 

@@ -7,31 +7,43 @@ import { useRecoilValue, useRecoilCallback, useRecoilState } from "recoil";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { withPrivateRoute } from "./hocs";
+import { activeCareProviderPatientState } from "../recoil/provider/provider";
 
-const PatientItem = ({ patient }) => {
+const PatientItem = ({ patient, setActiveCareProviderPatient }) => {
   const navigate = useNavigate();
   const link = `/records/${patient.userUid}`;
 
+  const handleClick = () => {
+    setActiveCareProviderPatient(patient);
+    navigate(link);
+  };
   return (
     <button
-      onClick={() => navigate(link)}
-      className="text-xs border-b last:border-b-0 py-8 w-full rounded-sm flex flex-row justify-between "
+      onClick={handleClick}
+      className="text-sm border-b last:border-b-0 py-8 w-full rounded-sm flex flex-row justify-between "
     >
       <div>{patient?.account?.nameValue}</div>
-      <div>Request reauthentication</div>
     </button>
   );
 };
 
-const ListOfPatients = ({ healthcareProviderPatients }) => {
+const ListOfPatients = ({
+  healthcareProviderPatients,
+  setActiveCareProviderPatient,
+}) => {
   useEffect(() => {}, []);
-  console.log("PATIENTS ");
-  console.log(healthcareProviderPatients);
+
   return (
     <div className="px-2 md:px-28">
       <div className="py-8">
         {healthcareProviderPatients?.map((e, i) => {
-          return <PatientItem patient={e} key={i} />;
+          return (
+            <PatientItem
+              setActiveCareProviderPatient={setActiveCareProviderPatient}
+              patient={e}
+              key={i}
+            />
+          );
         })}
       </div>
     </div>
@@ -49,11 +61,15 @@ const CareProviderPatients = () => {
     isGettingHealthcareProviderPatientsState
   );
 
+  const [activeCareProviderPatient, setActiveCareProviderPatient] =
+    useRecoilState(activeCareProviderPatientState);
+
   // const [searchQuery, setSearchQuery] = useRecoilState(
   //   previousPatientsSearchTermState
   // );
 
   useEffect(() => {
+    setActiveCareProviderPatient(null);
     getPatientsByHealthcareProviderUid();
   }, []);
 
@@ -63,7 +79,10 @@ const CareProviderPatients = () => {
   };
 
   return (
-    <ListOfPatients healthcareProviderPatients={healthcareProviderPatients} />
+    <ListOfPatients
+      setActiveCareProviderPatient={setActiveCareProviderPatient}
+      healthcareProviderPatients={healthcareProviderPatients}
+    />
   );
 
   // if (filteredPreviousPatients)

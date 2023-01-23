@@ -94,8 +94,31 @@ export const isLoadingTimelineDataState = atom({
 
 export const activeTimelineEventState = atom({
   key: "activeTimelineEventState",
-  default: [],
+  default: null,
 });
+
+export const setActiveTimelineEventCallback =
+  ({ set, snapshot }) =>
+  async (timelineEventFhirReference) => {
+    try {
+      // go through the timeline data state
+      const timelineEvents = snapshot.getLoadable(timelineDataState).contents;
+      if (!timelineEvents || timelineEvents.length === 0) {
+        return [];
+      }
+
+      // once you have it, set that the active thing
+      for (let i = 0; i < timelineEvents.length; i++) {
+        const event = timelineEvents[i];
+        if (event.fhirReference === timelineEventFhirReference) {
+          set(activeTimelineEventState, event);
+          break;
+        }
+      }
+    } catch (e) {
+      console.log(e);
+    }
+  };
 
 // https://terminology.hl7.org/ValueSet-encounter-class.html
 export const getPatientTimelineDataCallback =

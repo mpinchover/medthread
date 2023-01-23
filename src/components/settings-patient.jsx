@@ -42,8 +42,7 @@ const PatientSettings = ({ authProfile, accountSettings }) => {
     removeInsuranceProviderCallback
   );
 
-  console.log("AUTHORIZED PROFILE IS");
-  console.log(authProfile);
+
 
   useEffect(() => {
     // set the eamil from the auth profile state

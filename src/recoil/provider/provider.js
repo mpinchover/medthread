@@ -11,6 +11,10 @@ export const healthcareProviderPatientsState = atom({
   default: [],
 });
 
+export const activeCareProviderPatientState = atom({
+  key: "activeCareProviderPatientState",
+  default: null,
+});
 // export const previousPatientsSearchTermState = atom({
 //   key: "previousPatientsSearchTermState",
 //   default: "",

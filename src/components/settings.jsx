@@ -1,6 +1,6 @@
 import PatientSettings from "./settings-patient";
 import ProviderSettings from "./settings-provider";
-import { useRecoilValue, useRecoilCallback } from "recoil";
+import { useRecoilValue, useRecoilCallback, useRecoilState } from "recoil";
 import { isLoadingSettingsState } from "../recoil/profile/profile";
 import { LoadingSettingsData } from "./common";
 import { useEffect, useContext } from "react";
@@ -16,6 +16,7 @@ import {
 import { withPrivateRoute } from "./hocs";
 import { FirebaseContext } from "../firebase/firebase-context";
 import { authorizedProfileState } from "../recoil/auth/auth";
+import { activeCareProviderPatientState } from "../recoil/provider/provider";
 
 const Settings = () => {
   const { getAuthUser } = useContext(FirebaseContext);
@@ -24,8 +25,10 @@ const Settings = () => {
   const authProfile = useRecoilValue(authorizedProfileState);
   const getAccountSettings = useRecoilCallback(getAccountSettingsCallback);
   const accountSettings = useRecoilValue(accountSettingsState);
-  
+  const [activeCareProviderActivePatient, setActiveCareProviderPatient] =
+    useRecoilState(activeCareProviderPatientState);
   useEffect(() => {
+    setActiveCareProviderPatient(null);
     if (authProfile) {
       getAccountSettings();
     }

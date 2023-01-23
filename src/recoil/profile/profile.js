@@ -68,9 +68,6 @@ export const hydrateUserProfileCallback =
         authorizedProfileState
       ).contents;
       if (!curAuthProfile?.role) {
-        console.log("AUTH PROFILE");
-        console.log(curAuthProfile);
-        console.log("LOGGING USER OUT");
         localStorage.clear();
         set(authorizedProfileState, null);
         return null;
@@ -97,9 +94,6 @@ export const hydrateUserProfileCallback =
         ...hydratedProfile,
         idToken,
       };
-
-      console.log("AUTH USER IS");
-      console.log(authUser);
 
       localStorage.setItem("med_thread_auth_user", JSON.stringify(authUser));
 

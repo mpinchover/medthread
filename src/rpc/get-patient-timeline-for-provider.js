@@ -7,7 +7,6 @@ export const getPatientTimelineForProvider = async (patientUid) => {
   const authUser = JSON.parse(localStorage.getItem("med_thread_auth_user"));
   const { idToken } = authUser;
 
-  console.log("GETTING THE DATA");
   const res = await axios({
     method: "post",
     url: `${config.baseUrl}/get-patient-timeline-data-for-provider`,
@@ -19,7 +18,5 @@ export const getPatientTimelineForProvider = async (patientUid) => {
     },
   });
 
-  console.log("GOT BACK");
-  console.log(res.data);
   return res.data?.timeline;
 };

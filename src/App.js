@@ -1,6 +1,6 @@
 import logo from "./logo.svg";
 import "react-toastify/dist/ReactToastify.css";
-
+import "./App.css";
 import app from "./firebase/firebase";
 import { getFirestore } from "firebase/firestore";
 import { collection, addDoc } from "firebase/firestore";

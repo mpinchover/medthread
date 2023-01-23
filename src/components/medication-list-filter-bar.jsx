@@ -13,7 +13,7 @@ import {
   recordsActiveCategoryState,
   recordsSearchQueryState,
 } from "../recoil/claims/claims";
-
+import { activeTimelineEventState } from "../recoil/timeline/timeline";
 
 const FilterButton = ({ Icon, title, active, name, onClick }) => {
   return (
@@ -37,11 +37,15 @@ const MedicationListFilterBar = () => {
   const [recordsActiveCategory, setRecordsActiveCategory] = useRecoilState(
     recordsActiveCategoryState
   );
+  const [activeTimelineEvent, setActiveTimelineEvent] = useRecoilState(
+    activeTimelineEventState
+  );
   const handleClick = (e) => {
     const name = e.currentTarget.name;
     setSearchQuery("");
 
     setRecordsActiveCategory(name);
+    setActiveTimelineEvent(null);
   };
   return (
     <div className=" md:px-28 flex flex-row justify-between ">
