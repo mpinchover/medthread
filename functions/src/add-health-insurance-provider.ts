@@ -18,3 +18,4 @@ export const addHealthInsuranceProvider = async (req: any, res: any) => {
     res.status(501).send({ error: e });
   }
 };
+  

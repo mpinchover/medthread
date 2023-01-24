@@ -92,18 +92,10 @@ export const FirebaseProvider = ({ children }) => {
     };
   }, []);
 
-  const createProvider = async (
-    email,
-    password,
-    confirmPassword,
-    nameValue
-  ) => {
+  const createProvider = async (params) => {
     try {
       const auth = getAuth();
-      await _createProvider(
-        { email, password, confirmPassword, nameValue },
-        auth
-      );
+      await _createProvider(params, auth);
       verifyEmailAddress();
       navigate("/", { replace: true });
     } catch (e) {

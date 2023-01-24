@@ -12,6 +12,8 @@ const outpatientLaneId = "outpatient-lane";
 const outpatientLaneTitle = "Outpatient visists";
 const visionLaneId = "vision-lane";
 const visisionLaneTitle = "Vision visists";
+const medicationsLaneId = "medications-lane";
+const medicationsTitle = "Medications";
 
 const laneId = "visit-lane";
 const lanes = [
@@ -27,11 +29,10 @@ const lanes = [
     laneId: "vision-lane",
     label: "Vision vists",
   },
-
-  // {
-  //   laneId: "procedure-lane",
-  //   label: "Procedures",
-  // },
+  {
+    laneId: "medications-lane",
+    label: "Medications",
+  },
   // {
   //   laneId: "diagnoses-lane",
   //   label: "Diagnoses",
@@ -50,7 +51,8 @@ const claimTypeEvent = {
     // textColor: "text-blue-600",
   },
   pharmacy: {
-    title: "Pharmacy",
+    title: "Medications",
+    laneId: medicationsLaneId,
     // textColor: "text-blue-600",
   },
   professional: {
@@ -70,18 +72,33 @@ const InteractiveTimeline = ({ width, timelineData, height }) => {
   const setActiveTimelineEvent = useRecoilCallback(
     setActiveTimelineEventCallback
   );
+
   const [events, setEvents] = useState([]);
+
+  const timeSet = new Set();
 
   useEffect(() => {
     const timelineEvents = [];
     timelineData?.map((e, i) => {
+      const code = e?.type?.[0]?.code;
       let startISO = e?.billablePeriod?.start;
+      if (code === "pharmacy") {
+        startISO = e?.primaryDate;
+      }
+
       let endISO = e?.billablePeriod?.start;
       let startTimeMs;
       let endTimeMs;
       // if they are the same times, add one minute to it
       if (startISO) {
-        startTimeMs = new Date(startISO).getTime();
+        const startDate = new Date(startISO);
+        startTimeMs = startDate.getTime();
+
+        while (timeSet.has(startTimeMs)) {
+          startDate.setHours(startDate.getHours() + 6);
+          startTimeMs = startDate.getTime();
+        }
+        timeSet.add(startTimeMs);
       }
 
       if (endISO) {
@@ -94,7 +111,6 @@ const InteractiveTimeline = ({ width, timelineData, height }) => {
         endTimeMs = endDate.getTime();
       }
 
-      const code = e?.type?.[0]?.code;
       const codeTitle = claimTypeEvent[code]?.title;
       const eventLaneId = claimTypeEvent[code]?.laneId;
       const timelineData = {
@@ -121,7 +137,8 @@ const InteractiveTimeline = ({ width, timelineData, height }) => {
       //   };
       //   console.log("TIMELINE DATA IS ");
       //   console.log(timelineData);
-      if (code !== "oral" && code !== "pharmacy") {
+
+      if (code !== "oral") {
         timelineEvents.push(timelineData);
       }
     });
@@ -159,14 +176,17 @@ const InteractiveTimeline = ({ width, timelineData, height }) => {
 
   const dateFormat = (ms) => new Date(ms).toLocaleString();
   return (
-    <Timeline
-      width={width}
-      height={height}
-      events={events}
-      lanes={lanes}
-      dateFormat={dateFormat}
-      onEventClick={handleEventClick}
-    />
+    <div>
+      <Timeline
+        width={width}
+        height={height}
+        events={events}
+        lanes={lanes}
+        dateFormat={dateFormat}
+        onEventClick={handleEventClick}
+        customRange={[1136091600000, 1641013200000]} // TODO - get the last, first dates of events
+      />
+    </div>
   );
 };
 

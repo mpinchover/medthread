@@ -31,18 +31,19 @@ import TermsOfService from "./components/terms-of-service";
 import PatientTimeline from "./components/patient-timeline";
 import Home from "./components/home";
 import { accountSettingsState } from "./recoil/account/account";
-
+import GetEmrRecordsModal from "./components/modals/get-emr-records-modal";
 import SendMedicationsModal from "./components/medication-modal-send-meds";
 import CareProviderPatients from "./components/care-provider-patients";
 const ModalShadow = () => {
   // const { isModalOpen } = useContext(FirebaseContext);
   const modal = useRecoilValue(modalState);
+
   let style = {};
 
   // isSendingRecords: false,
   // isSendRecordsModalOpen: false,
 
-  if (modal.isSendRecordsModalOpen) {
+  if (modal.isSendRecordsModalOpen || modal.isRequestingEMR) {
     style = {
       background: "rgba(0, 0, 0, 0.5)",
     };
@@ -51,8 +52,10 @@ const ModalShadow = () => {
     <div
       style={style}
       className={`${
-        modal.isSendRecordsModalOpen ? "absolute" : "hidden "
-      } h-full w-full z-20`}
+        modal.isSendRecordsModalOpen || modal.isRequestingEMR
+          ? "absolute"
+          : "hidden"
+      } h-full w-full z-10`}
     ></div>
   );
 };
@@ -74,11 +77,21 @@ function App() {
     });
   };
 
+  const onRequestEMR = () => {
+    setModal((prevModal) => {
+      return {
+        ...prevModal,
+        isRequestingEMR: false,
+      };
+    });
+  };
+
   const handleSendMedsModalClose = () => {
     setModal((prevModal) => {
       return {
         ...prevModal,
         isSendRecordsModalOpen: false,
+        isRequestingEMR: false,
       };
     });
   };
@@ -142,6 +155,11 @@ function App() {
             isOpen={modal?.isSendRecordsModalOpen}
             onSend={onSendMedications}
             onClose={handleSendMedsModalClose}
+          />
+          <GetEmrRecordsModal
+            isOpen={modal?.isRequestingEMR}
+            onClose={handleSendMedsModalClose}
+            onSend={onRequestEMR}
           />
           <ToastContainer />
         </FirebaseProvider>

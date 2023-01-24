@@ -8,7 +8,7 @@ import {
   FaProcedures,
   FaAllergies,
 } from "react-icons/fa";
-import { AiOutlineHistory } from "react-icons/ai";
+import { AiOutlineHistory, AiOutlineUnorderedList } from "react-icons/ai";
 import {
   recordsActiveCategoryState,
   recordsSearchQueryState,
@@ -50,6 +50,22 @@ const MedicationListFilterBar = () => {
   return (
     <div className=" md:px-28 flex flex-row justify-between ">
       <FilterButton
+        name="LIST_VIEW"
+        title="List"
+        Icon={AiOutlineUnorderedList}
+        onClick={handleClick}
+        active={recordsActiveCategory}
+      />
+
+      <FilterButton
+        name="TIMELINE"
+        title="Timeline"
+        Icon={AiOutlineHistory}
+        onClick={handleClick}
+        active={recordsActiveCategory}
+      />
+
+      <FilterButton
         name="MEDICATIONS"
         title="Medications"
         Icon={TbPill}
@@ -85,14 +101,6 @@ const MedicationListFilterBar = () => {
         name="ALLERGIES"
         title="Allergies"
         Icon={FaAllergies}
-        onClick={handleClick}
-        active={recordsActiveCategory}
-      />
-
-      <FilterButton
-        name="TIMELINE"
-        title="Timeline"
-        Icon={AiOutlineHistory}
         onClick={handleClick}
         active={recordsActiveCategory}
       />

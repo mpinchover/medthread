@@ -29,12 +29,13 @@ const ProviderSignup = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await createProvider(
+      const params = {
         emailValue,
         passwordValue,
         confirmPasswordValue,
-        nameValue
-      );
+        nameValue,
+      };
+      await createProvider(params);
     } catch (e) {
       console.log(e);
     }

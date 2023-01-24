@@ -97,6 +97,11 @@ export const activeTimelineEventState = atom({
   default: null,
 });
 
+export const activeListViewEventsState = atom({
+  key: "activeListViewEventsState",
+  default: [],
+});
+
 export const setActiveTimelineEventCallback =
   ({ set, snapshot }) =>
   async (timelineEventFhirReference) => {

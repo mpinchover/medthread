@@ -1078,7 +1078,6 @@ export const getExplanationOfBenefitFromFlexpaInPromise = (
         accessToken
       );
 
-   
       console.log(entityListEOB);
       res({ type: EXPLANATION_OF_BENEFIT, values: entityListEOB });
     } catch (e) {
