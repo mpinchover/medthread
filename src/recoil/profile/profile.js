@@ -68,7 +68,8 @@ export const hydrateUserProfileCallback =
         authorizedProfileState
       ).contents;
       if (!curAuthProfile?.role) {
-        localStorage.clear();
+        // console.log("CLEARING");
+        // localStorage.clear();
         set(authorizedProfileState, null);
         return null;
       }

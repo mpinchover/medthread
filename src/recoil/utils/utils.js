@@ -18,6 +18,7 @@ const idleState = {
   isAddingNote: false,
   isSendingRecords: false,
   isSendRecordsModalOpen: false,
+  isRequestingEMR: false,
 };
 export const modalState = atom({
   key: "modalState",

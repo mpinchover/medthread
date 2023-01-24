@@ -11,9 +11,13 @@ import { getFormattedDate } from "./utils";
 import { activeTimelineEventState } from "../recoil/timeline/timeline";
 import { useRecoilState } from "recoil";
 import { useParams } from "react-router-dom";
+import { modalState } from "../recoil/utils/utils";
 // import { Timeline } from 'react-svg-timeline'
 import InteractiveTimeline from "./timeline/interactive-timeline";
-const DiagnosisInfo = ({ display }) => {
+const DiagnosisInfo = ({ display, code }) => {
+  if (!display) {
+    display = code;
+  }
   return <div className="text-xs p-4 rounded-md bg-gray-100">{display}</div>;
 };
 
@@ -94,6 +98,18 @@ const TimelineEventContent = ({ event, claimType }) => {
     activeTimelineEventState
   );
 
+  const [modal, setModal] = useRecoilState(modalState);
+
+  const handleGetEmrRecords = () => {
+    setActiveTimelineEvent(event);
+    setModal((prevModal) => {
+      return {
+        ...prevModal,
+        isRequestingEMR: true,
+      };
+    });
+  };
+
   const isSelected = activeTimelineEvent.uid === event.uid;
   return (
     <div className={`${isSelected ? "block" : "hidden"} mt-8`}>
@@ -114,9 +130,15 @@ const TimelineEventContent = ({ event, claimType }) => {
           <div className=" font-bold text-xs">Diagnosis</div>
           <div className="space-y-2 mt-2">
             {event?.diagnosis?.map((e, i) => {
+              console.log("E");
+              console.log(e);
               if (e.codeableConcept?.display) {
                 return (
-                  <DiagnosisInfo key={i} display={e.codeableConcept?.display} />
+                  <DiagnosisInfo
+                    key={i}
+                    code={e.codeableConcept?.code}
+                    display={e.codeableConcept?.display}
+                  />
                 );
               }
             })}
@@ -145,6 +167,7 @@ const TimelineEventContent = ({ event, claimType }) => {
       )}
       <div className="mt-8">
         <button
+          onClick={handleGetEmrRecords}
           // onClick={handleSubmit}
           className="text-xs p-3 px-8 font-bold border rounded-lg bg-black text-white"
         >
@@ -371,7 +394,7 @@ const PatientTimeline = () => {
     };
   }, []);
 
-  let height = 300;
+  let height = 400;
   if (activeTimelineEvent) {
     height = 150;
   }

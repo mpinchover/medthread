@@ -106,7 +106,7 @@ export const claimsMedicationDispenseState = atom({
 
 export const recordsActiveCategoryState = atom({
   key: "recordsActiveCategoryState",
-  default: "MEDICATIONS",
+  default: "LIST_VIEW",
 });
 
 export const getClaimsDataByUserUidCallback =

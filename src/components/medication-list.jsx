@@ -34,6 +34,7 @@ import ConditionsTable from "./table-conditions";
 import ProceduresTable from "./table-procedures";
 import { modalState } from "../recoil/utils/utils";
 import PatientTimeline from "./patient-timeline";
+import ListView from "./views/list-view";
 
 const MedicationList = ({
   meds,
@@ -155,6 +156,10 @@ const MedicationList = ({
 
     if (recordsActiveCategory === "TIMELINE") {
       return <PatientTimeline />;
+    }
+
+    if (recordsActiveCategory === "LIST_VIEW") {
+      return <ListView />;
     }
   };
 
