@@ -78,6 +78,10 @@ const CareProviderPatients = () => {
     // setSearchQuery(value);
   };
 
+  if (isGettingHealthcareProviderPatients) {
+    return <div>Getting patients...</div>;
+  }
+
   return (
     <ListOfPatients
       setActiveCareProviderPatient={setActiveCareProviderPatient}
