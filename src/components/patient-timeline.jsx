@@ -165,15 +165,17 @@ const TimelineEventContent = ({ event, claimType }) => {
           <PrescriptionDisplay display={event?.prescription?.display} />
         </div>
       )}
-      <div className="mt-8">
-        <button
-          onClick={handleGetEmrRecords}
-          // onClick={handleSubmit}
-          className="text-xs p-3 px-8 font-bold border rounded-lg bg-black text-white"
-        >
-          Get EMR records
-        </button>
-      </div>
+      {claimType.title !== "Pharmacy" && (
+        <div className="mt-8">
+          <button
+            onClick={handleGetEmrRecords}
+            // onClick={handleSubmit}
+            className="text-xs p-3 px-8 font-bold border rounded-lg bg-black text-white"
+          >
+            Get EMR records
+          </button>
+        </div>
+      )}
     </div>
   );
 };
