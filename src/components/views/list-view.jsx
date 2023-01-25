@@ -16,7 +16,7 @@ import { useRecoilState } from "recoil";
 import { useParams } from "react-router-dom";
 import { modalState } from "../../recoil/utils/utils";
 import { LoadingWindow } from "../common";
-
+import { authorizedProfileState } from "../../recoil/auth/auth";
 const DiagnosisInfo = ({ display, code }) => {
   if (!display) {
     display = code;
@@ -173,14 +173,16 @@ const TimelineEventContent = ({ event, claimType }) => {
           <PrescriptionDisplay display={event?.prescription?.display} />
         </div>
       )}
-      <div className="mt-8">
-        <button
-          onClick={handleGetEmrRecords}
-          className="text-xs p-3 px-8 font-bold border rounded-lg bg-black text-white"
-        >
-          Get EMR records
-        </button>
-      </div>
+      {claimType?.title !== "Pharmacy" && (
+        <div className="mt-8">
+          <button
+            onClick={handleGetEmrRecords}
+            className="text-xs p-3 px-8 font-bold border rounded-lg bg-black text-white"
+          >
+            Get EMR records
+          </button>
+        </div>
+      )}
     </div>
   );
 };

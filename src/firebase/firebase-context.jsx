@@ -67,10 +67,12 @@ export const FirebaseProvider = ({ children }) => {
 
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
       if (!user) {
-        // could be this issue here.
         console.log("NO USER FOUND");
-        localStorage.clear();
-        setAuthorizedProfile(null);
+        // could be this issue here.
+        // console.log("NO USER FOUND");
+        // localStorage.clear();
+        // setAuthorizedProfile(null);
+        return;
       }
 
       const auth = getAuth();
@@ -82,14 +84,15 @@ export const FirebaseProvider = ({ children }) => {
 
     const removeIdTokenListener = onIdTokenChanged(auth, async (user) => {
       if (!user) {
+        // console.log("NO USER FOUND");
         return;
       }
 
-      const auth = getAuth();
-      const authUser = getAuthUser();
-      if (authUser?.role) {
-        hydrateUserProfile(auth, user);
-      }
+      // const auth = getAuth();
+      // const authUser = getAuthUser();
+      // if (authUser?.role) {
+      //   hydrateUserProfile(auth, user);
+      // }
     });
 
     return () => {
