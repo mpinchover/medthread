@@ -19,3 +19,15 @@ npm run build-staging && firebase deploy
 ```
 npm run build-production && firebase deploy
 ```
+
+####
+
+Common errors
+
+####
+
+## Domain not whitelisted by project (auth/unauthorized-continue-uri)
+
+# Open the firebase console for this env
+
+# Go to authentication -> settings -> Authorized domains and add the domain

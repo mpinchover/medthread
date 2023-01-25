@@ -83,9 +83,11 @@ const PatientNavbar = ({ authUser }) => {
           <AiOutlineRadiusUpleft style={{ fontSize: 26, color: "lightgray" }} />
           <div className="text-lg hidden md:block ml-2 font-thin text-gray-300 ">
             <span className="font-bold">medthread</span>
-            <span>
+            <span className="ml-1">
               {process.env.REACT_APP_MEDTHREAD_ENV === "STAGING"
                 ? "STAGING"
+                : process.env.REACT_APP_MEDTHREAD_ENV === "DEMO"
+                ? "DEMO"
                 : null}
             </span>
           </div>

@@ -67,7 +67,7 @@ const ProviderNavbar = ({ authUser }) => {
   return (
     <div
       id="navbar"
-      className="relative shadow-sm py-7 px-2 md:px-28 flex flex-row sticky top-0 z-50  bg-[#030c1a] "
+      className="shadow-sm py-7 px-2 md:px-28 flex flex-row sticky top-0 z-10  bg-[#030c1a] "
     >
       <div className="flex-1 flex flex-row ">
         <button
@@ -77,9 +77,11 @@ const ProviderNavbar = ({ authUser }) => {
           <AiOutlineRadiusUpleft style={{ fontSize: 26, color: "lightgray" }} />
           <div className="text-lg hidden md:block ml-2 font-thin text-gray-300">
             <span className="font-bold">medthread</span>
-            <span>
+            <span className="ml-1">
               {process.env.REACT_APP_MEDTHREAD_ENV === "STAGING"
                 ? "STAGING"
+                : process.env.REACT_APP_MEDTHREAD_ENV === "DEMO"
+                ? "DEMO"
                 : null}
             </span>
           </div>
