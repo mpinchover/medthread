@@ -74,7 +74,10 @@ export const FirebaseProvider = ({ children }) => {
       }
 
       const auth = getAuth();
-      hydrateUserProfile(auth, user);
+      const authUser = getAuthUser();
+      if (authUser?.role) {
+        hydrateUserProfile(auth, user);
+      }
     });
 
     const removeIdTokenListener = onIdTokenChanged(auth, async (user) => {
@@ -83,7 +86,10 @@ export const FirebaseProvider = ({ children }) => {
       }
 
       const auth = getAuth();
-      hydrateUserProfile(auth, user);
+      const authUser = getAuthUser();
+      if (authUser?.role) {
+        hydrateUserProfile(auth, user);
+      }
     });
 
     return () => {

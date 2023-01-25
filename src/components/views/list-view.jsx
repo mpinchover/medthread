@@ -15,6 +15,7 @@ import {
 import { useRecoilState } from "recoil";
 import { useParams } from "react-router-dom";
 import { modalState } from "../../recoil/utils/utils";
+import { LoadingWindow } from "../common";
 
 const DiagnosisInfo = ({ display, code }) => {
   if (!display) {
@@ -205,13 +206,7 @@ const Timeline = ({ timelineData }) => {
   const isLoadingTimeline = useRecoilValue(isLoadingTimelineDataState);
 
   if (isLoadingTimeline) {
-    return (
-      <div className=" w-full relative">
-        <div className="absolute top-1/2 right-1/2 -translate-y-1/2">
-          Generating timeline...
-        </div>
-      </div>
-    );
+    return <LoadingWindow display="Generating timeline..." />;
   }
   return (
     <div className=" w-full">

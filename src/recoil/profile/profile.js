@@ -64,15 +64,15 @@ export const hydrateUserProfileCallback =
   async (auth, user) => {
     try {
       // i think its this
-      const curAuthProfile = snapshot.getLoadable(
-        authorizedProfileState
-      ).contents;
-      if (!curAuthProfile?.role) {
-        // console.log("CLEARING");
-        // localStorage.clear();
-        // set(authorizedProfileState, null);
-        return null;
-      }
+      // const curAuthProfile = snapshot.getLoadable(
+      //   authorizedProfileState
+      // ).contents;
+      // if (!curAuthProfile?.role) {
+      //   // console.log("CLEARING");
+      //   // localStorage.clear();
+      //   // set(authorizedProfileState, null);
+      //   return null;
+      // }
       // const config = getServerConfig();
       // const authUser = JSON.parse(localStorage.getItem("med_thread_auth_user"));
       // const { idToken } = authUser;
