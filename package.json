@@ -23,10 +23,12 @@
   },
   "scripts": {
     "start-dev": "dotenv -e .env.dev react-scripts start",
+    "start-demo": "dotenv -e .env.demo react-scripts start",
     "start": "react-scripts start",
     "build": "dotenv -e .env.production react-scripts build",
     "build-staging": "dotenv -e .env.staging react-scripts build",
     "build-production": "dotenv -e .env.production react-scripts build",
+    "build-demo": "dotenv -e .env.demo react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },

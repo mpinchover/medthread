@@ -80,8 +80,6 @@ export const updatePasswordCallback =
     }
   };
 
-  
-
 export const removeInsuranceProviderCallback =
   ({ set, snapshot }) =>
   async (healthInsuranceProviderUid) => {
@@ -115,6 +113,7 @@ export const addInsuranceProviderCallback =
   async (publicToken) => {
     try {
       set(isAccountLoadingState, true);
+
       const { insuranceProvider, claimsData } =
         await addHealthInsuranceProvider(publicToken);
 

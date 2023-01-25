@@ -184,10 +184,14 @@ export const FirebaseProvider = ({ children }) => {
         url = "https://usemedthread.com";
       } else if (process.env.REACT_APP_MEDTHREAD_ENV === "STAGING") {
         url = "https://staging.usemedthread.com";
+      } else if (process.env.REACT_APP_MEDTHREAD_ENV === "DEMO") {
+        url = "https://demo.usemedthread.com";
       } else {
         url = "http://localhost:3000";
       }
 
+      console.log("REDIRECT URL IS");
+      console.log(url);
       const auth = getAuth();
       const authUser = getAuthUser();
       const { email } = authUser;
