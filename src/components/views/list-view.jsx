@@ -196,6 +196,7 @@ const TimelineEvent = ({ event }) => {
 
   const claimType = claimTypeEvent[claimTypeCode];
 
+  if (claimType.title === "Pharmacy") return null;
   return (
     <div className={`border-b last:border-b-none py-8 w-full`}>
       <TimelineEventHeader claimType={claimType} event={event} />
@@ -229,7 +230,7 @@ const FilterSidebarCheckboxOption = ({
   const isSelected = () => {
     if (name === "inpatient" && timelineFilter?.inpatient) return true;
     if (name === "outpatient" && timelineFilter?.outpatient) return true;
-    if (name === "medications" && timelineFilter?.medications) return true;
+    // if (name === "medications" && timelineFilter?.medications) return true;
     if (name === "vision" && timelineFilter?.vision) return true;
   };
 
@@ -268,12 +269,12 @@ const FilterSidebar = ({ timelineFilter, onSelectFilterInput, onReset }) => {
           name={"outpatient"}
           label={"Outpatient"}
         />
-        <FilterSidebarCheckboxOption
+        {/* <FilterSidebarCheckboxOption
           timelineFilter={timelineFilter}
           onSelectFilterInput={onSelectFilterInput}
           name={"medications"}
           label={"Medications"}
-        />
+        /> */}
         <FilterSidebarCheckboxOption
           timelineFilter={timelineFilter}
           onSelectFilterInput={onSelectFilterInput}
