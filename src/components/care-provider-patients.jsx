@@ -8,6 +8,7 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { withPrivateRoute } from "./hocs";
 import { activeCareProviderPatientState } from "../recoil/provider/provider";
+import { LoadingWindow } from "./common";
 
 const PatientItem = ({ patient, setActiveCareProviderPatient }) => {
   const navigate = useNavigate();
@@ -79,7 +80,7 @@ const CareProviderPatients = () => {
   };
 
   if (isGettingHealthcareProviderPatients) {
-    return <div>Getting patients...</div>;
+    return <LoadingWindow display="Getting patients..." />;
   }
 
   return (
