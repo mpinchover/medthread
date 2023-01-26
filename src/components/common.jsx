@@ -250,14 +250,14 @@ export const HeadlessDropdown = ({
       ref={dropDownRef}
       className={`${
         isOpen ? "flex" : "hidden"
-      }  absolute top-full w-72 bg-white shadow-md flex-col right-0 `}
+      }  absolute top-full w-72 bg-black text-gray-300 shadow-md flex-col right-0 `}
     >
       {options.map((e, i) => {
         if (e.link) {
           return (
             <li
               key={i}
-              className="border border-t-0 last:border-b-0 hover:opacity-50"
+              className="border border-t-0 last:border-b-0 hover:text-white"
             >
               <div className="text-left w-full p-6 flex flex-row items-center">
                 {e.icon ? <div className="mr-2">{<e.icon />}</div> : null}
@@ -269,7 +269,7 @@ export const HeadlessDropdown = ({
         return (
           <li
             key={i}
-            className="border border-t-0 last:border-b-0 hover:opacity-50"
+            className="border border-t-0 last:border-b-0 hover:text-white"
           >
             <button
               className="text-left w-full p-6"
