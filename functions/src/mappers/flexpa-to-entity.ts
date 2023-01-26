@@ -22,10 +22,8 @@ import {
   EOBBillablePeriod,
 } from "../types";
 
-const UNKNOWN = "UNKNOWN";
-const CLAIMS = "CLAIMS";
-const ALLERGY_INTOLERANCE = "ALLERGY_INTOLERANCE";
-const MEDICATION_REQUEST = "MEDICATION_REQUEST";
+import * as constants from "../config/constants";
+
 export const setEOBPrimaryDate = (eob: ExplanationOfBenefit) => {
   if (eob.billablePeriod?.start) {
     eob.primaryDate = eob.billablePeriod.start;
@@ -64,7 +62,8 @@ export const fromFlexpaToEntityEOBList = (
 // TODO – can you query provider by npi code
 export const fromFlexpaToEntityEOB = (params: any) => {
   const eob: ExplanationOfBenefit = {
-    source: CLAIMS,
+    resourceType: constants.EXPLANATION_OF_BENEFIT,
+    source: constants.CLAIMS,
     fhirReference: params.resource?.id,
     jsonResponse: JSON.stringify(params),
     status: params.resource?.status,
@@ -247,7 +246,8 @@ export const fromFlexpaToEntityMedicationRequest = (
   params: any
 ): MedicationRequest => {
   const medicationRequest: MedicationRequest = {
-    source: CLAIMS,
+    resourceType: constants.MEDICATION_REQUEST,
+    source: constants.CLAIMS,
   };
 
   let fhirReference = params.resource?.id;
@@ -321,7 +321,8 @@ export const fromFlexpaToEntityAllergyIntolerance = (
   params: any
 ): AllergyIntolerance => {
   const allergyIntolerance: AllergyIntolerance = {
-    source: CLAIMS,
+    resourceType: constants.ALLERGY_INTOLERANCE,
+    source: constants.CLAIMS,
   };
 
   let clinicalStatus = params.resource?.clinicalStatus?.coding?.[0]?.code;
@@ -391,7 +392,8 @@ export const fromFlexpaToEntityConditionList = (flexpaConditionList: any[]) => {
 // TODO -  conditions can have multiple codes
 export const fromFlexpaToEntityCondition = (params: any): Condition => {
   const condition: Condition = {
-    source: CLAIMS,
+    resourceType: constants.CONDITION,
+    source: constants.CLAIMS,
   };
   let fhirReference = params.resource?.id;
   if (fhirReference) condition.fhirReference = fhirReference;
@@ -433,7 +435,8 @@ export const fromFlexpaToEntityProcedureList = (flexpaProcedureList: any[]) => {
 // use fallbacks for resource code
 export const fromFlexpaToEntityProcedure = (params: any): Procedure => {
   const procedure: Procedure = {
-    source: CLAIMS,
+    source: constants.CLAIMS,
+    resourceType: constants.PROCEDURE,
   };
 
   let fhirReference = params.resource?.id;
@@ -472,7 +475,8 @@ export const fromFlexpaReferenceProcedureToEntityProcedure = (
   params: any
 ): Procedure => {
   const procedure: Procedure = {
-    source: CLAIMS,
+    source: constants.CLAIMS,
+    resourceType: constants.PROCEDURE,
     fhirReference: params.id,
     code: params.code?.coding?.[0].code,
     performedDateTime: params.performedPeriod?.start,
@@ -519,7 +523,8 @@ export const fromFlexpaToEntityImmunization = (
   vCode: any
 ): Immunization => {
   const immunization: Immunization = {
-    source: CLAIMS,
+    source: constants.CLAIMS,
+    resourceType: constants.IMMUNIZATION,
   };
 
   const code = vCode.code;
@@ -556,7 +561,8 @@ export const fromFlexpaToEntityMedicationDispense = (
   params: any
 ): MedicationDispense => {
   const medicationDispense: MedicationDispense = {
-    source: CLAIMS,
+    source: constants.CLAIMS,
+    resourceType: constants.MEDICATION_DISPENSE,
   };
 
   let fhirReference = params.resource?.id;
@@ -611,8 +617,9 @@ export const fromFlexpaToEntityEncounterList = (
 
 export const fromFlexpaToEntityEncounter = (params: any) => {
   const encounter: Encounter = {
-    source: CLAIMS,
+    source: constants.CLAIMS,
     fhirReference: params.fhirReference,
+    resourceType: constants.ENCOUNTER,
   };
 
   if (params.resource?.status) {
@@ -651,8 +658,9 @@ export const fromFlexpaToEntityCareTeamList = (
 
 export const fromFlexpaToEntityCareTeam = (params: any) => {
   const careTeam: CareTeam = {
-    source: CLAIMS,
+    source: constants.CLAIMS,
     fhirReference: params.fhirReference,
+    resourceType: constants.CARE_TEAM,
   };
 
   if (params.resource?.status) careTeam.status = params.resource?.status;
@@ -717,8 +725,9 @@ export const fromFlexpaToEntityObservationList = (
 
 export const fromFlexpaToEntityObservation = (params: any) => {
   const observation: Observation = {
-    source: CLAIMS,
+    source: constants.CLAIMS,
     fhirReference: params.fhirReference,
+    resourceType: constants.OBSERVATION,
   };
 
   if (params.resource?.effectiveDateTime) {

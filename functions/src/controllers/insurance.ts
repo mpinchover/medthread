@@ -14,10 +14,8 @@ import {
   MedicationDispense,
   DerivedMedication,
   Condition,
-  Note,
   MedContext,
   DerivedMedicationHistory,
-  TimelineEvent,
   Procedure,
   Encounter,
   PatientRecordsQueryFilter,
@@ -43,49 +41,8 @@ import {
 } from "../mappers/flexpa-to-entity";
 import { promises } from "nodemailer/lib/xoauth2";
 import { stringify } from "uuid";
+import * as constants from "../config/constants";
 
-const MEDICATION_REQUEST = "MEDICATION_REQUEST";
-const ALLERGY_INTOLERANCE = "ALLERGY_INTOLERANCE";
-const MEDICATION_DISPENSE = "MEDICATION_DISPENSE";
-const PROCEDURE = "PROCEDURE";
-const IMMUNIZATION = "IMMUNIZATIONS";
-const CONDITION = "CONDITION";
-const ENCOUNTER = "ENCOUNTER";
-const CARE_TEAM = "CARE_TEAM";
-const OBSERVATION = "OBSERVATION";
-const EXPLANATION_OF_BENEFIT = "EXPLANATION_OF_BENEFIT";
-
-const medicationRequestCapability = "MedicationRequest";
-const medicationDispenseCapbility = "MedicationDispense";
-const procedureCapability = "Procedure";
-const immunizationCapability = "Immunization";
-const conditionCapability = "Condition";
-const allergyIntoleranceCapability = "AllergyIntolerance";
-const encounterCapability = "Encounter";
-const careTeamCapability = "CareTeam";
-const observationCapability = "Observation";
-const explanationOfBenefitCapability = "ExplanationOfBenefit";
-
-/*
-
-  /*
-  
-      // insert the queried procedure into the EOB procedure
-      for (let i = 0; i < entityListEOB.length; i++) {
-        const eob = entityListEOB[i];
-
-        for (let j = 0; j < eob.procedure?.length; j++) {
-          const eobProcedure = eob.procedure[j];
-          if (entityProcedures.has(eobProcedure.reference)) {
-            eobProcedure.procedure = entityProcedures.get(
-              eobProcedure.reference
-            );
-          }
-        }
-      }
-
-      TODO – get the procedures as well and add them in 
-*/
 export const getPatientTimeline = async (filter: PatientRecordsQueryFilter) => {
   const timeline = await getTimelineClaimsExplanationOfBenefit(filter);
   return timeline;
@@ -122,18 +79,6 @@ export const getPatientTimeline = async (filter: PatientRecordsQueryFilter) => {
 // };
 
 // take in a claims data array and covnert it to a timeline event
-const toTimelineEvents = (events: [], type: string): TimelineEvent[] => {
-  const timelineEvents: TimelineEvent[] = [];
-  events.forEach((e: any) => {
-    const event: TimelineEvent = {
-      primaryDate: e.primaryDate,
-      event: e,
-      type,
-    };
-    timelineEvents.push(event);
-  });
-  return timelineEvents;
-};
 
 export const getClaimsDataByUserUid = async (
   filter: PatientRecordsQueryFilter
@@ -208,7 +153,7 @@ export const getClaimsEncounterByFilter = async (
   return new Promise(async (res, rej) => {
     try {
       if (!filter.encounter) {
-        res({ type: ENCOUNTER, values: [] });
+        res({ type: constants.ENCOUNTER, values: [] });
       }
 
       // if everything is selected, them just don't filter by any types
@@ -219,7 +164,7 @@ export const getClaimsEncounterByFilter = async (
         setEncounterPrimaryDate(claimsValues[i]);
       }
 
-      res({ type: ENCOUNTER, values: claimsValues });
+      res({ type: constants.ENCOUNTER, values: claimsValues });
     } catch (e) {
       rej(e);
     }
@@ -295,7 +240,7 @@ export const getClaimsConditionByFilter = async (
         filter
       );
 
-      res({ type: CONDITION, values: claimsValues });
+      res({ type: constants.CONDITION, values: claimsValues });
     } catch (e) {
       rej(e);
     }
@@ -308,7 +253,7 @@ export const getClaimsProcedureByFilter = async (
   return new Promise(async (res, rej) => {
     try {
       if (!filter.procedure) {
-        res({ type: PROCEDURE, values: [] });
+        res({ type: constants.PROCEDURE, values: [] });
       }
       const claimsValues = await insuranceRepo.getClaimsProcedureByUserUid(
         filter
@@ -318,7 +263,7 @@ export const getClaimsProcedureByFilter = async (
         setProcedurePrimaryDate(claimsValues[i]);
       }
 
-      res({ type: PROCEDURE, values: claimsValues });
+      res({ type: constants.PROCEDURE, values: claimsValues });
     } catch (e) {
       rej(e);
     }
@@ -333,7 +278,7 @@ export const getClaimsImmunizationByFilter = async (
       const claimsValues = await insuranceRepo.getClaimsImmunizationByUserUid(
         filter
       );
-      res({ type: IMMUNIZATION, values: claimsValues });
+      res({ type: constants.IMMUNIZATION, values: claimsValues });
     } catch (e) {
       rej(e);
     }
@@ -347,7 +292,7 @@ export const getClaimsAllergyIntoleranceByFilter = async (
     try {
       const claimsValues =
         await insuranceRepo.getClaimsAllergyIntoleranceByUserUid(filter);
-      res({ type: ALLERGY_INTOLERANCE, values: claimsValues });
+      res({ type: constants.ALLERGY_INTOLERANCE, values: claimsValues });
     } catch (e) {
       rej(e);
     }
@@ -361,7 +306,7 @@ export const getClaimsMedicationRequestByFilter = async (
     try {
       const claimsValues =
         await insuranceRepo.getClaimsMedicationRequestByUserUid(filter);
-      res({ type: MEDICATION_REQUEST, values: claimsValues });
+      res({ type: constants.MEDICATION_REQUEST, values: claimsValues });
     } catch (e) {
       rej(e);
     }
@@ -375,7 +320,7 @@ export const getClaimsMedicationDispenseByFilter = async (
     try {
       const claimsValues =
         await insuranceRepo.getClaimsMedicationDispenseByUserUid(filter);
-      res({ type: MEDICATION_DISPENSE, values: claimsValues });
+      res({ type: constants.MEDICATION_DISPENSE, values: claimsValues });
     } catch (e) {
       rej(e);
     }
@@ -625,6 +570,7 @@ export const deriveClaimsMedications = (
       request: medContext.request,
       dispense: medContext.dispense,
       derivedMedicationHistory: medContext.derivedHistory,
+      resourceType: constants.DERIVED_MEDICATION
     };
 
     // TODO – add in a first requested as well
@@ -693,43 +639,63 @@ export const getClaimsFromInsuranceProvider = async (
   // TODO – add encounters, care team, etc
 
   const concurrentPromisesToExecute = [];
-  if (insuranceProvider.capabilities.includes(medicationRequestCapability)) {
+  if (
+    insuranceProvider.capabilities.includes(
+      constants.medicationRequestCapability
+    )
+  ) {
     concurrentPromisesToExecute.push(getMedicationRequests);
   }
 
-  if (insuranceProvider.capabilities.includes(medicationDispenseCapbility)) {
+  if (
+    insuranceProvider.capabilities.includes(
+      constants.medicationDispenseCapbility
+    )
+  ) {
     concurrentPromisesToExecute.push(getMedicationDispense);
   }
 
-  if (insuranceProvider.capabilities.includes(procedureCapability)) {
+  if (insuranceProvider.capabilities.includes(constants.procedureCapability)) {
     concurrentPromisesToExecute.push(getProcedures);
   }
 
-  if (insuranceProvider.capabilities.includes(immunizationCapability)) {
+  if (
+    insuranceProvider.capabilities.includes(constants.immunizationCapability)
+  ) {
     concurrentPromisesToExecute.push(getImmunizations);
   }
 
-  if (insuranceProvider.capabilities.includes(conditionCapability)) {
+  if (insuranceProvider.capabilities.includes(constants.conditionCapability)) {
     concurrentPromisesToExecute.push(getConditions);
   }
 
-  if (insuranceProvider.capabilities.includes(allergyIntoleranceCapability)) {
+  if (
+    insuranceProvider.capabilities.includes(
+      constants.allergyIntoleranceCapability
+    )
+  ) {
     concurrentPromisesToExecute.push(getAllergyIntolerance);
   }
 
-  if (insuranceProvider.capabilities.includes(encounterCapability)) {
+  if (insuranceProvider.capabilities.includes(constants.encounterCapability)) {
     concurrentPromisesToExecute.push(getEncounter);
   }
 
-  if (insuranceProvider.capabilities.includes(careTeamCapability)) {
+  if (insuranceProvider.capabilities.includes(constants.careTeamCapability)) {
     concurrentPromisesToExecute.push(getCareTeam);
   }
 
-  if (insuranceProvider.capabilities.includes(observationCapability)) {
+  if (
+    insuranceProvider.capabilities.includes(constants.observationCapability)
+  ) {
     concurrentPromisesToExecute.push(getObservation);
   }
 
-  if (insuranceProvider.capabilities.includes(explanationOfBenefitCapability)) {
+  if (
+    insuranceProvider.capabilities.includes(
+      constants.explanationOfBenefitCapability
+    )
+  ) {
     concurrentPromisesToExecute.push(getHydratedExplantionOfBenefitFromFlexpa);
   }
 
@@ -771,29 +737,29 @@ export const extractClaimsResultsFromPromises = (
     const type = promiseResult.value.type;
     const values = promiseResult.value.values;
 
-    if (type === MEDICATION_REQUEST) {
+    if (type === constants.MEDICATION_REQUEST) {
       claimsData.medicationRequest = values;
-    } else if (type === ALLERGY_INTOLERANCE) {
+    } else if (type === constants.ALLERGY_INTOLERANCE) {
       claimsData.allergyIntolerance = values;
-    } else if (type === MEDICATION_DISPENSE) {
+    } else if (type === constants.MEDICATION_DISPENSE) {
       claimsData.medicationDispense = values;
-    } else if (type === PROCEDURE) {
+    } else if (type === constants.PROCEDURE) {
       values.forEach((proc: Procedure) => {
         if (proc.fhirReference) {
           procedureMap.set(proc.fhirReference, proc);
         }
       });
-    } else if (type === CONDITION) {
+    } else if (type === constants.CONDITION) {
       claimsData.condition = values;
-    } else if (type === IMMUNIZATION) {
+    } else if (type === constants.IMMUNIZATION) {
       claimsData.immunization = values;
-    } else if (type === ENCOUNTER) {
+    } else if (type === constants.ENCOUNTER) {
       claimsData.encounter = values;
-    } else if (type === OBSERVATION) {
+    } else if (type === constants.OBSERVATION) {
       claimsData.observation = values;
-    } else if (type === CARE_TEAM) {
+    } else if (type === constants.CARE_TEAM) {
       claimsData.careTeam = values;
-    } else if (type === EXPLANATION_OF_BENEFIT) {
+    } else if (type === constants.EXPLANATION_OF_BENEFIT) {
       const explanationOfBenefit: ExplanationOfBenefit[] =
         values.explanationOfBenefit;
 
@@ -827,7 +793,7 @@ export const getMedicationRequests = (
       const entityMedRequestList =
         fromFlexpaToEntityMedicationRequestList(flexpaMedRequest);
 
-      res({ type: MEDICATION_REQUEST, values: entityMedRequestList });
+      res({ type: constants.MEDICATION_REQUEST, values: entityMedRequestList });
     } catch (e) {
       console.log(e);
       rej(e);
@@ -852,7 +818,7 @@ export const getEncounter = (accessToken: string) => {
         );
       });
 
-      res({ type: ENCOUNTER, values: entityEncounterList });
+      res({ type: constants.ENCOUNTER, values: entityEncounterList });
     } catch (e) {
       console.log(e);
       rej(e);
@@ -870,7 +836,10 @@ export const getMedicationDispense = (accessToken: string) => {
       const entityMedDispenseList =
         fromFlexpaToEntityMedicationDispenseList(flexpaMedDispense);
 
-      res({ type: MEDICATION_DISPENSE, values: entityMedDispenseList });
+      res({
+        type: constants.MEDICATION_DISPENSE,
+        values: entityMedDispenseList,
+      });
     } catch (e) {
       console.log(e);
       rej(e);
@@ -900,7 +869,10 @@ export const getAllergyIntolerance = (accessToken: string) => {
       );
 
       // map it
-      res({ type: ALLERGY_INTOLERANCE, values: allergyIntoleranceEntityList });
+      res({
+        type: constants.ALLERGY_INTOLERANCE,
+        values: allergyIntoleranceEntityList,
+      });
     } catch (e) {
       console.log(e);
       rej(e);
@@ -919,7 +891,7 @@ export const getConditions = (
       const conditionsEntityList =
         fromFlexpaToEntityConditionList(flexpaConditions);
 
-      res({ type: CONDITION, values: conditionsEntityList });
+      res({ type: constants.CONDITION, values: conditionsEntityList });
     } catch (e) {
       rej(e);
     }
@@ -949,7 +921,7 @@ export const getImmunizations = (
         );
       });
 
-      res({ type: IMMUNIZATION, values: immunizationsEntityList });
+      res({ type: constants.IMMUNIZATION, values: immunizationsEntityList });
     } catch (e) {
       console.log(e);
       rej(e);
@@ -976,7 +948,7 @@ export const getProcedures = (accessToken: string) => {
         );
       });
 
-      res({ type: PROCEDURE, values: proceduresEntityList });
+      res({ type: constants.PROCEDURE, values: proceduresEntityList });
     } catch (e) {
       console.log(e);
       rej(e);
@@ -992,7 +964,7 @@ export const getCareTeam = (accessToken: string) => {
       const careTeamEntityList =
         fromFlexpaToEntityCareTeamList(flexpaCareTeamList);
 
-      res({ type: CARE_TEAM, values: careTeamEntityList });
+      res({ type: constants.CARE_TEAM, values: careTeamEntityList });
     } catch (e) {
       console.log(e);
       rej(e);
@@ -1038,7 +1010,7 @@ export const getHydratedExplantionOfBenefitFromFlexpa = (
       }
 
       res({
-        type: EXPLANATION_OF_BENEFIT,
+        type: constants.EXPLANATION_OF_BENEFIT,
         values: {
           explanationOfBenefit: entityListEOB,
           procedures: entityProcedures,
@@ -1079,7 +1051,7 @@ export const getExplanationOfBenefitFromFlexpaInPromise = (
       );
 
       console.log(entityListEOB);
-      res({ type: EXPLANATION_OF_BENEFIT, values: entityListEOB });
+      res({ type: constants.EXPLANATION_OF_BENEFIT, values: entityListEOB });
     } catch (e) {
       console.log(e);
       rej(e);
@@ -1145,7 +1117,7 @@ export const getObservation = (accessToken: string) => {
         );
       });
 
-      res({ type: OBSERVATION, values: observationEntityList });
+      res({ type: constants.OBSERVATION, values: observationEntityList });
     } catch (e) {
       console.log(e);
       rej(e);

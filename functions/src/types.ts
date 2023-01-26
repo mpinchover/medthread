@@ -47,6 +47,7 @@ export interface DerivedMedication {
   // dosage?: string;
   source?: string; // if the patient has modified the derived me by the code then should be claims + patient
   derivedMedicationHistory: DerivedMedicationHistory[];
+  resourceType?: string;
 }
 
 export interface MedicationRequest {
@@ -67,6 +68,7 @@ export interface MedicationRequest {
   insuranceProviderUid?: string;
   userUid?: string;
   primaryDate?: string;
+  resourceType?: string;
 }
 
 export interface MedicationDispense {
@@ -85,6 +87,7 @@ export interface MedicationDispense {
   source?: string;
   userUid?: string;
   primaryDate?: string;
+  resourceType?: string;
 }
 
 export interface AllergyIntolerance {
@@ -105,6 +108,7 @@ export interface AllergyIntolerance {
   asserterIdentifier?: string;
   userUid?: string;
   primaryDate?: string;
+  resourceType?: string;
 }
 
 export interface Condition {
@@ -119,6 +123,7 @@ export interface Condition {
   codeDisplay?: string; // the condition
   userUid?: string;
   primaryDate?: string;
+  resourceType?: string;
 }
 
 export interface Immunization {
@@ -132,6 +137,7 @@ export interface Immunization {
   occurenceDateTime?: string;
   userUid?: string;
   primaryDate?: string;
+  resourceType?: string;
 }
 
 export interface Procedure {
@@ -149,6 +155,7 @@ export interface Procedure {
   performerIdentifier?: string; // NPI code
   userUid?: string;
   primaryDate?: string;
+  resourceType?: string;
 }
 
 export interface Encounter {
@@ -162,6 +169,7 @@ export interface Encounter {
   end?: string;
   code?: string;
   primaryDate?: string;
+  resourceType?: string;
 }
 
 export interface CareTeamParticipant {
@@ -180,6 +188,7 @@ export interface CareTeam {
   status?: string;
   participants?: CareTeamParticipant[];
   primaryDate?: string;
+  resourceType?: string;
 }
 
 export interface ClaimsData {
@@ -214,6 +223,7 @@ export interface Observation {
   userUid?: string;
   fhirReference?: string;
   primaryDate?: string;
+  resourceType?: string;
 }
 
 export interface Profile {
@@ -257,20 +267,6 @@ export interface InsuranceMetadata {
   capabilities: string[];
 }
 
-// TODO – handle provider/role/patient
-// save the flexpa resource id and the code
-// so if its med, just query by code
-// if its anything else, do uid
-export interface Note {
-  uid?: string;
-  userUid?: string;
-  // type?: string; // MEDICATION, ALLERGY, etc
-  text?: string; // note text
-  // medicationCode?: string;
-  parentUid?: string; // what it's a note for
-  // role?: string;
-}
-
 export interface PatientRecordsQueryFilter {
   encounter?: boolean;
   encounterTypes?: string[]; // if empty just query everything.
@@ -283,11 +279,6 @@ export interface PatientRecordsQueryFilter {
   userUid?: string;
 }
 
-export interface TimelineEvent {
-  primaryDate?: string;
-  event?: any;
-  type?: string;
-}
 
 // TODO
 // use npi code api?
@@ -313,6 +304,7 @@ export interface ExplanationOfBenefit {
   diagnosis?: EOBDiagnosis[];
   procedure?: EOBProcedure[];
   primaryDate?: string;
+  resourceType?: string;
 }
 
 export interface EOBItem {
