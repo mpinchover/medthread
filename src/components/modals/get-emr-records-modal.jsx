@@ -4,7 +4,11 @@ import { TextInput, DatePicker } from "../common";
 import { activeTimelineEventState } from "../../recoil/timeline/timeline";
 import { useRecoilCallback, useRecoilState } from "recoil";
 import { getFormattedDate } from "../utils";
-
+import { sendEMRRequestForEobEventCallback } from "../../recoil/emr/emr";
+import {
+  activeEMRPatientUidState,
+  activeEMREobUidState,
+} from "../../recoil/emr/emr";
 const claimTypeEvent = {
   institutional: {
     title: "Inpatient",
@@ -40,6 +44,9 @@ const GetEMRRecordsModal = ({ isOpen, onClose }) => {
   const [activeTimelineEvent, setActiveTimelineEvent] = useRecoilState(
     activeTimelineEventState
   );
+  const sendEMRRequestForEobEvent = useRecoilCallback(
+    sendEMRRequestForEobEventCallback
+  );
 
   useEffect(() => {
     document.addEventListener("mousedown", handleClickOutside);
@@ -57,9 +64,8 @@ const GetEMRRecordsModal = ({ isOpen, onClose }) => {
     }
   };
 
-  const handleSend = (e) => {
-    e.preventDefault();
-    setActiveTimelineEvent(null);
+  const handleSend = async () => {
+    sendEMRRequestForEobEvent(activeTimelineEvent);
     onClose();
   };
 
@@ -71,7 +77,7 @@ const GetEMRRecordsModal = ({ isOpen, onClose }) => {
       ref={modalRef}
       className={`${
         isOpen ? "fixed" : "hidden"
-      }  bg-white w-144 w-96 fixed left-1/2 top-1/2 -translate-y-1/2 -translate-x-1/2 shadow-md border rounded-lg z-20`}
+      }  bg-white w-144 w-96 fixed left-1/2 top-1/2 -translate-y-1/2 -translate-x-1/2 shadow-md border rounded-lg z-30`}
     >
       <div className="border-b">
         <div className="flex flex-row items-center p-6">

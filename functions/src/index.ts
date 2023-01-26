@@ -20,7 +20,7 @@ import { getPatientTimelineData } from "./handlers/get-patient-timeline";
 import { hydrateUserProfile } from "./handlers/hydrate-user-profile";
 import { getPatientTimelineDataForProvider } from "./handlers/get-patient-timeline-for-provider";
 import { getPatientsByHealthcareProviderUid } from "./handlers/get-patients-by-healthcare-provider-uid";
-
+import { sendRequestForEMRDataForEOBEvent } from "./handlers/send-request-for-emr-data-for-eob-event";
 // import { getMedicationsByPatientUid } from "./get-medications-by-patient-uid";
 const app = express();
 
@@ -98,11 +98,12 @@ app.post(
   validateFirebaseIdToken,
   removeHealthInsuranceProvider
 );
-// app.post(
-//   "/send-medications-to-provider",
-//   validateFirebaseIdToken,
-//   sendMedicationsToProvider
-// );
+app.post(
+  "/send-request-for-emr-data-for-eob-event",
+  validateFirebaseIdToken,
+  sendRequestForEMRDataForEOBEvent
+);
+
 app.post("/remove-medication", validateFirebaseIdToken, removeMedication);
 app.post("/save-medication", validateFirebaseIdToken, saveMedication);
 app.get("/get-user-account", validateFirebaseIdToken, getUserAccount);

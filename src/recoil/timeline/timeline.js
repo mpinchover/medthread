@@ -142,6 +142,8 @@ export const getPatientTimelineDataCallback =
       let timeline;
       if (patientUid) {
         timeline = await getPatientTimelineForProvider(patientUid);
+        console.log("TIMELINE IS ");
+        console.log(timeline);
       } else {
         timeline = await getPatientTimeline();
       }

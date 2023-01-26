@@ -8,7 +8,6 @@ import {
   Procedure,
   Immunization,
   Condition,
-  Note,
   Encounter,
   Observation,
   CareTeam,
@@ -498,13 +497,4 @@ export const getClaimsImmunizationByUserUid = async (
     };
   });
   return res;
-};
-
-export const saveNote = async (note: Note): Promise<Note> => {
-  const db = admin.firestore();
-
-  const notesDocRef = db.collection(insuranceProvidersCollection).doc();
-  note.uid = notesDocRef.id;
-  await notesDocRef.set(note);
-  return note;
 };

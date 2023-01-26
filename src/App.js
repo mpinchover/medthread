@@ -151,22 +151,6 @@ function App() {
             <Route exact path="/verification" element={<VerificationPage />} />
           </Routes>
 
-          <SendMedicationsModal
-            healthcareProviders={accountSettings?.healthcareProviders}
-            isOpen={modal?.isSendRecordsModalOpen}
-            onSend={onSendMedications}
-            onClose={handleCloseModal}
-          />
-          <GetEmrRecordsModal
-            isOpen={modal?.isRequestingEMR}
-            onClose={handleCloseModal}
-            onSend={onRequestEMR}
-          />
-          <AddPatientModal
-            onClose={handleCloseModal}
-            onSend={handleCloseModal}
-            isOpen={modal?.isAddingPatient}
-          />
           <GetEmrRecordsModal
             isOpen={modal?.isRequestingEMR}
             onClose={handleCloseModal}

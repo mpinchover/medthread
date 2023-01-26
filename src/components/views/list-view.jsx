@@ -17,6 +17,11 @@ import { useParams } from "react-router-dom";
 import { modalState } from "../../recoil/utils/utils";
 import { LoadingWindow } from "../common";
 import { authorizedProfileState } from "../../recoil/auth/auth";
+import {
+  activeEMRPatientUidState,
+  activeEMREobUidState,
+} from "../../recoil/emr/emr";
+
 const DiagnosisInfo = ({ display, code }) => {
   if (!display) {
     display = code;
@@ -294,7 +299,6 @@ const FilterSidebar = ({ timelineFilter, onSelectFilterInput, onReset }) => {
   );
 };
 
-// const encounterTypes = ["HH", "IMP", "VR", "EMER", "AMB", "OBSENC"];
 const idleFilterState = {
   inpatient: true,
   outpatient: true,
@@ -302,9 +306,6 @@ const idleFilterState = {
   medications: true,
 };
 
-const renderTimelineEvent = (event) => {
-  return <TimelineEvent event={event} />;
-};
 const ListView = () => {
   const getPatientTimelineData = useRecoilCallback(
     getPatientTimelineDataCallback
