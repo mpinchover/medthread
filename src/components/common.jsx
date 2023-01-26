@@ -288,16 +288,17 @@ export const HeadlessDropdown = ({
   );
 };
 
-export const Button = ({ display, type, onClick, disabled }) => {
+export const Button = ({ Icon, display, type, onClick, disabled }) => {
   if (!type) type = "PRIMARY";
 
   return (
     <button
       disabled={disabled}
       onClick={onClick}
-      className="text-sm  p-3 px-8 font-bold border rounded-lg bg-black text-white"
+      className="flex flex-row  items-center space-x-2 text-sm  p-3 px-8 font-bold border rounded-lg bg-black text-white"
     >
-      {display}
+      <Icon />
+      <span>{display}</span>
     </button>
   );
 };

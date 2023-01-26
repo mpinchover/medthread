@@ -11,6 +11,9 @@ import { activeCareProviderPatientState } from "../recoil/provider/provider";
 import { LoadingWindow, SearchBar } from "./common";
 import { Button } from "./common";
 import { modalState } from "../recoil/utils/utils";
+import { FaRegCopy } from "react-icons/fa";
+import { authorizedProfileState } from "../recoil/auth/auth";
+import Fade from "@mui/material/Fade";
 
 const PatientItem = ({ patient, setActiveCareProviderPatient }) => {
   const navigate = useNavigate();
@@ -53,12 +56,32 @@ const ListOfPatients = ({
   );
 };
 
-const PatientListHeader = ({ handleAddPatient }) => {
+// https://mui.com/material-ui/transitions/
+const PatientListHeader = ({ handleAddPatient, authorizedProfile }) => {
+  const [showCopyPopup, setShowCopyPopup] = useState(false);
+
+  const handleCopyNewPatientLink = () => {
+    setShowCopyPopup(true);
+    setTimeout(() => setShowCopyPopup(false), 1000);
+    navigator.clipboard.writeText(
+      `${process.env.REACT_APP_BASE_URL}/patient-signup?providerUid=${authorizedProfile.uid}`
+    );
+  };
+
   return (
     <section className="px-2 md:px-28 flex flex-row">
       <SearchBar placeholder="Search patients..." />
-      <div className="ml-6  flex items-center">
-        <Button onClick={handleAddPatient} display={"Add patient"} />
+      <div className="ml-6 relative flex items-center">
+        <Fade in={showCopyPopup}>
+          <div className="absolute text-sm w-full p-4 bg-white border rounded-sm text-center z-30 bottom-full">
+            Copied new patient link
+          </div>
+        </Fade>
+        <Button
+          Icon={FaRegCopy}
+          onClick={handleCopyNewPatientLink}
+          display={"New patient link"}
+        />
       </div>
     </section>
   );
@@ -71,6 +94,10 @@ const CareProviderPatients = () => {
   const healthcareProviderPatients = useRecoilValue(
     healthcareProviderPatientsState
   );
+  const [authorizedProfile, setAuthorizedProfile] = useRecoilState(
+    authorizedProfileState
+  );
+
   const isGettingHealthcareProviderPatients = useRecoilValue(
     isGettingHealthcareProviderPatientsState
   );
@@ -93,12 +120,12 @@ const CareProviderPatients = () => {
   };
 
   const handleAddPatient = () => {
-    setModal((prevState) => {
-      return {
-        ...prevState,
-        isAddingPatient: true,
-      };
-    });
+    // setModal((prevState) => {
+    //   return {
+    //     ...prevState,
+    //     isAddingPatient: true,
+    //   };
+    // });
   };
 
   if (isGettingHealthcareProviderPatients) {
@@ -107,7 +134,10 @@ const CareProviderPatients = () => {
 
   return (
     <div className="py-8">
-      <PatientListHeader handleAddPatient={handleAddPatient} />
+      <PatientListHeader
+        authorizedProfile={authorizedProfile}
+        handleAddPatient={handleAddPatient}
+      />
       <ListOfPatients
         setActiveCareProviderPatient={setActiveCareProviderPatient}
         healthcareProviderPatients={healthcareProviderPatients}
