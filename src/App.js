@@ -34,6 +34,7 @@ import { accountSettingsState } from "./recoil/account/account";
 import GetEmrRecordsModal from "./components/modals/get-emr-records-modal";
 import SendMedicationsModal from "./components/medication-modal-send-meds";
 import CareProviderPatients from "./components/care-provider-patients";
+import AddPatientModal from "./components/modals/add-patient-modal";
 const ModalShadow = () => {
   // const { isModalOpen } = useContext(FirebaseContext);
   const modal = useRecoilValue(modalState);
@@ -43,7 +44,11 @@ const ModalShadow = () => {
   // isSendingRecords: false,
   // isSendRecordsModalOpen: false,
 
-  if (modal.isSendRecordsModalOpen || modal.isRequestingEMR) {
+  if (
+    modal.isSendRecordsModalOpen ||
+    modal.isRequestingEMR ||
+    modal.isAddingPatient
+  ) {
     style = {
       background: "rgba(0, 0, 0, 0.5)",
     };
@@ -52,7 +57,9 @@ const ModalShadow = () => {
     <div
       style={style}
       className={`${
-        modal.isSendRecordsModalOpen || modal.isRequestingEMR
+        modal.isSendRecordsModalOpen ||
+        modal.isRequestingEMR ||
+        modal.isAddingPatient
           ? "absolute"
           : "hidden"
       } h-full w-full z-10`}
@@ -86,12 +93,13 @@ function App() {
     });
   };
 
-  const handleSendMedsModalClose = () => {
+  const handleCloseModal = () => {
     setModal((prevModal) => {
       return {
         ...prevModal,
         isSendRecordsModalOpen: false,
         isRequestingEMR: false,
+        isAddingPatient: false,
       };
     });
   };
@@ -154,12 +162,17 @@ function App() {
             healthcareProviders={accountSettings?.healthcareProviders}
             isOpen={modal?.isSendRecordsModalOpen}
             onSend={onSendMedications}
-            onClose={handleSendMedsModalClose}
+            onClose={handleCloseModal}
           />
           <GetEmrRecordsModal
             isOpen={modal?.isRequestingEMR}
-            onClose={handleSendMedsModalClose}
+            onClose={handleCloseModal}
             onSend={onRequestEMR}
+          />
+          <AddPatientModal
+            onClose={handleCloseModal}
+            onSend={handleCloseModal}
+            isOpen={modal?.isAddingPatient}
           />
           <ToastContainer />
         </FirebaseProvider>

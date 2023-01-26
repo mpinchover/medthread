@@ -8,7 +8,9 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { withPrivateRoute } from "./hocs";
 import { activeCareProviderPatientState } from "../recoil/provider/provider";
-import { LoadingWindow } from "./common";
+import { LoadingWindow, SearchBar } from "./common";
+import { Button } from "./common";
+import { modalState } from "../recoil/utils/utils";
 
 const PatientItem = ({ patient, setActiveCareProviderPatient }) => {
   const navigate = useNavigate();
@@ -36,7 +38,7 @@ const ListOfPatients = ({
 
   return (
     <div className="px-2 md:px-28">
-      <div className="py-8">
+      <div className="">
         {healthcareProviderPatients?.map((e, i) => {
           return (
             <PatientItem
@@ -51,6 +53,17 @@ const ListOfPatients = ({
   );
 };
 
+const PatientListHeader = ({ handleAddPatient }) => {
+  return (
+    <section className="px-2 md:px-28 flex flex-row">
+      <SearchBar placeholder="Search patients..." />
+      <div className="ml-6  flex items-center">
+        <Button onClick={handleAddPatient} display={"Add patient"} />
+      </div>
+    </section>
+  );
+};
+
 const CareProviderPatients = () => {
   const getPatientsByHealthcareProviderUid = useRecoilCallback(
     getPatientsByHealthcareProviderUidCallback
@@ -61,7 +74,7 @@ const CareProviderPatients = () => {
   const isGettingHealthcareProviderPatients = useRecoilValue(
     isGettingHealthcareProviderPatientsState
   );
-
+  const [modal, setModal] = useRecoilState(modalState);
   const [activeCareProviderPatient, setActiveCareProviderPatient] =
     useRecoilState(activeCareProviderPatientState);
 
@@ -79,15 +92,27 @@ const CareProviderPatients = () => {
     // setSearchQuery(value);
   };
 
+  const handleAddPatient = () => {
+    setModal((prevState) => {
+      return {
+        ...prevState,
+        isAddingPatient: true,
+      };
+    });
+  };
+
   if (isGettingHealthcareProviderPatients) {
     return <LoadingWindow display="Getting patients..." />;
   }
 
   return (
-    <ListOfPatients
-      setActiveCareProviderPatient={setActiveCareProviderPatient}
-      healthcareProviderPatients={healthcareProviderPatients}
-    />
+    <div className="py-8">
+      <PatientListHeader handleAddPatient={handleAddPatient} />
+      <ListOfPatients
+        setActiveCareProviderPatient={setActiveCareProviderPatient}
+        healthcareProviderPatients={healthcareProviderPatients}
+      />
+    </div>
   );
 
   // if (filteredPreviousPatients)
