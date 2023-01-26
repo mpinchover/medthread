@@ -34,6 +34,7 @@ import { accountSettingsState } from "./recoil/account/account";
 import GetEmrRecordsModal from "./components/modals/get-emr-records-modal";
 import SendMedicationsModal from "./components/medication-modal-send-meds";
 import CareProviderPatients from "./components/care-provider-patients";
+import AddPatientModal from "./components/modals/add-patient-modal";
 const ModalShadow = () => {
   // const { isModalOpen } = useContext(FirebaseContext);
   const modal = useRecoilValue(modalState);
@@ -86,7 +87,7 @@ function App() {
     });
   };
 
-  const handleSendMedsModalClose = () => {
+  const handleCloseModal = () => {
     setModal((prevModal) => {
       return {
         ...prevModal,
@@ -154,11 +155,21 @@ function App() {
             healthcareProviders={accountSettings?.healthcareProviders}
             isOpen={modal?.isSendRecordsModalOpen}
             onSend={onSendMedications}
-            onClose={handleSendMedsModalClose}
+            onClose={handleCloseModal}
           />
           <GetEmrRecordsModal
             isOpen={modal?.isRequestingEMR}
-            onClose={handleSendMedsModalClose}
+            onClose={handleCloseModal}
+            onSend={onRequestEMR}
+          />
+          <AddPatientModal
+            onClose={handleCloseModal}
+            onSend={handleCloseModal}
+            isOpen={modal?.isAddingPatient}
+          />
+          <GetEmrRecordsModal
+            isOpen={modal?.isRequestingEMR}
+            onClose={handleCloseModal}
             onSend={onRequestEMR}
           />
           <ToastContainer />

@@ -147,6 +147,18 @@ export const TextInputWithEdit = ({
   );
 };
 
+export const SearchBar = ({ onChange, searchTerm, placeholder }) => {
+  return (
+    <input
+      placeholder={placeholder}
+      // onChange={(e) => setSearchTerm(e.target.value)}
+      onChange={onChange}
+      value={searchTerm}
+      className=" focus:outline-none p-4 text-sm border rounded-full flex-1 "
+    />
+  );
+};
+
 export const TextInput = ({
   label,
   placeholder,
@@ -273,6 +285,21 @@ export const HeadlessDropdown = ({
         );
       })}
     </ul>
+  );
+};
+
+export const Button = ({ Icon, display, type, onClick, disabled }) => {
+  if (!type) type = "PRIMARY";
+
+  return (
+    <button
+      disabled={disabled}
+      onClick={onClick}
+      className="flex flex-row  items-center space-x-2 text-sm  p-3 px-8 font-bold border rounded-lg bg-black text-white"
+    >
+      <Icon />
+      <span>{display}</span>
+    </button>
   );
 };
 

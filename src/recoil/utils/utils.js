@@ -19,6 +19,7 @@ const idleState = {
   isSendingRecords: false,
   isSendRecordsModalOpen: false,
   isRequestingEMR: false,
+  isAddingPatient: false,
 };
 export const modalState = atom({
   key: "modalState",
