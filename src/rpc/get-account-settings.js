@@ -14,6 +14,7 @@ export const getAccountSettings = async (uid) => {
       url: `${config.baseUrl}/get-user-account`,
 
       headers: {
+        "Access-Control-Allow-Origin": "*",
         Authorization: `Bearer ${idToken}`,
       },
     });

@@ -12,6 +12,7 @@ export const getMedicationsByUserUid = async () => {
     url: `${config.baseUrl}/get-medications-by-user-uid`,
 
     headers: {
+      "Access-Control-Allow-Origin": "*",
       Authorization: `Bearer ${idToken}`,
     },
   });

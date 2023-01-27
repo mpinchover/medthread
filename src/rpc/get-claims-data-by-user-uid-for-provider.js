@@ -20,6 +20,7 @@ export const getClaimsDataByUserUidForProvider = async (patientUid) => {
     method: "post",
     url: `${config.baseUrl}/get-claims-data-by-user-uid-for-provider`,
     headers: {
+      "Access-Control-Allow-Origin": "*",
       Authorization: `Bearer ${idToken}`,
     },
     data: {

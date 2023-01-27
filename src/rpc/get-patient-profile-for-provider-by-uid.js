@@ -13,6 +13,7 @@ export const getPatientProfileForProviderByUid = async (patientUid) => {
       patientUid,
     },
     headers: {
+      "Access-Control-Allow-Origin": "*",
       Authorization: `Bearer ${idToken}`,
     },
   });

@@ -11,6 +11,7 @@ export const getPatientsByHealthcareProviderUid = async () => {
       method: "post",
       url: `${config.baseUrl}/get-patients-by-healthcare-provider-uid`,
       headers: {
+        "Access-Control-Allow-Origin": "*",
         Authorization: `Bearer ${idToken}`,
       },
     });

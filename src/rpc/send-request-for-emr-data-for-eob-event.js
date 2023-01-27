@@ -14,7 +14,9 @@ export const sendRequestForEMRDataForEOBEvent = async (patientUid, eobUid) => {
       patientUid,
       eobUid,
     },
+
     headers: {
+        "Access-Control-Allow-Origin": "*",
       Authorization: `Bearer ${idToken}`,
     },
   });

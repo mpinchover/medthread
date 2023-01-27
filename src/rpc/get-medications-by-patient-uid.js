@@ -10,6 +10,7 @@ export const getMedicationsForPatient = async () => {
     method: "get",
     url: `${config.baseUrl}/get-medications-by-patient-uid`,
     headers: {
+      "Access-Control-Allow-Origin": "*",
       Authorization: `Bearer ${idToken}`,
     },
   });

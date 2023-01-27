@@ -13,6 +13,7 @@ export const removeHealthInsuranceProvider = async (insuranceProviderUid) => {
       insuranceProviderUid,
     },
     headers: {
+      "Access-Control-Allow-Origin": "*",
       Authorization: `Bearer ${idToken}`,
     },
   });

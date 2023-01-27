@@ -14,6 +14,7 @@ export const removeMedication = async (medUid) => {
       medUid,
     },
     headers: {
+      "Access-Control-Allow-Origin": "*",
       Authorization: `Bearer ${idToken}`,
     },
   });

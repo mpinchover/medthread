@@ -14,6 +14,7 @@ export const sendMedicationsToProvider = async (healthcareProviderEmail) => {
       healthcareProviderEmail,
     },
     headers: {
+      "Access-Control-Allow-Origin": "*",
       Authorization: `Bearer ${idToken}`,
     },
   });

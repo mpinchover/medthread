@@ -18,6 +18,7 @@ export const addAuthorizedHealthcareProviderdicationsByUid = async (
       healthcareProviderName,
     },
     headers: {
+      "Access-Control-Allow-Origin": "*",
       Authorization: `Bearer ${idToken}`,
     },
   });

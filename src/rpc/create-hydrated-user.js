@@ -11,7 +11,9 @@ export const createHydratedUserProfile = async (params, providerUid) => {
       profile: params,
       providerUid: providerUid,
     },
-    headers: {},
+    headers: {
+      "Access-Control-Allow-Origin": "*",
+    },
   });
   return res?.data?.profile;
 };

@@ -15,6 +15,7 @@ export const getPatientTimeline = async (filter) => {
       filter,
     },
     headers: {
+      "Access-Control-Allow-Origin": "*",
       Authorization: `Bearer ${idToken}`,
     },
   });

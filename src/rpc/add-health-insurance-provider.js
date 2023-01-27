@@ -13,6 +13,7 @@ export const addHealthInsuranceProvider = async (publicToken) => {
       publicToken,
     },
     headers: {
+      "Access-Control-Allow-Origin": "*",
       Authorization: `Bearer ${idToken}`,
     },
   });

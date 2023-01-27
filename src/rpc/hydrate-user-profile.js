@@ -7,6 +7,7 @@ export const hydrateUserProfile = async (idToken) => {
     method: "get",
     url: `${config.baseUrl}/hydrate-user-profile`,
     headers: {
+      "Access-Control-Allow-Origin": "*",
       Authorization: `Bearer ${idToken}`,
     },
   });

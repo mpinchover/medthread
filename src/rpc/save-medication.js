@@ -14,6 +14,7 @@ export const saveMedication = async (medication) => {
       medication,
     },
     headers: {
+      "Access-Control-Allow-Origin": "*",
       Authorization: `Bearer ${idToken}`,
     },
   });
