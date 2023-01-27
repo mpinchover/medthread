@@ -57,7 +57,7 @@ const ListOfPatients = ({
 };
 
 // https://mui.com/material-ui/transitions/
-const PatientListHeader = ({ handleAddPatient, authorizedProfile }) => {
+const PatientListHeader = ({ onChange, authorizedProfile, searchQuery }) => {
   const [showCopyPopup, setShowCopyPopup] = useState(false);
 
   const handleCopyNewPatientLink = () => {
@@ -70,7 +70,11 @@ const PatientListHeader = ({ handleAddPatient, authorizedProfile }) => {
 
   return (
     <section className="px-2 md:px-28 flex flex-row">
-      <SearchBar placeholder="Search patients..." />
+      <SearchBar
+        value={searchQuery}
+        onChange={onChange}
+        placeholder="Search patients..."
+      />
       <div className="ml-6 relative flex items-center">
         <Fade in={showCopyPopup}>
           <div className="absolute text-sm w-full p-4 bg-white border rounded-sm text-center z-30 bottom-full">
@@ -87,89 +91,75 @@ const PatientListHeader = ({ handleAddPatient, authorizedProfile }) => {
   );
 };
 
-const CareProviderPatients = () => {
-  const getPatientsByHealthcareProviderUid = useRecoilCallback(
-    getPatientsByHealthcareProviderUidCallback
+const CareProviderPatients = ({
+  healthcareProviderPatients,
+  setActiveCareProviderPatient,
+  authorizedProfile,
+}) => {
+  const [listOfPatients, setListOfPatients] = useState(
+    healthcareProviderPatients
   );
+  const [searchQuery, setSearchQuery] = useState("");
+
+  useEffect(() => {
+    setListOfPatients(healthcareProviderPatients);
+  }, [healthcareProviderPatients]);
+
+  const onChange = (e) => {
+    const value = e.target.value;
+    setSearchQuery(value);
+    setListOfPatients(() =>
+      healthcareProviderPatients.filter((x) =>
+        x?.account?.nameValue?.toLowerCase()?.includes(value.toLowerCase())
+      )
+    );
+  };
+
+  return (
+    <div className="py-8">
+      <PatientListHeader
+        onChange={onChange}
+        searchQuery={searchQuery}
+        authorizedProfile={authorizedProfile}
+      />
+      <ListOfPatients
+        setActiveCareProviderPatient={setActiveCareProviderPatient}
+        healthcareProviderPatients={listOfPatients}
+      />
+    </div>
+  );
+};
+
+const CareProviderPatientsContainer = () => {
   const healthcareProviderPatients = useRecoilValue(
     healthcareProviderPatientsState
   );
-  const [authorizedProfile, setAuthorizedProfile] = useRecoilState(
-    authorizedProfileState
+  const [activeCareProviderPatient, setActiveCareProviderPatient] =
+    useRecoilState(activeCareProviderPatientState);
+  const getPatientsByHealthcareProviderUid = useRecoilCallback(
+    getPatientsByHealthcareProviderUidCallback
   );
-
   const isGettingHealthcareProviderPatients = useRecoilValue(
     isGettingHealthcareProviderPatientsState
   );
-  const [modal, setModal] = useRecoilState(modalState);
-  const [activeCareProviderPatient, setActiveCareProviderPatient] =
-    useRecoilState(activeCareProviderPatientState);
-
-  // const [searchQuery, setSearchQuery] = useRecoilState(
-  //   previousPatientsSearchTermState
-  // );
+  const authorizedProfile = useRecoilValue(authorizedProfileState);
 
   useEffect(() => {
     setActiveCareProviderPatient(null);
     getPatientsByHealthcareProviderUid();
   }, []);
 
-  const handleChange = (e) => {
-    const { value } = e.target;
-    // setSearchQuery(value);
-  };
-
-  const handleAddPatient = () => {
-    // setModal((prevState) => {
-    //   return {
-    //     ...prevState,
-    //     isAddingPatient: true,
-    //   };
-    // });
-  };
-
   if (isGettingHealthcareProviderPatients) {
     return <LoadingWindow display="Getting patients..." />;
   }
 
   return (
-    <div className="py-8">
-      <PatientListHeader
-        authorizedProfile={authorizedProfile}
-        handleAddPatient={handleAddPatient}
-      />
-      <ListOfPatients
-        setActiveCareProviderPatient={setActiveCareProviderPatient}
-        healthcareProviderPatients={healthcareProviderPatients}
-      />
-    </div>
+    <CareProviderPatients
+      authorizedProfile={authorizedProfile}
+      setActiveCareProviderPatient={setActiveCareProviderPatient}
+      healthcareProviderPatients={healthcareProviderPatients}
+    />
   );
-
-  // if (filteredPreviousPatients)
-  //   return (
-  //     <div className="flex-1 p-2 md:px-28 md:py-10 bg-gray-100 ">
-  //       <div className="bg-white border p-4 md:px-10 md:py-7 rounded-sm">
-  //         <div className="mb-4">
-  //           <section className="text-xl mb-4">{"Previous patients"}</section>
-  //           <input
-  //             value={searchQuery}
-  //             onChange={handleChange}
-  //             className="w-full p-4  focus:outline-none border rounded-sm"
-  //             placeholder="Search patients..."
-  //           />
-  //         </div>
-  //         <ul>
-  //           {filteredPreviousPatients.map((e, i) => {
-  //             return (
-  //               <li key={i} className="mb-4 last:mb-0">
-  //                 <PatientItem patient={e} />
-  //               </li>
-  //             );
-  //           })}
-  //         </ul>
-  //       </div>
-  //     </div>
-  //   );
 };
 
-export default withPrivateRoute(CareProviderPatients);
+export default withPrivateRoute(CareProviderPatientsContainer);

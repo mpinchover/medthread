@@ -147,13 +147,13 @@ export const TextInputWithEdit = ({
   );
 };
 
-export const SearchBar = ({ onChange, searchTerm, placeholder }) => {
+export const SearchBar = ({ onChange, value, placeholder }) => {
   return (
     <input
       placeholder={placeholder}
       // onChange={(e) => setSearchTerm(e.target.value)}
       onChange={onChange}
-      value={searchTerm}
+      value={value}
       className=" focus:outline-none p-4 text-sm border rounded-full flex-1 "
     />
   );

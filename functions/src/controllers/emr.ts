@@ -6,7 +6,6 @@ export const sendRequestForEMRDataForEOBEvent = async (
   patientUid: string
 ) => {
   // for now just send the provider uid and the eobUid to the email
-  console.log("SENDING EMAIL OUT");
   const subject = "[Automated-EMR-request-for-event]";
   const emailTo = "info@usemedthread.com";
   const emailFrom = "automated@usemedthread.com";
