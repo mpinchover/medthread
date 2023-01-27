@@ -42,8 +42,6 @@ const PatientSettings = ({ authProfile, accountSettings }) => {
     removeInsuranceProviderCallback
   );
 
-
-
   useEffect(() => {
     // set the eamil from the auth profile state
     // make dependencies on email
