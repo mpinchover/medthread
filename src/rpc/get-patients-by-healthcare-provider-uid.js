@@ -4,9 +4,6 @@ export const getPatientsByHealthcareProviderUid = async () => {
   try {
     const authUser = JSON.parse(localStorage.getItem("med_thread_auth_user"));
 
-    console.log("AUTH USER IS");
-    console.log(authUser);
-
     const { idToken } = authUser;
     const config = getServerConfig();
 

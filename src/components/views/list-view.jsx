@@ -11,16 +11,14 @@ import { getFormattedDate } from "../utils";
 import {
   activeTimelineEventState,
   activeListViewEventsState,
+  timelineDataFiltersState,
 } from "../../recoil/timeline/timeline";
 import { useRecoilState } from "recoil";
 import { useParams } from "react-router-dom";
 import { modalState } from "../../recoil/utils/utils";
 import { LoadingWindow } from "../common";
 import { authorizedProfileState } from "../../recoil/auth/auth";
-import {
-  activeEMRPatientUidState,
-  activeEMREobUidState,
-} from "../../recoil/emr/emr";
+import { claimTypeEvent } from "../common";
 
 const DiagnosisInfo = ({ display, code }) => {
   if (!display) {
@@ -37,39 +35,15 @@ const PrescriptionDisplay = ({ display }) => {
   return <div className="text-xs p-4 rounded-md bg-gray-100">{display}</div>;
 };
 
-const claimTypeEvent = {
-  institutional: {
-    title: "Inpatient",
-    textColor: "text-red-600",
-  },
-  oral: {
-    title: "Dentist",
-    textColor: "text-blue-600",
-  },
-  pharmacy: {
-    title: "Pharmacy",
-    textColor: "text-blue-600",
-  },
-  professional: {
-    title: "Outpatient",
-    textColor: "text-blue-600",
-  },
-  vision: {
-    title: "Vision",
-    textColor: "text-blue-600",
-  },
-};
-
-const TimelineEventHeader = ({ event, claimType }) => {
-  const [activeTimelineEvent, setActiveTimelineEvent] = useRecoilState(
-    activeTimelineEventState
-  );
-
-  const [activeListViewEvents, setActiveListViewEvents] = useRecoilState(
-    activeListViewEventsState
-  );
-
-  const isSelected = activeListViewEvents.includes(event?.uid);
+const TimelineEventHeader = ({
+  setActiveListViewEvent,
+  event,
+  claimType,
+  activeTimelineEvent,
+  activeListViewEvents,
+  setActiveListViewEvents,
+}) => {
+  const isSelected = activeListViewEvents?.includes(event?.uid);
 
   const handleClick = () => {
     setActiveListViewEvents((prevState) => {
@@ -105,16 +79,13 @@ const TimelineEventHeader = ({ event, claimType }) => {
   );
 };
 
-const TimelineEventContent = ({ event, claimType }) => {
-  const [activeTimelineEvent, setActiveTimelineEvent] = useRecoilState(
-    activeTimelineEventState
-  );
-
-  const [modal, setModal] = useRecoilState(modalState);
-  const [activeListViewEvents, setActiveListViewEvents] = useRecoilState(
-    activeListViewEventsState
-  );
-
+const TimelineEventContent = ({
+  event,
+  claimType,
+  setActiveTimelineEvent,
+  setModal,
+  activeListViewEvents,
+}) => {
   const handleGetEmrRecords = () => {
     setActiveTimelineEvent(event);
     setModal((prevModal) => {
@@ -125,7 +96,7 @@ const TimelineEventContent = ({ event, claimType }) => {
     });
   };
 
-  const isSelected = activeListViewEvents.includes(event?.uid);
+  const isSelected = activeListViewEvents?.includes(event?.uid);
   return (
     <div className={`${isSelected ? "block" : "hidden"} mt-8`}>
       <div className="font-bold text-xs">
@@ -135,11 +106,7 @@ const TimelineEventContent = ({ event, claimType }) => {
       <div className={` text-xs font-bold  ${claimType.textColor}`}>
         {claimType.title}
       </div>
-      {/* <div className=" font-bold text-xs mt-1">{event?.provider?.display}</div> */}
-      {/* 
-      {event?.provider?.npiCode && (
-        <div className="py-2 text-xs">NPI code: {event?.provider?.npiCode}</div>
-      )} */}
+
       {event?.diagnosis?.length > 0 && (
         <div className=" mt-8">
           <div className=" font-bold text-xs">Diagnosis</div>
@@ -194,32 +161,60 @@ const TimelineEventContent = ({ event, claimType }) => {
 
 // https://www.hl7.org/fhir/valueset-claim-type.html
 // claim tpyes
-const TimelineEvent = ({ event }) => {
-  const claimTypeCode = event?.type?.[0]?.code;
-  // console.log(claimTypeCode);
-  // if (claimTypeCode === "oral" || claimTypeCode === "pharmacy") return null;
-
+const TimelineEvent = ({
+  event,
+  activeTimelineEvent,
+  setActiveTimelineEvent,
+  activeListViewEvents,
+  setActiveListViewEvent,
+  setActiveListViewEvents,
+  setModal,
+}) => {
+  const claimTypeCode = event?.types?.[0];
   const claimType = claimTypeEvent[claimTypeCode];
 
   if (claimType.title === "Pharmacy") return null;
   return (
     <div className={`border-b last:border-b-none py-8 w-full`}>
-      <TimelineEventHeader claimType={claimType} event={event} />
-      <TimelineEventContent claimType={claimType} event={event} />
+      <TimelineEventHeader
+        activeTimelineEvent={activeTimelineEvent}
+        claimType={claimType}
+        event={event}
+        setActiveListViewEvent={setActiveListViewEvent}
+        setActiveListViewEvents={setActiveListViewEvents}
+        activeListViewEvents={activeListViewEvents}
+      />
+      <TimelineEventContent
+        setModal={setModal}
+        activeListViewEvents={activeListViewEvents}
+        setActiveTimelineEvent={setActiveTimelineEvent}
+        claimType={claimType}
+        event={event}
+      />
     </div>
   );
 };
 
-const Timeline = ({ timelineData }) => {
-  const isLoadingTimeline = useRecoilValue(isLoadingTimelineDataState);
-
-  if (isLoadingTimeline) {
-    return <LoadingWindow display="Generating timeline..." />;
-  }
+const Timeline = ({
+  setModal,
+  setActiveListViewEvents,
+  activeListViewEvents,
+  timelineData,
+  setActiveTimelineEvent,
+}) => {
   return (
     <div className=" w-full">
       {timelineData.map((e, i) => {
-        return <TimelineEvent key={i} event={e} />;
+        return (
+          <TimelineEvent
+            activeListViewEvents={activeListViewEvents}
+            setActiveListViewEvents={setActiveListViewEvents}
+            setModal={setModal}
+            key={i}
+            setActiveTimelineEvent={setActiveTimelineEvent}
+            event={e}
+          />
+        );
       })}
     </div>
   );
@@ -227,7 +222,6 @@ const Timeline = ({ timelineData }) => {
 
 const FilterSidebarCheckboxOption = ({
   label,
-  color,
   name,
   onSelectFilterInput,
   timelineFilter,
@@ -235,7 +229,6 @@ const FilterSidebarCheckboxOption = ({
   const isSelected = () => {
     if (name === "inpatient" && timelineFilter?.inpatient) return true;
     if (name === "outpatient" && timelineFilter?.outpatient) return true;
-    // if (name === "medications" && timelineFilter?.medications) return true;
     if (name === "vision" && timelineFilter?.vision) return true;
   };
 
@@ -274,12 +267,6 @@ const FilterSidebar = ({ timelineFilter, onSelectFilterInput, onReset }) => {
           name={"outpatient"}
           label={"Outpatient"}
         />
-        {/* <FilterSidebarCheckboxOption
-          timelineFilter={timelineFilter}
-          onSelectFilterInput={onSelectFilterInput}
-          name={"medications"}
-          label={"Medications"}
-        /> */}
         <FilterSidebarCheckboxOption
           timelineFilter={timelineFilter}
           onSelectFilterInput={onSelectFilterInput}
@@ -299,28 +286,60 @@ const FilterSidebar = ({ timelineFilter, onSelectFilterInput, onReset }) => {
   );
 };
 
-const idleFilterState = {
-  inpatient: true,
-  outpatient: true,
-  vision: true,
-  medications: true,
+const ListView = ({
+  setModal,
+  setActiveListViewEvents,
+  activeListViewEvents,
+  timelineData,
+  isLoadingTimelineData,
+  timelineFilter,
+  onSelectFilterInput,
+  setActiveTimelineEvent,
+}) => {
+  useEffect(() => {}, [timelineData]);
+
+  return (
+    <div className=" flex flex-col  w-full text-md px-2 md:px-28 ">
+      <div className={`flex flex-row   w-full`}>
+        <section className="">
+          <FilterSidebar
+            timelineFilter={timelineFilter}
+            onSelectFilterInput={onSelectFilterInput}
+          />
+        </section>
+        <section className="ml-4 w-full">
+          <Timeline
+            setActiveTimelineEvent={setActiveTimelineEvent}
+            timelineData={timelineData}
+            activeListViewEvents={activeListViewEvents}
+            setActiveListViewEvents={setActiveListViewEvents}
+            setModal={setModal}
+          />
+        </section>
+      </div>
+    </div>
+  );
 };
 
-const ListView = () => {
+const ListViewContainer = () => {
   const getPatientTimelineData = useRecoilCallback(
     getPatientTimelineDataCallback
   );
-
-  const isLoadingTimelineData = useRecoilValue(isLoadingTimelineDataState);
-  const timelineData = useRecoilValue(timelineDataState);
-
-  const [timelineFilter, setTimelineFilter] = useState(idleFilterState);
-
   const [activeTimelineEvent, setActiveTimelineEvent] = useRecoilState(
     activeTimelineEventState
   );
+  const isLoadingTimelineData = useRecoilValue(isLoadingTimelineDataState);
+  const timelineData = useRecoilValue(timelineDataState);
+  const [modal, setModal] = useRecoilState(modalState);
+  const [activeListViewEvents, setActiveListViewEvents] = useRecoilState(
+    activeListViewEventsState
+  );
+  const [timelineFilter, setTimelineFilter] = useRecoilState(
+    timelineDataFiltersState
+  );
 
-  // should refire the query to BE
+  const { patientUid } = useParams();
+
   const onSelectFilterInput = (e) => {
     const filterInput = e.currentTarget.name;
 
@@ -338,13 +357,6 @@ const ListView = () => {
           outpatient: !timelineFilter.outpatient,
         };
       });
-    } else if (filterInput === "medications") {
-      setTimelineFilter((prevState) => {
-        return {
-          ...prevState,
-          medications: !timelineFilter.medications,
-        };
-      });
     } else if (filterInput === "vision") {
       setTimelineFilter((prevState) => {
         return {
@@ -355,51 +367,33 @@ const ListView = () => {
     }
   };
 
-  const onReset = () => {
-    // setTimelineFilter(idleFilterState);
-  };
-
-  const timelineContainerRef = useRef();
-  const { patientUid } = useParams();
-
-  const handleKeyDown = (event) => {
-    if (event.key === "Escape") {
-      setActiveTimelineEvent(null);
-    }
-  };
-  // TODO – add in a filter for inpatient, outpatient, etc
   useEffect(() => {
-    document.addEventListener("keydown", handleKeyDown, false);
     if (patientUid) {
-      getPatientTimelineData(patientUid);
+      getPatientTimelineData(patientUid, timelineFilter);
     } else {
       getPatientTimelineData();
     }
-    return () => {
-      document.removeEventListener("keydown", handleKeyDown, false);
-    };
-  }, []);
+    console.log("RE_RENDER");
+  }, [timelineFilter]);
 
-  let height = 300;
-  if (activeTimelineEvent) {
-    height = 150;
+  if (isLoadingTimelineData) {
+    return <LoadingWindow display="Generating timeline..." />;
   }
+
   return (
-    <div className=" flex flex-col  w-full text-md px-2 md:px-28 ">
-      <div className={`flex flex-row   w-full`} ref={timelineContainerRef}>
-        <section className="">
-          <FilterSidebar
-            // onReset={onReset}
-            timelineFilter={timelineFilter}
-            onSelectFilterInput={onSelectFilterInput}
-          />
-        </section>
-        <section className="ml-4 w-full">
-          <Timeline timelineData={timelineData} />
-        </section>
-      </div>
-    </div>
+    <ListView
+      setActiveTimelineEvent={setActiveTimelineEvent}
+      activeTimelineEvent={activeTimelineEvent}
+      isLoadingTimelineData={isLoadingTimelineData}
+      timelineData={timelineData}
+      patientUid={patientUid}
+      timelineFilter={timelineFilter}
+      onSelectFilterInput={onSelectFilterInput}
+      setModal={setModal}
+      setActiveListViewEvents={setActiveListViewEvents}
+      activeListViewEvents={activeListViewEvents}
+    />
   );
 };
 
-export default ListView;
+export default ListViewContainer;

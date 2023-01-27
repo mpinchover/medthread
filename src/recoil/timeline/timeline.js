@@ -1,85 +1,21 @@
 import { atom, selector } from "recoil";
 import { getPatientTimeline } from "../../rpc/get-patient-timeline";
 import { getPatientTimelineForProvider } from "../../rpc/get-patient-timeline-for-provider";
-// const fakeTimelineData = [
-//   {
-//     code: "IMP",
-//     start: "2021-01-10",
-//     status: "in-progress",
-//     type: "ENCOUNTER",
-//     primaryDate: "2021-01-10",
-//   },
-//   {
-//     code: "IMP",
-//     start: "2021-01-09",
-//     status: "in-progress",
-//     type: "ENCOUNTER",
-//     primaryDate: "2021-01-09",
-//   },
-//   {
-//     codeDisplay: "Removal of Spacer from Right Knee Joint, Open Approach",
-//     primaryDate: "2021-01-08",
-//     status: "unknown",
-//     type: "PROCEDURE",
-//   },
-//   {
-//     codeDisplay: "Removal of Spacer from Right Knee Joint, Open Approach",
-//     primaryDate: "2021-01-07",
-//     status: "completed",
-//     type: "PROCEDURE",
-//   },
-//   {
-//     code: "AMB",
-//     start: "2020-05-09",
-//     status: "completed",
-//     type: "ENCOUNTER",
-//     primaryDate: "2020-05-09",
-//   },
-//   {
-//     codeDisplay: "Removal of Spacer from Right Knee Joint, Open Approach",
-//     primaryDate: "2020-05-06",
-//     status: "unknown",
-//     type: "PROCEDURE",
-//   },
-//   {
-//     code: "EMER",
-//     start: "2020-04-01",
-//     status: "completed",
-//     type: "ENCOUNTER",
-//     primaryDate: "2020-04-01",
-//   },
-//   {
-//     code: "EMER",
-//     start: "2020-02-01",
-//     status: "completed",
-//     type: "ENCOUNTER",
-//     primaryDate: "2020-02-01",
-//   },
-//   {
-//     code: "IMP",
-//     start: "2020-01-01",
-//     status: "completed",
-//     type: "ENCOUNTER",
-//     primaryDate: "2020-01-01",
-//   },
-// ];
+
 export const timelineDataState = atom({
   key: "timelineDataState",
   default: [],
 });
 
 const initialFilterState = {
-  AMB: true,
-  OBSENC: true,
-  EMERG: true,
-  VR: true,
-  HH: true,
-  PROCEDURE: true,
+  inpatient: true,
+  outpatient: true,
+  vision: true,
 };
 
 export const timelineDataFiltersState = atom({
   key: "timelineDataFiltersState",
-  default: {},
+  default: initialFilterState,
 });
 
 export const filteredTimelineDataState = atom({
@@ -125,27 +61,39 @@ export const setActiveTimelineEventCallback =
     }
   };
 
+const mapToBackendFilter = (params) => {
+  const encounterTypes = [];
+  if (params?.inpatient) encounterTypes.push("institutional");
+  if (params?.outpatient) encounterTypes.push("professional");
+  if (params?.vision) encounterTypes.push("vision");
+
+  const filter = {
+    encounterTypes,
+  };
+  return filter;
+  /*
+    
+    // converted on the frontend
+    const filter: PatientRecordsQueryFilter = {
+      userUid: patientUid,
+      encounterTypes
+    };
+     */
+};
+
 // https://terminology.hl7.org/ValueSet-encounter-class.html
 export const getPatientTimelineDataCallback =
   ({ set, snapshot }) =>
-  async (patientUid) => {
-    // const filter = {
-    //   encounter: timelineFilter.encounterTypes.length > 0,
-    //   encounterTypes: timelineFilter.encounterTypes,
-    //   procedure: timelineFilter.procedure,
-    // };
-
-    // convert timeline filters to rpc filter
+  async (patientUid, filters) => {
     try {
       set(isLoadingTimelineDataState, true);
 
+      const filter = mapToBackendFilter(filters);
       let timeline;
       if (patientUid) {
-        timeline = await getPatientTimelineForProvider(patientUid);
-        console.log("TIMELINE IS ");
-        console.log(timeline);
+        timeline = await getPatientTimelineForProvider(patientUid, filter);
       } else {
-        timeline = await getPatientTimeline();
+        timeline = await getPatientTimeline(filters);
       }
       if (!timeline) timeline = [];
       set(timelineDataState, timeline);

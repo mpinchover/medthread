@@ -5,6 +5,7 @@ import {
 } from "../../recoil/timeline/timeline";
 import { useRecoilState, useRecoilCallback, useRecoilValue } from "recoil";
 import { useEffect, useState } from "react";
+// import { claimTypeEvent } from "../common";
 
 const inpatientLaneId = "inpatient-lane";
 const inpatientLaneTitle = "Inpatient visists";
@@ -80,7 +81,7 @@ const InteractiveTimeline = ({ width, timelineData, height }) => {
   useEffect(() => {
     const timelineEvents = [];
     timelineData?.map((e, i) => {
-      const code = e?.type?.[0]?.code;
+      const code = e?.types?.[0];
       let startISO = e?.billablePeriod?.start;
       if (code === "pharmacy") {
         startISO = e?.primaryDate;

@@ -18,13 +18,10 @@ export const getAuthorizedHealthcareProviderForPatientRecords = async (
 export const getPatientsForCareProvider = async (
   careProviderUid: string
 ): Promise<Profile[]> => {
-  console.log("CARE PROVIDR UID");
-  console.log(careProviderUid);
   const patients = await careProviderRepo.getPatientsByHealthcareProviderUid(
     careProviderUid
   );
-  console.log("PATIENTS ARE");
-  console.log(patients);
+
   return patients;
 };
 
@@ -41,4 +38,3 @@ export const addAuthorizedHealthcareProviderForPatient = async (
     careProviderUid
   );
 };
-

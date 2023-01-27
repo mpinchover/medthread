@@ -20,8 +20,6 @@ export const sendEMRRequestForEobEventCallback =
   ({ set, snapshot }) =>
   (event) => {
     try {
-      console.log("EVENT IS");
-      console.log(event);
       const { userUid, uid } = event;
       set(isSendingEMRRequestForEobEventState, true);
       sendRequestForEMRDataForEOBEvent(userUid, uid);

@@ -72,7 +72,7 @@ app.post(
   getPatientTimelineDataForProvider
 );
 
-app.get(
+app.post(
   "/get-patient-timeline-data",
   validateFirebaseIdToken,
   getPatientTimelineData

@@ -67,7 +67,7 @@ export const fromFlexpaToEntityEOB = (params: any) => {
     fhirReference: params.resource?.id,
     jsonResponse: JSON.stringify(params),
     status: params.resource?.status,
-    type: fromFlexpaToEntityEOBType(params.resource?.type?.coding),
+    types: fromFlexpaToEntityEOBType(params.resource?.type?.coding),
     use: params.resource?.use,
     created: params.resource?.created,
     insurer: params.resource?.insurer?.display,
@@ -213,16 +213,14 @@ export const fromFlexpaToEntityEOBProvider = (params: any): EOBProvider => {
   return entityEOBProvider;
 };
 
-export const fromFlexpaToEntityEOBType = (params: any): EOBType[] => {
+export const fromFlexpaToEntityEOBType = (params: any): string[] => {
   if (!params) return null;
 
-  const eobTypes: EOBType[] = [];
+  const eobTypes: string[] = [];
   params.forEach((code: any) => {
-    const eobType: EOBType = {
-      code: code?.code,
-      display: code?.display,
-    };
-    eobTypes.push(eobType);
+    if (code?.code) {
+      eobTypes.push(code.code);
+    }
   });
 
   return eobTypes;

@@ -7,7 +7,7 @@ export const getPatientTimelineDataForProvider = async (req: any, res: any) => {
   try {
     const { body, user } = req;
     const userUid = user.user_id;
-    const { patientUid } = body;
+    const { patientUid, filter } = body;
 
     const careProvider =
       await careProviderController.getAuthorizedHealthcareProviderForPatientRecords(
@@ -16,13 +16,8 @@ export const getPatientTimelineDataForProvider = async (req: any, res: any) => {
       );
 
     if (!careProvider) {
-      console.log("CARE PROVIDER NOT FOUND");
       throw new Error("care provider not found or not authorized");
     }
-
-    const filter: PatientRecordsQueryFilter = {
-      userUid: patientUid,
-    };
 
     const timeline = await insuranceController.getPatientTimeline(filter);
 

@@ -437,3 +437,26 @@ export const LoadingWindow = ({ display }) => {
     </div>
   );
 };
+
+export const claimTypeEvent = {
+  institutional: {
+    title: "Inpatient",
+    textColor: "text-red-600",
+  },
+  oral: {
+    title: "Dentist",
+    textColor: "text-blue-600",
+  },
+  pharmacy: {
+    title: "Pharmacy",
+    textColor: "text-blue-600",
+  },
+  professional: {
+    title: "Outpatient",
+    textColor: "text-blue-600",
+  },
+  vision: {
+    title: "Vision",
+    textColor: "text-blue-600",
+  },
+};

@@ -44,7 +44,8 @@ import { stringify } from "uuid";
 import * as constants from "../config/constants";
 
 export const getPatientTimeline = async (filter: PatientRecordsQueryFilter) => {
-  const timeline = await getTimelineClaimsExplanationOfBenefit(filter);
+  let timeline = await getTimelineClaimsExplanationOfBenefit(filter);
+  timeline = timeline.filter((x) => !x.types?.includes("oral"));
   return timeline;
 };
 
@@ -570,7 +571,7 @@ export const deriveClaimsMedications = (
       request: medContext.request,
       dispense: medContext.dispense,
       derivedMedicationHistory: medContext.derivedHistory,
-      resourceType: constants.DERIVED_MEDICATION
+      resourceType: constants.DERIVED_MEDICATION,
     };
 
     // TODO – add in a first requested as well

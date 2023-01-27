@@ -262,9 +262,13 @@ export const getExplanationOfBenefitByUserUid = async (
   const db = admin.firestore();
 
   const explanationOfBenefit = db.collection(explanationOfBenefitCollection);
-  const snapshot = await explanationOfBenefit
-    .where("userUid", "==", filter.userUid)
-    .get();
+  let query = explanationOfBenefit.where("userUid", "==", filter.userUid);
+
+  if (filter.encounterTypes?.length > 0) {
+    query = query.where("types", "array-contains-any", filter.encounterTypes);
+  }
+
+  const snapshot = await query.get();
 
   if (snapshot.empty) return [];
 

@@ -279,7 +279,6 @@ export interface PatientRecordsQueryFilter {
   userUid?: string;
 }
 
-
 // TODO
 // use npi code api?
 // https://clinicaltables.nlm.nih.gov/apidoc/npi_org/v3/doc.html
@@ -290,7 +289,7 @@ export interface ExplanationOfBenefit {
   jsonResponse?: string;
   fhirReference?: string;
   status?: string;
-  type?: EOBType[];
+  types?: string[];
   use?: string;
   patientReference?: string;
   insurer?: string;
