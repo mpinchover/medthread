@@ -17,5 +17,6 @@ export const getPatientProfileForProviderByUid = async (patientUid) => {
       Authorization: `Bearer ${idToken}`,
     },
   });
+
   return res.data.patient;
 };

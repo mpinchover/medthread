@@ -73,7 +73,7 @@ const TimelineEventHeader = ({
       </div>
 
       <div className={` text-xs font-bold  ${claimType.textColor}`}>
-        {claimType.title}
+        {claimType?.title}
       </div>
     </button>
   );
@@ -104,7 +104,7 @@ const TimelineEventContent = ({
       </div>
       <div className=" text-xs">{event?.provider?.display}</div>
       <div className={` text-xs font-bold  ${claimType.textColor}`}>
-        {claimType.title}
+        {claimType?.title}
       </div>
 
       {event?.diagnosis?.length > 0 && (
@@ -173,7 +173,7 @@ const TimelineEvent = ({
   const claimTypeCode = event?.types?.[0];
   const claimType = claimTypeEvent[claimTypeCode];
 
-  if (claimType.title === "Pharmacy") return null;
+  if (claimType?.title === "Pharmacy") return null;
   return (
     <div className={`border-b last:border-b-none py-8 w-full`}>
       <TimelineEventHeader

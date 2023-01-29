@@ -20,6 +20,8 @@ export const getPatientTimelineForProvider = async (patientUid, filter) => {
       Authorization: `Bearer ${idToken}`,
     },
   });
+  console.log("DATA IS");
+  console.log(res.data?.timeline);
 
   return res.data?.timeline;
 };
