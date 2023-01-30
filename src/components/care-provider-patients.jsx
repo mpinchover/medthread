@@ -60,11 +60,22 @@ const ListOfPatients = ({
 const PatientListHeader = ({ onChange, authorizedProfile, searchQuery }) => {
   const [showCopyPopup, setShowCopyPopup] = useState(false);
 
+  let baseUrl = "";
+  if (process.env.REACT_APP_MEDTHREAD_ENV === "PRODUCTION") {
+    baseUrl = "https://usemedthread.com";
+  } else if (process.env.REACT_APP_MEDTHREAD_ENV === "STAGING") {
+    baseUrl = "https://staging.usemedthread.com";
+  } else if (process.env.REACT_APP_MEDTHREAD_ENV === "DEMO") {
+    baseUrl = "https://demo.usemedthread.com";
+  } else {
+    baseUrl = "http://localhost:3000";
+  }
+
   const handleCopyNewPatientLink = () => {
     setShowCopyPopup(true);
     setTimeout(() => setShowCopyPopup(false), 1000);
     navigator.clipboard.writeText(
-      `${process.env.REACT_APP_BASE_URL}/patient-signup?providerUid=${authorizedProfile.uid}`
+      `${baseUrl}/patient-signup?providerUid=${authorizedProfile.uid}`
     );
   };
 

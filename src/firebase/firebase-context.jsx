@@ -189,8 +189,6 @@ export const FirebaseProvider = ({ children }) => {
         url = "http://localhost:3000";
       }
 
-      console.log("REDIRECT URL IS");
-      console.log(url);
       const auth = getAuth();
       const authUser = getAuthUser();
       const { email } = authUser;
