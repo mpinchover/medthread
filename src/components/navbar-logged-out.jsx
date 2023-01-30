@@ -60,7 +60,7 @@ const NavbarLoggedOut = () => {
   return (
     <div
       id="navbar"
-      className="shadow-sm py-7 px-2 md:px-28 flex flex-row sticky top-0 z-50  bg-[#030c1a] "
+      className="py-7 px-2 md:px-28 flex flex-row sticky top-0 z-50 bg-gradient-to-r from-cyan-600 to-blue-500"
     >
       <div className="flex-1 flex flex-row ">
         <button
@@ -82,7 +82,7 @@ const NavbarLoggedOut = () => {
       </div>
 
       <div className="relative">
-        <button
+        {/* <button
           onClick={handleToggleOpen}
           ref={mainDropdownRefBtn}
           className="rounded-full  relative flex flex-row items-center justify-center space-x-2 p-2 px-4 "
@@ -95,7 +95,7 @@ const NavbarLoggedOut = () => {
           onClick={onDropdownClick}
           toggleOpen={toggleOpen}
           mainDropdownRefBtn={mainDropdownRefBtn}
-        />
+        /> */}
         {/* 
         <button
           id="logout"
