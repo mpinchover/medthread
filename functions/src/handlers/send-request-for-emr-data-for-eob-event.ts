@@ -1,6 +1,8 @@
 import * as careProviderController from "../controllers/care-providers";
 import * as emrController from "../controllers/emr";
+import * as functions from "firebase-functions";
 export const sendRequestForEMRDataForEOBEvent = async (req: any, res: any) => {
+  const logger = functions.logger;
   try {
     // ensure that this is the correct provider for this patient and that
     // provider is verified.
@@ -24,6 +26,7 @@ export const sendRequestForEMRDataForEOBEvent = async (req: any, res: any) => {
     );
     res.send({ success: "success" });
   } catch (e) {
+    logger.error(e);
     res.status(501).send(e);
   }
 };

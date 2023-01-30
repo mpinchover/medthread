@@ -1,6 +1,6 @@
 import axios from "axios";
 import { InsuranceMetadata } from "../types";
-
+import * as functions from "firebase-functions";
 export const getAccessToken = async (publicToken: string) => {
   const res = await axios({
     method: "post",
@@ -72,6 +72,7 @@ export const getFHIRResourceByReference = async (
 // TODO – short circuit in case of inifnite loop
 export const getExplanationOfBenefit = async (accessToken: string) => {
   const entries = [];
+  const logger = functions.logger;
 
   let link =
     "https://api.flexpa.com/fhir/ExplanationOfBenefit?patient=$PATIENT_ID";
@@ -84,6 +85,11 @@ export const getExplanationOfBenefit = async (accessToken: string) => {
         "accept-encoding": "*",
       },
     });
+    if (!res?.data?.entry) {
+      break;
+    }
+
+    logger.info({ message: "explanation_of_benefit_result", result: res.data });
     entries.push(...res.data.entry);
     link = null;
     res.data.link.forEach((linkItem: any) => {
@@ -110,6 +116,7 @@ export const getMedicationByAccessToken = async (accessToken: string) => {
 };
 
 export const getAllergyIntolerance = async (accessToken: string) => {
+  const logger = functions.logger;
   const entries = [];
   let link =
     "https://api.flexpa.com/fhir/AllergyIntolerance?patient=$PATIENT_ID";
@@ -125,6 +132,7 @@ export const getAllergyIntolerance = async (accessToken: string) => {
     if (!res?.data?.entry) {
       break;
     }
+    logger.info({ message: "explanation_of_benefit_result", result: res.data });
     entries.push(...res.data.entry);
     link = null;
     res.data.link.forEach((linkItem: any) => {
@@ -139,6 +147,7 @@ export const getAllergyIntolerance = async (accessToken: string) => {
 };
 
 export const getConditions = async (accessToken: string) => {
+  const logger = functions.logger;
   const entries = [];
   let link = "https://api.flexpa.com/fhir/Condition?patient=$PATIENT_ID";
 
@@ -153,6 +162,7 @@ export const getConditions = async (accessToken: string) => {
     if (!res?.data?.entry) {
       break;
     }
+    logger.info({ message: "conditions_result", result: res.data });
     entries.push(...res.data.entry);
     link = null;
     res.data.link.forEach((linkItem: any) => {
@@ -167,6 +177,7 @@ export const getConditions = async (accessToken: string) => {
 };
 
 export const getDiagnosticReport = async (accessToken: string) => {
+  const logger = functions.logger;
   const entries = [];
   let link = "https://api.flexpa.com/fhir/DiagnosticReport?patient=$PATIENT_ID";
 
@@ -181,6 +192,7 @@ export const getDiagnosticReport = async (accessToken: string) => {
     if (!res?.data?.entry) {
       break;
     }
+    logger.info({ message: "diagnostic_report_result", result: res.data });
     entries.push(...res.data.entry);
     link = null;
     res.data.link.forEach((linkItem: any) => {
@@ -195,6 +207,7 @@ export const getDiagnosticReport = async (accessToken: string) => {
 };
 
 export const getImmunizations = async (accessToken: string) => {
+  const logger = functions.logger;
   const entries = [];
   let link = "https://api.flexpa.com/fhir/Immunization?patient=$PATIENT_ID";
 
@@ -209,6 +222,7 @@ export const getImmunizations = async (accessToken: string) => {
     if (!res?.data?.entry) {
       break;
     }
+    logger.info({ message: "immunizations_result", result: res.data });
     entries.push(...res.data.entry);
     link = null;
     res.data.link.forEach((linkItem: any) => {
@@ -222,6 +236,7 @@ export const getImmunizations = async (accessToken: string) => {
 };
 
 export const getProcedures = async (accessToken: string) => {
+  const logger = functions.logger;
   const entries = [];
   let link = "https://api.flexpa.com/fhir/Procedure?patient=$PATIENT_ID";
 
@@ -236,6 +251,7 @@ export const getProcedures = async (accessToken: string) => {
     if (!res?.data?.entry) {
       break;
     }
+    logger.info({ message: "procedures_result", result: res.data });
 
     entries.push(...res.data.entry);
     link = null;
@@ -251,6 +267,7 @@ export const getProcedures = async (accessToken: string) => {
 };
 
 export const getMedicationRequest = async (accessToken: string) => {
+  const logger = functions.logger;
   const entries = [];
   let link =
     "https://api.flexpa.com/fhir/MedicationRequest?patient=$PATIENT_ID";
@@ -266,6 +283,7 @@ export const getMedicationRequest = async (accessToken: string) => {
     if (!res?.data?.entry) {
       break;
     }
+    logger.info({ message: "medications_request_result", result: res.data });
     entries.push(...res.data.entry);
     link = null;
     res.data.link.forEach((linkItem: any) => {
@@ -280,6 +298,7 @@ export const getMedicationRequest = async (accessToken: string) => {
 };
 
 export const getMedicationDispense = async (accessToken: string) => {
+  const logger = functions.logger;
   const entries = [];
   let link =
     "https://api.flexpa.com/fhir/MedicationDispense?patient=$PATIENT_ID";
@@ -294,6 +313,7 @@ export const getMedicationDispense = async (accessToken: string) => {
     if (!res?.data?.entry) {
       break;
     }
+    logger.info({ message: "medication_dispense_result", result: res.data });
     entries.push(...res.data.entry);
     link = null;
     res.data.link.forEach((linkItem: any) => {
@@ -307,6 +327,7 @@ export const getMedicationDispense = async (accessToken: string) => {
 };
 
 export const getEncounter = async (accessToken: string) => {
+  const logger = functions.logger;
   const entries = [];
   let link = "https://api.flexpa.com/fhir/Encounter?patient=$PATIENT_ID";
 
@@ -321,6 +342,7 @@ export const getEncounter = async (accessToken: string) => {
     if (!res?.data?.entry) {
       break;
     }
+    logger.info({ message: "encounter_result", result: res.data });
     entries.push(...res.data.entry);
     link = null;
     res.data.link.forEach((linkItem: any) => {
@@ -335,6 +357,7 @@ export const getEncounter = async (accessToken: string) => {
 };
 
 export const getCareTeam = async (accessToken: string) => {
+  const logger = functions.logger;
   const entries = [];
   let link = "https://api.flexpa.com/fhir/CareTeam?patient=$PATIENT_ID";
 
@@ -349,6 +372,7 @@ export const getCareTeam = async (accessToken: string) => {
     if (!res?.data?.entry) {
       break;
     }
+    logger.info({ message: "care_team_result", result: res.data });
     entries.push(...res.data.entry);
     link = null;
     res.data.link.forEach((linkItem: any) => {
@@ -363,6 +387,7 @@ export const getCareTeam = async (accessToken: string) => {
 };
 
 export const getCarePlan = async (accessToken: string) => {
+  const logger = functions.logger;
   const entries = [];
   let link = "https://api.flexpa.com/fhir/CarePlan?patient=$PATIENT_ID";
 
@@ -377,6 +402,7 @@ export const getCarePlan = async (accessToken: string) => {
     if (!res?.data?.entry) {
       break;
     }
+    logger.info({ message: "care_plan_result", result: res.data });
     entries.push(...res.data.entry);
     link = null;
     res.data.link.forEach((linkItem: any) => {
@@ -391,6 +417,7 @@ export const getCarePlan = async (accessToken: string) => {
 };
 
 export const getDocumentReference = async (accessToken: string) => {
+  const logger = functions.logger;
   const entries = [];
   let link =
     "https://api.flexpa.com/fhir/DocumentReference?patient=$PATIENT_ID";
@@ -406,6 +433,7 @@ export const getDocumentReference = async (accessToken: string) => {
     if (!res?.data?.entry) {
       break;
     }
+    logger.info({ message: "document_reference_result", result: res.data });
     entries.push(...res.data.entry);
     link = null;
     res.data.link.forEach((linkItem: any) => {
@@ -420,6 +448,7 @@ export const getDocumentReference = async (accessToken: string) => {
 };
 
 export const getPractitioner = async (accessToken: string) => {
+  const logger = functions.logger;
   const entries = [];
   let link = "https://api.flexpa.com/fhir/Practitioner?patient=$PATIENT_ID";
 
@@ -434,6 +463,7 @@ export const getPractitioner = async (accessToken: string) => {
     if (!res?.data?.entry) {
       break;
     }
+    logger.info({ message: "practitioner_result", result: res.data });
     entries.push(...res.data.entry);
     link = null;
     res.data.link.forEach((linkItem: any) => {
@@ -448,6 +478,7 @@ export const getPractitioner = async (accessToken: string) => {
 };
 
 export const getPractitionerRole = async (accessToken: string) => {
+  const logger = functions.logger;
   const entries = [];
   let link = "https://api.flexpa.com/fhir/PractitionerRole?patient=$PATIENT_ID";
 
@@ -462,6 +493,7 @@ export const getPractitionerRole = async (accessToken: string) => {
     if (!res?.data?.entry) {
       break;
     }
+    logger.info({ message: "practitioner_role_result", result: res.data });
     entries.push(...res.data.entry);
     link = null;
     res.data.link.forEach((linkItem: any) => {
@@ -476,6 +508,7 @@ export const getPractitionerRole = async (accessToken: string) => {
 };
 
 export const getObservation = async (accessToken: string) => {
+  const logger = functions.logger;
   const entries = [];
   let link = "https://api.flexpa.com/fhir/Observation?patient=$PATIENT_ID";
 
@@ -491,6 +524,7 @@ export const getObservation = async (accessToken: string) => {
       break;
     }
 
+    logger.info({ message: "observation_result", result: res.data });
     entries.push(...res.data.entry);
     link = null;
     res.data.link.forEach((linkItem: any) => {

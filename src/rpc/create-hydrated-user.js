@@ -9,7 +9,7 @@ export const createHydratedUserProfile = async (params, providerUid) => {
     url: `${config.baseUrl}/create-hydrated-profile`,
     data: {
       profile: params,
-      providerUid: providerUid,
+      providerUid,
     },
     headers: {
       "Access-Control-Allow-Origin": "*",

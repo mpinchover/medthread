@@ -4,11 +4,13 @@ import {
   // getAuthorizedHealthcareProvider,
 } from "./repo/repo";
 import * as admin from "firebase-admin";
+import * as functions from "firebase-functions";
 
 module.exports.getPatientProfileForProviderByUid = async (
   req: any,
   res: any
 ) => {
+  const logger = functions.logger;
   try {
     const tokenId = req.get("Authorization").split("Bearer ")[1];
 
@@ -37,6 +39,7 @@ module.exports.getPatientProfileForProviderByUid = async (
     const patientProfile = await getUserProfile(patientUid);
     res.send({ patient: patientProfile });
   } catch (e) {
+    logger.error(e);
     console.log(e);
     res.status(500).send({ error: e });
   }

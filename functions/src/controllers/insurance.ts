@@ -42,6 +42,7 @@ import {
 import { promises } from "nodemailer/lib/xoauth2";
 import { stringify } from "uuid";
 import * as constants from "../config/constants";
+import * as functions from "firebase-functions";
 
 export const getPatientTimeline = async (filter: PatientRecordsQueryFilter) => {
   let timeline = await getTimelineClaimsExplanationOfBenefit(filter);
@@ -639,7 +640,7 @@ export const getClaimsFromInsuranceProvider = async (
 ): Promise<ClaimsData> => {
   // TOOD – if it fails, you shouldn't add the insurance provdier
   // TODO – add encounters, care team, etc
-
+  const logger = functions.logger;
   const concurrentPromisesToExecute = [];
   if (
     insuranceProvider.capabilities.includes(
@@ -706,6 +707,11 @@ export const getClaimsFromInsuranceProvider = async (
       fn(insuranceProvider.accessToken, insuranceProvider.uid)
     )
   );
+  logger.info({
+    message: "CLAIMS RESULTS FROM ADDING PROVIDER",
+    userUid: insuranceProvider?.userUid,
+    data: claimsResults,
+  });
 
   const claimsData = extractClaimsResultsFromPromises(claimsResults);
 

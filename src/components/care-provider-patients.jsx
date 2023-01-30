@@ -75,7 +75,7 @@ const PatientListHeader = ({ onChange, authorizedProfile, searchQuery }) => {
     setShowCopyPopup(true);
     setTimeout(() => setShowCopyPopup(false), 1000);
     navigator.clipboard.writeText(
-      `${baseUrl}/patient-signup?providerUid=${authorizedProfile.uid}`
+      `${baseUrl}/patient-signup?providerUid=${authorizedProfile.userUid}`
     );
   };
 
