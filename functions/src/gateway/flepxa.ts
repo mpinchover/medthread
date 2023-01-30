@@ -97,18 +97,22 @@ export const getExplanationOfBenefit = async (accessToken: string) => {
 };
 
 export const getMedicationByAccessToken = async (accessToken: string) => {
-  const res = await axios.get("https://api.flexpa.com/fhir/MedicationRequest", {
-    headers: {
-      Authorization: `Bearer ${accessToken}`,
-      "accept-encoding": "*",
-    },
-  });
+  const res = await axios.get(
+    "https://api.flexpa.com/fhir/MedicationRequest?patient=$PATIENT_ID",
+    {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+        "accept-encoding": "*",
+      },
+    }
+  );
   return res.data;
 };
 
 export const getAllergyIntolerance = async (accessToken: string) => {
   const entries = [];
-  let link = "https://api.flexpa.com/fhir/AllergyIntolerance";
+  let link =
+    "https://api.flexpa.com/fhir/AllergyIntolerance?patient=$PATIENT_ID";
 
   while (link) {
     const res = await axios.get(link, {
@@ -131,7 +135,7 @@ export const getAllergyIntolerance = async (accessToken: string) => {
 
 export const getConditions = async (accessToken: string) => {
   const entries = [];
-  let link = "https://api.flexpa.com/fhir/Condition";
+  let link = "https://api.flexpa.com/fhir/Condition?patient=$PATIENT_ID";
 
   while (link) {
     const res = await axios.get(link, {
@@ -155,7 +159,7 @@ export const getConditions = async (accessToken: string) => {
 
 export const getDiagnosticReport = async (accessToken: string) => {
   const entries = [];
-  let link = "https://api.flexpa.com/fhir/DiagnosticReport";
+  let link = "https://api.flexpa.com/fhir/DiagnosticReport?patient=$PATIENT_ID";
 
   while (link) {
     const res = await axios.get(link, {
@@ -179,7 +183,7 @@ export const getDiagnosticReport = async (accessToken: string) => {
 
 export const getImmunizations = async (accessToken: string) => {
   const entries = [];
-  let link = "https://api.flexpa.com/fhir/Immunization";
+  let link = "https://api.flexpa.com/fhir/Immunization?patient=$PATIENT_ID";
 
   while (link) {
     const res = await axios.get(link, {
@@ -201,7 +205,7 @@ export const getImmunizations = async (accessToken: string) => {
 
 export const getProcedures = async (accessToken: string) => {
   const entries = [];
-  let link = "https://api.flexpa.com/fhir/Procedure";
+  let link = "https://api.flexpa.com/fhir/Procedure?patient=$PATIENT_ID";
 
   while (link) {
     const res = await axios.get(link, {
@@ -225,7 +229,8 @@ export const getProcedures = async (accessToken: string) => {
 
 export const getMedicationRequest = async (accessToken: string) => {
   const entries = [];
-  let link = "https://api.flexpa.com/fhir/MedicationRequest";
+  let link =
+    "https://api.flexpa.com/fhir/MedicationRequest?patient=$PATIENT_ID";
 
   while (link) {
     const res = await axios.get(link, {
@@ -248,7 +253,8 @@ export const getMedicationRequest = async (accessToken: string) => {
 
 export const getMedicationDispense = async (accessToken: string) => {
   const entries = [];
-  let link = "https://api.flexpa.com/fhir/MedicationDispense";
+  let link =
+    "https://api.flexpa.com/fhir/MedicationDispense?patient=$PATIENT_ID";
   while (link) {
     const res = await axios.get(link, {
       headers: {
@@ -269,7 +275,7 @@ export const getMedicationDispense = async (accessToken: string) => {
 
 export const getEncounter = async (accessToken: string) => {
   const entries = [];
-  let link = "https://api.flexpa.com/fhir/Encounter";
+  let link = "https://api.flexpa.com/fhir/Encounter?patient=$PATIENT_ID";
 
   while (link) {
     const res = await axios.get(link, {
@@ -292,7 +298,7 @@ export const getEncounter = async (accessToken: string) => {
 
 export const getCareTeam = async (accessToken: string) => {
   const entries = [];
-  let link = "https://api.flexpa.com/fhir/CareTeam";
+  let link = "https://api.flexpa.com/fhir/CareTeam?patient=$PATIENT_ID";
 
   while (link) {
     const res = await axios.get(link, {
@@ -315,7 +321,7 @@ export const getCareTeam = async (accessToken: string) => {
 
 export const getCarePlan = async (accessToken: string) => {
   const entries = [];
-  let link = "https://api.flexpa.com/fhir/CarePlan";
+  let link = "https://api.flexpa.com/fhir/CarePlan?patient=$PATIENT_ID";
 
   while (link) {
     const res = await axios.get(link, {
@@ -338,7 +344,8 @@ export const getCarePlan = async (accessToken: string) => {
 
 export const getDocumentReference = async (accessToken: string) => {
   const entries = [];
-  let link = "https://api.flexpa.com/fhir/DocumentReference";
+  let link =
+    "https://api.flexpa.com/fhir/DocumentReference?patient=$PATIENT_ID";
 
   while (link) {
     const res = await axios.get(link, {
@@ -361,7 +368,7 @@ export const getDocumentReference = async (accessToken: string) => {
 
 export const getPractitioner = async (accessToken: string) => {
   const entries = [];
-  let link = "https://api.flexpa.com/fhir/Practitioner";
+  let link = "https://api.flexpa.com/fhir/Practitioner?patient=$PATIENT_ID";
 
   while (link) {
     const res = await axios.get(link, {
@@ -384,7 +391,7 @@ export const getPractitioner = async (accessToken: string) => {
 
 export const getPractitionerRole = async (accessToken: string) => {
   const entries = [];
-  let link = "https://api.flexpa.com/fhir/PractitionerRole";
+  let link = "https://api.flexpa.com/fhir/PractitionerRole?patient=$PATIENT_ID";
 
   while (link) {
     const res = await axios.get(link, {
@@ -407,7 +414,7 @@ export const getPractitionerRole = async (accessToken: string) => {
 
 export const getObservation = async (accessToken: string) => {
   const entries = [];
-  let link = "https://api.flexpa.com/fhir/Observation";
+  let link = "https://api.flexpa.com/fhir/Observation?patient=$PATIENT_ID";
 
   while (link) {
     const res = await axios.get(link, {
