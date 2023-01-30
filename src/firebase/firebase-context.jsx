@@ -161,10 +161,10 @@ export const FirebaseProvider = ({ children }) => {
 
   const signOutUser = async () => {
     try {
-      localStorage.clear();
-      setAuthorizedProfile(null);
       const auth = getAuth();
       await signOut(auth);
+      localStorage.clear();
+      setAuthorizedProfile(null);
       // window.location.reload();
     } catch (e) {
       console.log(e);
