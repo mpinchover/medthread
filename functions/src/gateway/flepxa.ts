@@ -114,13 +114,17 @@ export const getAllergyIntolerance = async (accessToken: string) => {
   let link =
     "https://api.flexpa.com/fhir/AllergyIntolerance?patient=$PATIENT_ID";
 
-  while (link) {
+  let count = 0;
+  while (link && count < 100) {
     const res = await axios.get(link, {
       headers: {
         Authorization: `Bearer ${accessToken}`,
         "accept-encoding": "*",
       },
     });
+    if (!res?.data?.entry) {
+      break;
+    }
     entries.push(...res.data.entry);
     link = null;
     res.data.link.forEach((linkItem: any) => {
@@ -128,6 +132,7 @@ export const getAllergyIntolerance = async (accessToken: string) => {
         link = linkItem.url;
       }
     });
+    count++;
   }
 
   return entries;
@@ -137,14 +142,17 @@ export const getConditions = async (accessToken: string) => {
   const entries = [];
   let link = "https://api.flexpa.com/fhir/Condition?patient=$PATIENT_ID";
 
-  while (link) {
+  let count = 0;
+  while (link && count < 100) {
     const res = await axios.get(link, {
       headers: {
         Authorization: `Bearer ${accessToken}`,
         "accept-encoding": "*",
       },
     });
-
+    if (!res?.data?.entry) {
+      break;
+    }
     entries.push(...res.data.entry);
     link = null;
     res.data.link.forEach((linkItem: any) => {
@@ -152,6 +160,7 @@ export const getConditions = async (accessToken: string) => {
         link = linkItem.url;
       }
     });
+    count++;
   }
 
   return entries;
@@ -161,14 +170,17 @@ export const getDiagnosticReport = async (accessToken: string) => {
   const entries = [];
   let link = "https://api.flexpa.com/fhir/DiagnosticReport?patient=$PATIENT_ID";
 
-  while (link) {
+  let count = 0;
+  while (link && count < 100) {
     const res = await axios.get(link, {
       headers: {
         Authorization: `Bearer ${accessToken}`,
         "accept-encoding": "*",
       },
     });
-
+    if (!res?.data?.entry) {
+      break;
+    }
     entries.push(...res.data.entry);
     link = null;
     res.data.link.forEach((linkItem: any) => {
@@ -176,6 +188,7 @@ export const getDiagnosticReport = async (accessToken: string) => {
         link = linkItem.url;
       }
     });
+    count++;
   }
 
   return entries;
@@ -185,13 +198,17 @@ export const getImmunizations = async (accessToken: string) => {
   const entries = [];
   let link = "https://api.flexpa.com/fhir/Immunization?patient=$PATIENT_ID";
 
-  while (link) {
+  let count = 0;
+  while (link && count < 100) {
     const res = await axios.get(link, {
       headers: {
         Authorization: `Bearer ${accessToken}`,
         "accept-encoding": "*",
       },
     });
+    if (!res?.data?.entry) {
+      break;
+    }
     entries.push(...res.data.entry);
     link = null;
     res.data.link.forEach((linkItem: any) => {
@@ -199,6 +216,7 @@ export const getImmunizations = async (accessToken: string) => {
         link = linkItem.url;
       }
     });
+    count++;
   }
   return entries;
 };
@@ -207,13 +225,17 @@ export const getProcedures = async (accessToken: string) => {
   const entries = [];
   let link = "https://api.flexpa.com/fhir/Procedure?patient=$PATIENT_ID";
 
-  while (link) {
+  let count = 0;
+  while (link && count < 100) {
     const res = await axios.get(link, {
       headers: {
         Authorization: `Bearer ${accessToken}`,
         "accept-encoding": "*",
       },
     });
+    if (!res?.data?.entry) {
+      break;
+    }
 
     entries.push(...res.data.entry);
     link = null;
@@ -222,6 +244,7 @@ export const getProcedures = async (accessToken: string) => {
         link = linkItem.url;
       }
     });
+    count++;
   }
 
   return entries;
@@ -232,13 +255,17 @@ export const getMedicationRequest = async (accessToken: string) => {
   let link =
     "https://api.flexpa.com/fhir/MedicationRequest?patient=$PATIENT_ID";
 
-  while (link) {
+  let count = 0;
+  while (link && count < 100) {
     const res = await axios.get(link, {
       headers: {
         Authorization: `Bearer ${accessToken}`,
         "accept-encoding": "*",
       },
     });
+    if (!res?.data?.entry) {
+      break;
+    }
     entries.push(...res.data.entry);
     link = null;
     res.data.link.forEach((linkItem: any) => {
@@ -246,6 +273,7 @@ export const getMedicationRequest = async (accessToken: string) => {
         link = linkItem.url;
       }
     });
+    count++;
   }
 
   return entries;
@@ -255,13 +283,17 @@ export const getMedicationDispense = async (accessToken: string) => {
   const entries = [];
   let link =
     "https://api.flexpa.com/fhir/MedicationDispense?patient=$PATIENT_ID";
-  while (link) {
+  let count = 0;
+  while (link && count < 100) {
     const res = await axios.get(link, {
       headers: {
         Authorization: `Bearer ${accessToken}`,
         "accept-encoding": "*",
       },
     });
+    if (!res?.data?.entry) {
+      break;
+    }
     entries.push(...res.data.entry);
     link = null;
     res.data.link.forEach((linkItem: any) => {
@@ -269,6 +301,7 @@ export const getMedicationDispense = async (accessToken: string) => {
         link = linkItem.url;
       }
     });
+    count++;
   }
   return entries;
 };
@@ -277,13 +310,17 @@ export const getEncounter = async (accessToken: string) => {
   const entries = [];
   let link = "https://api.flexpa.com/fhir/Encounter?patient=$PATIENT_ID";
 
-  while (link) {
+  let count = 0;
+  while (link && count < 100) {
     const res = await axios.get(link, {
       headers: {
         Authorization: `Bearer ${accessToken}`,
         "accept-encoding": "*",
       },
     });
+    if (!res?.data?.entry) {
+      break;
+    }
     entries.push(...res.data.entry);
     link = null;
     res.data.link.forEach((linkItem: any) => {
@@ -291,6 +328,7 @@ export const getEncounter = async (accessToken: string) => {
         link = linkItem.url;
       }
     });
+    count++;
   }
 
   return entries;
@@ -300,13 +338,17 @@ export const getCareTeam = async (accessToken: string) => {
   const entries = [];
   let link = "https://api.flexpa.com/fhir/CareTeam?patient=$PATIENT_ID";
 
-  while (link) {
+  let count = 0;
+  while (link && count < 100) {
     const res = await axios.get(link, {
       headers: {
         Authorization: `Bearer ${accessToken}`,
         "accept-encoding": "*",
       },
     });
+    if (!res?.data?.entry) {
+      break;
+    }
     entries.push(...res.data.entry);
     link = null;
     res.data.link.forEach((linkItem: any) => {
@@ -314,6 +356,7 @@ export const getCareTeam = async (accessToken: string) => {
         link = linkItem.url;
       }
     });
+    count++;
   }
 
   return entries;
@@ -323,13 +366,17 @@ export const getCarePlan = async (accessToken: string) => {
   const entries = [];
   let link = "https://api.flexpa.com/fhir/CarePlan?patient=$PATIENT_ID";
 
-  while (link) {
+  let count = 0;
+  while (link && count < 100) {
     const res = await axios.get(link, {
       headers: {
         Authorization: `Bearer ${accessToken}`,
         "accept-encoding": "*",
       },
     });
+    if (!res?.data?.entry) {
+      break;
+    }
     entries.push(...res.data.entry);
     link = null;
     res.data.link.forEach((linkItem: any) => {
@@ -337,6 +384,7 @@ export const getCarePlan = async (accessToken: string) => {
         link = linkItem.url;
       }
     });
+    count++;
   }
 
   return entries;
@@ -347,13 +395,17 @@ export const getDocumentReference = async (accessToken: string) => {
   let link =
     "https://api.flexpa.com/fhir/DocumentReference?patient=$PATIENT_ID";
 
-  while (link) {
+  let count = 0;
+  while (link && count < 100) {
     const res = await axios.get(link, {
       headers: {
         Authorization: `Bearer ${accessToken}`,
         "accept-encoding": "*",
       },
     });
+    if (!res?.data?.entry) {
+      break;
+    }
     entries.push(...res.data.entry);
     link = null;
     res.data.link.forEach((linkItem: any) => {
@@ -361,6 +413,7 @@ export const getDocumentReference = async (accessToken: string) => {
         link = linkItem.url;
       }
     });
+    count++;
   }
 
   return entries;
@@ -370,13 +423,17 @@ export const getPractitioner = async (accessToken: string) => {
   const entries = [];
   let link = "https://api.flexpa.com/fhir/Practitioner?patient=$PATIENT_ID";
 
-  while (link) {
+  let count = 0;
+  while (link && count < 100) {
     const res = await axios.get(link, {
       headers: {
         Authorization: `Bearer ${accessToken}`,
         "accept-encoding": "*",
       },
     });
+    if (!res?.data?.entry) {
+      break;
+    }
     entries.push(...res.data.entry);
     link = null;
     res.data.link.forEach((linkItem: any) => {
@@ -384,6 +441,7 @@ export const getPractitioner = async (accessToken: string) => {
         link = linkItem.url;
       }
     });
+    count++;
   }
 
   return entries;
@@ -393,13 +451,17 @@ export const getPractitionerRole = async (accessToken: string) => {
   const entries = [];
   let link = "https://api.flexpa.com/fhir/PractitionerRole?patient=$PATIENT_ID";
 
-  while (link) {
+  let count = 0;
+  while (link && count < 100) {
     const res = await axios.get(link, {
       headers: {
         Authorization: `Bearer ${accessToken}`,
         "accept-encoding": "*",
       },
     });
+    if (!res?.data?.entry) {
+      break;
+    }
     entries.push(...res.data.entry);
     link = null;
     res.data.link.forEach((linkItem: any) => {
@@ -407,6 +469,7 @@ export const getPractitionerRole = async (accessToken: string) => {
         link = linkItem.url;
       }
     });
+    count++;
   }
 
   return entries;
@@ -416,20 +479,26 @@ export const getObservation = async (accessToken: string) => {
   const entries = [];
   let link = "https://api.flexpa.com/fhir/Observation?patient=$PATIENT_ID";
 
-  while (link) {
+  let count = 0;
+  while (link && count < 100) {
     const res = await axios.get(link, {
       headers: {
         Authorization: `Bearer ${accessToken}`,
         "accept-encoding": "*",
       },
     });
+    if (!res?.data?.entry) {
+      break;
+    }
+
     entries.push(...res.data.entry);
     link = null;
     res.data.link.forEach((linkItem: any) => {
-      if (linkItem.relation === "next") {
+      if (linkItem?.relation === "next") {
         link = linkItem.url;
       }
     });
+    count++;
   }
 
   return entries;

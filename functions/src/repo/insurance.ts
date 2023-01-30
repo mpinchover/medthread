@@ -273,6 +273,7 @@ export const getExplanationOfBenefitByUserUid = async (
   if (snapshot.empty) return [];
 
   const res: ExplanationOfBenefit[] = snapshot.docs.map((doc) => doc.data());
+
   return res;
 };
 

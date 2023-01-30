@@ -84,10 +84,15 @@ const mapToBackendFilter = (params) => {
 // https://terminology.hl7.org/ValueSet-encounter-class.html
 export const getPatientTimelineDataCallback =
   ({ set, snapshot }) =>
-  async (patientUid, filters) => {
+  async (patientUid) => {
     try {
       set(isLoadingTimelineDataState, true);
 
+      const filters = {
+        inpatient: true,
+        outpatient: true,
+        vision: true,
+      };
       const filter = mapToBackendFilter(filters);
       let timeline;
       if (patientUid) {

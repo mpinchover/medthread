@@ -7,7 +7,9 @@ export const getPatientTimeline = async (filter) => {
   const authUser = JSON.parse(localStorage.getItem("med_thread_auth_user"));
   const { idToken } = authUser;
 
-  filter.userUid = authUser.uid;
+  console.log("AUTH USER IS");
+  console.log(authUser);
+  filter.userUid = authUser.userUid;
   const res = await axios({
     method: "post",
     url: `${config.baseUrl}/get-patient-timeline-data`,

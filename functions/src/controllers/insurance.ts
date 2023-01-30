@@ -178,6 +178,7 @@ export const getTimelineClaimsExplanationOfBenefit = async (
   // if everything is selected, them just don't filter by any types
   let explanationofBenefits =
     await insuranceRepo.getExplanationOfBenefitByUserUid(filter);
+
   const procedureReferences = extractProcedureRefsFromEOB(
     explanationofBenefits
   );
