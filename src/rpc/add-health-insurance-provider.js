@@ -4,13 +4,14 @@ import { getServerConfig } from "../config/config";
 export const addHealthInsuranceProvider = async (publicToken) => {
   const config = getServerConfig();
   const authUser = JSON.parse(localStorage.getItem("med_thread_auth_user"));
-  const { idToken } = authUser;
+  const { idToken, userUuid } = authUser;
 
   const res = await axios({
     method: "post",
     url: `${config.baseUrl}/add-health-insurance-provider`,
     data: {
       publicToken,
+      userUuid,
     },
     headers: {
       "Access-Control-Allow-Origin": "*",

@@ -4,10 +4,14 @@ import { PatientRecordsQueryFilter } from "../types";
 // TODO – make another one for the provider
 export const getPatientTimelineData = async (req: any, res: any) => {
   try {
-    const { user, body } = req;
-    const userUid = user.user_id;
-    const { filter } = body;
+    const { body } = req;
 
+    const { filter, userUuid } = body;
+
+    filter.userUuid = userUuid;
+
+    console.log("FILTER IS ");
+    console.log(filter);
     const timeline = await insuranceController.getPatientTimeline(filter);
 
     res.send({ timeline });

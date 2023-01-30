@@ -4,7 +4,7 @@ export const getPatientsByHealthcareProviderUid = async () => {
   try {
     const authUser = JSON.parse(localStorage.getItem("med_thread_auth_user"));
 
-    const { idToken } = authUser;
+    const { idToken, userUuid } = authUser;
     const config = getServerConfig();
 
     const res = await axios({
@@ -13,6 +13,9 @@ export const getPatientsByHealthcareProviderUid = async () => {
       headers: {
         "Access-Control-Allow-Origin": "*",
         Authorization: `Bearer ${idToken}`,
+      },
+      data: {
+        userUuid,
       },
     });
     return res.data?.patients;

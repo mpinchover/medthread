@@ -112,12 +112,12 @@ export const FirebaseProvider = ({ children }) => {
     }
   };
 
-  const createPatient = async (params, providerUid) => {
+  const createPatient = async (params, providerUuid) => {
     try {
       const auth = getAuth();
       const { email, password, confirmPassword, nameValue } = params;
 
-      await _createPatient(params, auth, providerUid);
+      await _createPatient(params, auth, providerUuid);
       navigate("/settings", { replace: true });
     } catch (e) {
       console.log(e);

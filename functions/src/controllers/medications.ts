@@ -3,35 +3,35 @@ import * as medicationsRepo from "../repo/medications";
 import * as insuranceRepo from "../repo/insurance";
 import * as flexpaGateway from "../gateway/flepxa";
 // import { fromFlexpaToEntityMedications } from "../mappers/flexpa-to-entity";
-export const getMedicationsByUserUid = async (
-  userUid: string
-): Promise<Medication[]> => {
-  try {
-    // const medications: Medication[] = [];
+// export const getMedicationsByUserUid = async (
+//   userUid: string
+// ): Promise<Medication[]> => {
+//   try {
+//     // const medications: Medication[] = [];
 
-    const medications = await medicationsRepo.getMedicationsByUserUid(userUid);
+//     const medications = await medicationsRepo.getMedicationsByUserUuid(userUid);
 
-    // medications.push(...meds);
-    // const claimsMedications = await getMedicationsFromInsuranceProvider(
-    //   userUid
-    // );
+//     // medications.push(...meds);
+//     // const claimsMedications = await getMedicationsFromInsuranceProvider(
+//     //   userUid
+//     // );
 
-    // medications.push(...claimsMedications);
-    return medications;
-  } catch (e) {
-    console.log(e);
-    throw e;
-  }
-};
+//     // medications.push(...claimsMedications);
+//     return medications;
+//   } catch (e) {
+//     console.log(e);
+//     throw e;
+//   }
+// };
 
 export const getMedicationsFromInsuranceProvider = async (
-  patientUid: string
+  patientUuid: string
 ) => {
   const medications: Medication[] = [];
 
   // get access tokens by patient uid
   const insuranceProviders =
-    await insuranceRepo.getHealthInsuranceProvidersByPatientUid(patientUid);
+    await insuranceRepo.getHealthInsuranceProvidersByPatientUuid(patientUuid);
 
   for (let i = 0; i < insuranceProviders.length; i++) {
     const insuranceProviderData: InsuranceProvider = insuranceProviders[i];
@@ -48,7 +48,7 @@ export const getMedicationsFromInsuranceProvider = async (
 
     // save new access token
     await insuranceRepo.updateAccessTokenForInsuranceProvider(
-      insuranceProviderData.uid,
+      insuranceProviderData.uuid,
       refreshedAccessToken
     );
     const flexpaMedications = await flexpaGateway.getMedicationByAccessToken(

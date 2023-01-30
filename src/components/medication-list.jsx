@@ -104,21 +104,7 @@ const MedicationList = ({
     });
   };
 
-  const handleRemoveMedication = (uid) => {
-    setMedToBeUpdated(null);
-    setIsAddMedModalOpen(false);
-    setIsModalOpen(false);
-    removeMedication(uid);
-  };
 
-  const onSave = (params) => {
-    setMedToBeUpdated(null);
-    setIsAddMedModalOpen(false);
-    setIsModalOpen(false);
-    saveMedication(params);
-  };
-
-  const navigate = useNavigate();
 
   const renderSearchBar = () => {
     if (recordsActiveCategory === "TIMELINE") return null;

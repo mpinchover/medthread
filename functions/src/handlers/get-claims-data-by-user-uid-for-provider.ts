@@ -4,26 +4,29 @@ import { PatientRecordsQueryFilter } from "../types";
 
 export const getClaimsDataByUserUidForProvider = async (req: any, res: any) => {
   try {
-    const { body, user } = req;
-    const userUid = user.user_id;
-    const { patientUid } = body;
+    const { body, auth } = req;
+    const authUid = auth.user_id;
+    const { patientUuid, userUuid } = body;
     // check to see if authorized
     // const userUidToReadClaimsFor = req.params.userUid;
 
     const careProvider =
       await careProviderController.getAuthorizedHealthcareProviderForPatientRecords(
-        userUid,
-        patientUid
+        authUid,
+        userUuid,
+        patientUuid
       );
 
     if (!careProvider)
       throw new Error("care provider not found or not authorized");
 
     const filter: PatientRecordsQueryFilter = {
-      userUid: patientUid,
+      userUuid: patientUuid,
     };
 
-    const claimsData = await insuranceController.getClaimsDataByUserUid(filter);
+    const claimsData = await insuranceController.getClaimsDataByUserUuid(
+      filter
+    );
     res.send({ claimsData });
   } catch (e) {
     console.log(e);

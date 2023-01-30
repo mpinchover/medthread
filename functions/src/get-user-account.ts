@@ -4,20 +4,21 @@ import { Account } from "./types";
 
 export const getUserAccount = async (req: any, res: any) => {
   try {
-    console.log("CALLING FN");
-    const { user } = req;
-    const userUid = user.user_id;
-    let insuranceProviders = await insuranceRepo.getInsuranceProvidersByUserUid(
-      userUid
-    );
+    const { auth, body } = req;
+    const authUid = auth.user_id;
+    const { userUuid } = body;
+
+    console.log(userUuid);
+    let insuranceProviders =
+      await insuranceRepo.getInsuranceProvidersByUserUuid(userUuid);
     if (!insuranceProviders) insuranceProviders = [];
 
-    const healthcareProviders =
-      await careProviderRepo.getAuthorizedHealthcareProviders(userUid);
+    // const healthcareProviders =
+    //   await careProviderRepo.getAuthorizedHealthcareProviders(userUuid);
 
     const account: Account = {
       insuranceProviders,
-      healthcareProviders,
+      // healthcareProviders,
     };
 
     res.send({ account });

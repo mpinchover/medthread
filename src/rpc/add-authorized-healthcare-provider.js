@@ -7,8 +7,7 @@ export const addAuthorizedHealthcareProviderdicationsByUid = async (
 ) => {
   const config = getServerConfig();
   const authUser = JSON.parse(localStorage.getItem("med_thread_auth_user"));
-  const { idToken } = authUser;
-
+  const { idToken, userUuid } = authUser;
 
   const res = await axios({
     method: "post",
@@ -16,6 +15,7 @@ export const addAuthorizedHealthcareProviderdicationsByUid = async (
     data: {
       healthcareProviderEmail,
       healthcareProviderName,
+      userUuid,
     },
     headers: {
       "Access-Control-Allow-Origin": "*",

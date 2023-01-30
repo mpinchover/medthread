@@ -6,11 +6,12 @@ export const getPatientsByHealthcareProviderUid = async (
   res: any
 ) => {
   try {
-    const { user } = req;
-    const userUid = user.user_id;
+    const { body } = req;
+    const { userUuid } = body;
+
     // get the provider uid out of the header
     const patients = await careProviderController.getPatientsForCareProvider(
-      userUid
+      userUuid
     );
     res.send({ patients });
   } catch (e) {

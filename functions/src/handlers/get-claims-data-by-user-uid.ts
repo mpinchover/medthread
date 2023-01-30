@@ -1,13 +1,16 @@
 import * as insuranceController from "../controllers/insurance";
 export const getClaimsDataByUserUid = async (req: any, res: any) => {
   try {
-    const { body, user } = req;
-    const userUid = user.user_id;
-    
-    const { filter } = body;
-    filter.userUid = userUid;
+    const { body, auth } = req;
+    const authUid = auth.user_id;
+
+    const { filter, userUuid } = body;
+
+    filter.userUuid = userUuid;
     // const userUidToReadClaimsFor = req.params.userUid;
-    const claimsData = await insuranceController.getClaimsDataByUserUid(filter);
+    const claimsData = await insuranceController.getClaimsDataByUserUuid(
+      filter
+    );
 
     res.send({ claimsData });
   } catch (e) {

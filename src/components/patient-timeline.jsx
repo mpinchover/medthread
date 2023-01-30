@@ -110,7 +110,7 @@ const TimelineEventContent = ({ event, claimType }) => {
     });
   };
 
-  const isSelected = activeTimelineEvent.uid === event.uid;
+  const isSelected = activeTimelineEvent.uuid === event.uuid;
   return (
     <div className={`${isSelected ? "block" : "hidden"} mt-8`}>
       <div className="font-bold text-xs">
@@ -376,7 +376,7 @@ const PatientTimeline = () => {
   // };
 
   const timelineContainerRef = useRef();
-  const { patientUid } = useParams();
+  const { patientUuid } = useParams();
 
   const handleKeyDown = (event) => {
     if (event.key === "Escape") {
@@ -386,8 +386,8 @@ const PatientTimeline = () => {
   // TODO – add in a filter for inpatient, outpatient, etc
   useEffect(() => {
     document.addEventListener("keydown", handleKeyDown, false);
-    if (patientUid) {
-      getPatientTimelineData(patientUid);
+    if (patientUuid) {
+      getPatientTimelineData(patientUuid);
     } else {
       getPatientTimelineData();
     }

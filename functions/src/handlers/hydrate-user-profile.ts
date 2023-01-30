@@ -2,10 +2,12 @@ import * as userController from "../controllers/user";
 
 export const hydrateUserProfile = async (req: any, res: any) => {
   try {
-    const { user } = req;
-    const userUid = user.user_id;
+    const { body, auth } = req;
 
-    const profile = await userController.hydrateUserProfile(userUid);
+    const userUuid = body;
+    const authUid = auth.user_id;
+
+    const profile = await userController.hydrateUserProfile(authUid);
     res.send({ profile });
   } catch (e) {
     console.log("ERROR IS");

@@ -13,12 +13,12 @@ module.exports.getPatientProfileForProviderByUid = async (
     const tokenId = req.get("Authorization").split("Bearer ")[1];
 
     const decodedToken = await admin.auth().verifyIdToken(tokenId);
-    const providerUid = decodedToken.uid;
+    const authUid = decodedToken.uid;
 
     const { body } = req;
-    const { patientUid } = body;
+    const { patientUuid } = body;
 
-    const authProfile = await getAuthProfile(providerUid);
+    const authProfile = await getAuthProfile(authUid);
     if (!authProfile.emailVerified) {
       throw new Error("Provider must be verified");
     }
@@ -34,7 +34,7 @@ module.exports.getPatientProfileForProviderByUid = async (
     //   throw new Error("Provider must be authorized to vew patient records");
     // }
 
-    const patientProfile = await getUserProfile(patientUid);
+    const patientProfile = await getUserProfile(patientUuid);
     res.send({ patient: patientProfile });
   } catch (e) {
     console.log(e);

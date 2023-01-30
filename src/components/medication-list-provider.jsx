@@ -58,12 +58,12 @@ const MedicationListProvider = () => {
   // );
 
   const [searchTerm, setSearchTerm] = useRecoilState(recordsSearchQueryState);
-  const { patientUid } = useParams();
+  const { patientUuid } = useParams();
 
   // get the patient uis from the params
   useEffect(() => {
     // getMedications();
-    getClaimsDatabyUserUid(patientUid);
+    getClaimsDatabyUserUid(patientUuid);
   }, []);
 
   const isLoadingMedicationList = useRecoilValue(loadingGetMedicationState);

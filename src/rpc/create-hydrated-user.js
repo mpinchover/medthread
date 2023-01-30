@@ -1,7 +1,7 @@
 import axios from "axios";
 import { getServerConfig } from "../config/config";
 
-export const createHydratedUserProfile = async (params, providerUid) => {
+export const createHydratedUserProfile = async (params, providerUuid) => {
   const config = getServerConfig();
 
   const res = await axios({
@@ -9,7 +9,7 @@ export const createHydratedUserProfile = async (params, providerUid) => {
     url: `${config.baseUrl}/create-hydrated-profile`,
     data: {
       profile: params,
-      providerUid: providerUid,
+      providerUuid,
     },
     headers: {
       "Access-Control-Allow-Origin": "*",

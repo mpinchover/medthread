@@ -10,11 +10,11 @@ const ConditionsTable = ({ conditions }) => {
   const [activeConditions, setActiveConditions] = useState([]);
 
   const renderConditionDetails = (e) => {
-    const { uid, requestAndDispense, codeDisplay } = e;
+    const { uuid, requestAndDispense, codeDisplay } = e;
     return (
       <div
         className={`${
-          activeConditions.includes(uid) ? "block" : "hidden"
+          activeConditions.includes(uuid) ? "block" : "hidden"
         } mt-6 bg-gray-100 p-6`}
       >
         <div className="mb-2 text-xs">{codeDisplay}</div>
@@ -23,15 +23,15 @@ const ConditionsTable = ({ conditions }) => {
   };
 
   const handleClick = (e) => {
-    const conditionUid = e.currentTarget.name;
-    if (activeConditions.includes(conditionUid)) {
+    const conditionUuid = e.currentTarget.name;
+    if (activeConditions.includes(conditionUuid)) {
       setActiveConditions((active) =>
-        active.filter((uid) => uid !== conditionUid)
+        active.filter((uuid) => uuid !== conditionUuid)
       );
       return;
     }
 
-    setActiveConditions([...activeConditions, conditionUid]);
+    setActiveConditions([...activeConditions, conditionUuid]);
   };
 
   const renderConditionList = () => {
@@ -43,7 +43,7 @@ const ConditionsTable = ({ conditions }) => {
               <div className="relative">
                 <button
                   onClick={handleClick}
-                  name={e.uid}
+                  name={e.uuid}
                   className=" text-left relative flex w-full flex-row "
                 >
                   <div className="pr-6 w-72 text-ellipsis overflow-hidden whitespace-nowrap">
@@ -86,14 +86,14 @@ const ConditionsTable = ({ conditions }) => {
 export default ConditionsTable;
 
 //   export interface Condition {
-//     uid?: string;
+//     uuid?: string;
 //     fhirReference?: string;
-//     insuranceProviderUid?: string;
+//     insuranceProviderUuid?: string;
 //     source?: string;
 //     clinicalStatus?: string;
 //     verificationStatus?: string;
 //     category?: string;
 //     code?: string;
 //     codeDisplay?: string; // the condition
-//     userUid?: string;
+//     userUuid?: string;
 //   }

@@ -5,10 +5,10 @@ import { activeTimelineEventState } from "../../recoil/timeline/timeline";
 import { useRecoilCallback, useRecoilState } from "recoil";
 import { getFormattedDate } from "../utils";
 import { sendEMRRequestForEobEventCallback } from "../../recoil/emr/emr";
-import {
-  activeEMRPatientUidState,
-  activeEMREobUidState,
-} from "../../recoil/emr/emr";
+// import {
+//   activeEMRPatientUidState,
+//   activeEMREobUidState,
+// } from "../../recoil/emr/emr";
 const claimTypeEvent = {
   institutional: {
     title: "Inpatient",

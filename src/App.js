@@ -135,7 +135,7 @@ function App() {
             />
             <Route
               exact
-              path="/records/:patientUid"
+              path="/records/:patientUuid"
               element={<MedicationListProvider />}
             />
             <Route exact path="/records" element={<MedicationListPatient />} />

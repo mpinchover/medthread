@@ -3,68 +3,50 @@ import { AuthorizedCareProviderLink, AuthProfile, Profile } from "../types";
 import { getUserProfile, getUserProfilesByUids } from "./repo";
 import { AUTHORIZED_CARE_PROVIDER_LINKS_COLLECTION } from "../config/constants";
 import { stringSplitIntoBatches } from "../utils/utils";
-// export const _getAuthorizedHealthcareProvider = async (patientUid: string) => {
-//   const healthcareProvidersRef = await admin
-//     .firestore()
-//     .collection("authorized_providers");
-
-//   const snapshot = await healthcareProvidersRef
-//     .where("patientUid", "==", patientUid)
-//     .get();
-
-//   if (snapshot.empty) return [];
-
-//   return snapshot.docs.map((doc) => {
-//     const data: any = doc.data();
-
-//     const hcp: AuthorizedProvider = {
-//       ...data,
-//       uid: doc.id,
-//     };
-//     return hcp;
-//   });
-// };
+import Database from "./database";
+import * as constants from "../config/constants";
 
 export const getAuthorizedHealthcareProviders = async (patientUid: string) => {
-  const healthcareProvidersRef = await admin
-    .firestore()
-    .collection("healthcareProviders");
+  const db = await Database.getDb();
 
-  const snapshot = await healthcareProvidersRef
-    .where("patientUid", "==", patientUid)
-    .get();
-
-  if (snapshot.empty) return [];
-
-  return snapshot.docs.map((doc) => {
-    const data: any = doc.data();
-
-    const hcp: AuthorizedCareProviderLink = {
-      ...data,
-      uid: doc.id,
-    };
-    return hcp;
+  const authorizedProviders: AuthorizedCareProviderLink[] = [];
+  const c = db.collection(constants.HEALTHCARE_PROVIDER_COLLECTION);
+  const docs = await c.find({ patientUid });
+  await docs.forEach((doc: any) => {
+    const document: AuthorizedCareProviderLink = doc;
+    authorizedProviders.push(document);
   });
+
+  console.log("PROVIDERS ARE");
+  console.log(authorizedProviders);
+
+  return authorizedProviders;
 };
 
 export const getAuthorizedHealthcareProviderForPatient = async (
-  providerUid: string,
-  patientUid: string
+  authUid: string,
+  providerUuid: string,
+  patientUuid: string
 ) => {
-  const userProfile = await getUserProfile(providerUid);
-  if (userProfile.role !== "PROVIDER") throw new Error("must be a provider");
+  // console.log("GETTING THE PROFILE");
+  const userProfile = await getUserProfile(providerUuid);
+  // console.log("CARE PROFILE");
+  // console.log(userProfile);
+  if (userProfile.role !== "PROVIDER") {
+    // console.log("ERROR POINT 1");
+    throw new Error("must be a provider");
+  }
   // check verification
-  const providerAuthProfile: AuthProfile = await admin
-    .auth()
-    .getUser(providerUid);
+  const providerAuthProfile: AuthProfile = await admin.auth().getUser(authUid);
 
   if (!providerAuthProfile.emailVerified) {
+    // console.log("ERROR POINT 2");
     throw new Error("provider is not verified");
   }
 
   const existingHealthcareProvider = await getAuthorizedHealthcareProvider(
-    providerUid,
-    patientUid
+    providerUuid,
+    patientUuid
   );
 
   if (existingHealthcareProvider) return existingHealthcareProvider;
@@ -74,24 +56,26 @@ export const getAuthorizedHealthcareProviderForPatient = async (
 // TODO – make sure that the care provider is authorized
 // TODO – make sure that you get the insurance provider refresh state
 export const getPatientsByHealthcareProviderUid = async (
-  providerUid: string
+  providerUuid: string
 ): Promise<Profile[]> => {
-  if (!providerUid) {
+  if (!providerUuid) {
     throw new Error("provider uid cannot be null");
   }
 
   // get all patient uids this provider is authorized for
-  const patientUids = await getPatientUidsByHealthcareProviderUid(providerUid);
-  if (patientUids.length === 0) {
+  const patientUuids = await getPatientUidsByHealthcareProviderUid(
+    providerUuid
+  );
+  if (patientUuids.length === 0) {
     return [];
   }
 
   // split patient Uids into batches of 10
-  const patientUidBatches = stringSplitIntoBatches(patientUids, 10);
+  const patientUuidBatches = stringSplitIntoBatches(patientUuids, 10);
   let patientProfiles: Profile[] = [];
 
   await Promise.allSettled(
-    patientUidBatches.map((batch) => {
+    patientUuidBatches.map((batch) => {
       return getUserProfilesByUids(batch);
     })
   ).then((results) => {
@@ -102,42 +86,27 @@ export const getPatientsByHealthcareProviderUid = async (
     });
   });
   return patientProfiles;
-
-  // so you have patient profiles
-  // now get all of their health insurance providers
-  // check to see if the tokens are expired or not.
-  // if they are, FE should be able to send a notification to the patient
-  // to reauthenticate
-  // on patient account page they should have the ability to reauth
 };
 
 //  get all the patient uids this provider is authorized for
 export const getPatientUidsByHealthcareProviderUid = async (
-  providerUid: string
+  providerUuid: string
 ): Promise<string[]> => {
-  if (!providerUid) {
+  if (!providerUuid) {
     throw new Error("provider uid cannot be null");
   }
-  const db = admin.firestore();
+
+  const db = await Database.getDb();
+  // const db = admin.firestore();
 
   const patientUids: string[] = [];
 
-  const authorizedCareProvidersRef = db.collection(
-    AUTHORIZED_CARE_PROVIDER_LINKS_COLLECTION
-  );
-  const query = authorizedCareProvidersRef.where(
-    "careProviderUid",
-    "==",
-    providerUid
-  );
-
-  const snapshot = await query.get();
-  if (snapshot.empty) return [];
-
-  snapshot.docs.map((doc) => {
-    const authCareProvider: AuthorizedCareProviderLink = doc.data();
-    if (authCareProvider?.patientUid) {
-      patientUids.push(authCareProvider?.patientUid);
+  const c = db.collection(constants.AUTHORIZED_CARE_PROVIDER_LINKS_COLLECTION);
+  const docs = await c.find({ careProviderUuid: providerUuid });
+  await docs.forEach((doc: any) => {
+    const authCareProvider: AuthorizedCareProviderLink = doc;
+    if (authCareProvider?.patientUuid) {
+      patientUids.push(authCareProvider?.patientUuid);
     }
   });
 
@@ -145,49 +114,29 @@ export const getPatientUidsByHealthcareProviderUid = async (
 };
 
 export const addAuthorizedHealthcareProviderLink = async (
-  patientUid: string,
-  careProviderUid: string
-) => {
+  params: AuthorizedCareProviderLink
+): Promise<AuthorizedCareProviderLink> => {
   // first check to see if the document exists
   const existingHealthcareProvider = await getAuthorizedHealthcareProvider(
-    patientUid,
-    careProviderUid
+    params?.patientUuid,
+    params?.careProviderUuid
   );
-  if (existingHealthcareProvider) return existingHealthcareProvider;
+  if (existingHealthcareProvider)
+    return existingHealthcareProvider as AuthorizedCareProviderLink;
 
-  const authorizedProviderDoc = admin
-    .firestore()
-    .collection(AUTHORIZED_CARE_PROVIDER_LINKS_COLLECTION)
-    .doc();
+  const db = await Database.getDb();
+  const c = db.collection(constants.AUTHORIZED_CARE_PROVIDER_LINKS_COLLECTION);
 
-  const params: AuthorizedCareProviderLink = {
-    patientUid,
-    careProviderUid,
-    uid: authorizedProviderDoc.id,
-  };
-
-  await authorizedProviderDoc.set(params);
-  return params;
+  const res = await c.insertOne(params);
+  return params as AuthorizedCareProviderLink;
 };
 
 export const getAuthorizedHealthcareProvider = async (
-  providerUid: string,
-  patientUid: string
+  providerUuid: string,
+  patientUuid: string
 ) => {
-  const healthcareProvidersRef = await admin
-    .firestore()
-    .collection(AUTHORIZED_CARE_PROVIDER_LINKS_COLLECTION);
-
-  const snapshot = await healthcareProvidersRef
-    .where("careProviderUid", "==", providerUid)
-    .where("patientUid", "==", patientUid)
-    .get();
-
-  if (snapshot.empty) return null;
-
-  const doc: AuthorizedCareProviderLink = {
-    ...snapshot.docs[0].data(),
-    uid: snapshot.docs[0].id,
-  };
+  const db = await Database.getDb();
+  const c = db.collection(constants.AUTHORIZED_CARE_PROVIDER_LINKS_COLLECTION);
+  const doc = await c.findOne({ careProviderUuid: providerUuid, patientUuid });
   return doc;
 };

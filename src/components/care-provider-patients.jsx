@@ -17,7 +17,7 @@ import Fade from "@mui/material/Fade";
 
 const PatientItem = ({ patient, setActiveCareProviderPatient }) => {
   const navigate = useNavigate();
-  const link = `/records/${patient.userUid}`;
+  const link = `/records/${patient.userUuid}`;
 
   const handleClick = () => {
     setActiveCareProviderPatient(patient);
@@ -64,7 +64,7 @@ const PatientListHeader = ({ onChange, authorizedProfile, searchQuery }) => {
     setShowCopyPopup(true);
     setTimeout(() => setShowCopyPopup(false), 1000);
     navigator.clipboard.writeText(
-      `${process.env.REACT_APP_BASE_URL}/patient-signup?providerUid=${authorizedProfile.uid}`
+      `${process.env.REACT_APP_BASE_URL}/patient-signup?providerUuid=${authorizedProfile.userUuid}`
     );
   };
 

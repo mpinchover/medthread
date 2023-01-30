@@ -10,24 +10,24 @@ const ImmunizationsTable = ({ immunizations }) => {
   const [activeNote, setActiveNote] = useState();
 
   const handleClick = (e) => {
-    const immunizationUid = e.currentTarget.name;
-    if (activeImmunizations.includes(immunizationUid)) {
+    const immunizationUuuid = e.currentTarget.name;
+    if (activeImmunizations.includes(immunizationUuuid)) {
       setActiveImmunizations((active) =>
-        active.filter((uid) => uid !== immunizationUid)
+        active.filter((uuid) => uuid !== immunizationUuuid)
       );
 
       return;
     }
 
-    setActiveImmunizations([...activeImmunizations, immunizationUid]);
+    setActiveImmunizations([...activeImmunizations, immunizationUuuid]);
   };
 
   const renderImmunizationDetails = (e) => {
-    const { uid, requestAndDispense, codeDisplay } = e;
+    const { uuid, requestAndDispense, codeDisplay } = e;
     return (
       <div
         className={`${
-          activeImmunizations.includes(uid) ? "block" : "hidden"
+          activeImmunizations.includes(uuid) ? "block" : "hidden"
         } mt-6 bg-gray-100 p-6`}
       >
         <div className="mb-2 text-xs">{codeDisplay}</div>
@@ -44,7 +44,7 @@ const ImmunizationsTable = ({ immunizations }) => {
               <div className="relative">
                 <button
                   onClick={handleClick}
-                  name={e.uid}
+                  name={e.uuid}
                   // disabled
                   className=" text-left relative flex w-full flex-row "
                 >
@@ -81,13 +81,13 @@ const ImmunizationsTable = ({ immunizations }) => {
 export default ImmunizationsTable;
 
 //   export interface Immunization {
-//     uid?: string;
+//     uuid?: string;
 //     fhirReference?: string;
-//     insuranceProviderUid?: string;
+//     insuranceProviderUuuid?: string;
 //     source?: string;
 //     status?: string;
 //     code?: string;
 //     codeDisplay?: string; // the vaccine display
 //     occurenceDateTime?: string;
-//     userUid?: string;
+//     userUuuid?: string;
 //   }

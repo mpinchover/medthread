@@ -1,14 +1,14 @@
 import * as insuranceController from "./controllers/insurance";
 export const addHealthInsuranceProvider = async (req: any, res: any) => {
   try {
-    const { body, user } = req;
-    const { publicToken } = body;
-
-    const userUid = user.user_id;
+    const { body, auth } = req;
+    console.log("BODY IS");
+    console.log(body);
+    const { publicToken, userUuid } = body;
 
     const { insuranceProvider, claimsData } =
       await insuranceController.addHealthInsuranceProvider(
-        userUid,
+        userUuid,
         publicToken
       );
 
@@ -18,4 +18,3 @@ export const addHealthInsuranceProvider = async (req: any, res: any) => {
     res.status(501).send({ error: e });
   }
 };
-  

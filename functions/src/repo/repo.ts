@@ -5,20 +5,18 @@ import {
   Profile,
   AuthProfile,
 } from "../types";
-
-export const getUserProfile = async (uid: string): Promise<Profile> => {
+import Database from "./database";
+import * as constants from "../config/constants";
+export const getUserProfile = async (uuid: string): Promise<Profile> => {
   try {
-    const profiles = await admin.firestore().collection("profiles");
+    const db = await Database.getDb();
 
-    const snapshot = await profiles.where("userUid", "==", uid).get();
-
-    if (!snapshot || snapshot.empty) return null;
-
-    const profile: Profile = snapshot.docs[0].data();
-
-    const profileId = snapshot.docs[0].id;
-    profile.uid = profileId;
-
+    // const profiles = await admin.firestore().collection("profiles");
+    const profiles = db.collection(constants.PROFILE_COLLECTION);
+    const profile: any = await profiles.findOne({ userUuid: uuid });
+    if (!profile) {
+      return null;
+    }
     return profile;
   } catch (e) {
     console.log(e);
@@ -26,126 +24,70 @@ export const getUserProfile = async (uid: string): Promise<Profile> => {
   }
 };
 
+export const testFn = async () => {
+  const db = await Database.getDb();
+
+  await db.collection("drinks").insertOne({ value: 30 });
+  const doc = await db.collection("drinks").findOne({ value: 30 });
+  console.log(doc);
+};
+
 export const getUserProfilesByUids = async (
-  uids: string[]
+  uuids: string[]
 ): Promise<Profile[]> => {
   try {
-    const profiles = await admin.firestore().collection("profiles");
+    const db = await Database.getDb();
+    if (uuids?.length === 0) return [];
 
-    const snapshot = await profiles.where("userUid", "in", uids).get();
-
-    if (!snapshot || snapshot.empty) return [];
-
-    return snapshot.docs.map((doc) => {
-      return doc.data();
+    const profiles: Profile[] = [];
+    const profilesRef = db.collection(constants.PROFILE_COLLECTION);
+    const documents = await profilesRef.find({ userUuid: { $in: uuids } });
+    await documents.forEach((doc: any) => {
+      profiles.push(doc);
     });
+
+    console.log("PROFILES ARE");
+    console.log(profiles);
+    return profiles;
   } catch (e) {
     console.log(e);
     throw e;
   }
 };
 
-export const getDerivedMedications = async (userUid: string) => {
-  const medicationsRef = await admin.firestore().collection("medications");
-  const snapshot = await medicationsRef.where("userUid", "==", userUid).get();
-  if (snapshot.empty) return [];
-  return snapshot.docs.map((e: any) => {
-    const med: Medication = e.data();
-    med.uid = e.id;
-    med.source = "PATIENT";
-    return med;
-  });
-};
+// // TODO – deprecate
+// export const getDerivedMedications = async (userUuid: string) => {
+//   const medicationsRef = await admin.firestore().collection("medications");
+//   const snapshot = await medicationsRef.where("userUid", "==", userUuid).get();
+//   if (snapshot.empty) return [];
+//   return snapshot.docs.map((e: any) => {
+//     const med: Medication = e.data();
+//     med.uuid = e.id;
+//     med.source = "PATIENT";
+//     return med;
+//   });
+// };
 
 export const getAuthProfile = async (uid: string) => {
   const authProfile: AuthProfile = await admin.auth().getUser(uid);
   return authProfile;
 };
 
-export const hydrateUserProfile = async (userUid: string): Promise<Profile> => {
-  if (!userUid) return null;
+export const hydrateUserProfile = async (authUid: string): Promise<Profile> => {
+  const db = await Database.getDb();
+  if (!authUid) return null;
 
-  const db = admin.firestore();
-  const profilesRef = db.collection("profiles");
-  const snapshot = await profilesRef.where("userUid", "==", userUid).get();
-
-  if (snapshot.empty) return null;
-  return snapshot.docs[0].data();
+  const profilesRef = db.collection(constants.PROFILE_COLLECTION);
+  const profile: any = await profilesRef.findOne({ authUid });
+  // const snapshot = await profilesRef.where("userUid", "==", userUid).get();
+  return profile;
 };
 
 export const createHydratedUserProfile = async (
   params: Profile
 ): Promise<Profile> => {
-  const db = admin.firestore();
-
-  const profilesDocRef = db.collection("profiles").doc();
-  params.uid = profilesDocRef.id;
-  await profilesDocRef.set(params);
-  return params;
+  const db = await Database.getDb();
+  const profilesRef = db.collection(constants.PROFILE_COLLECTION);
+  await profilesRef.insertOne(params);
+  return params as Profile;
 };
-
-// export const getPatientsByProviderUid = async (providerUid: string) => {
-//   // // first get the provider auth profile to get the email
-
-//   // const providerAuthProfile: AuthProfile = await admin
-//   //   .auth()
-//   //   .getUser(providerUid);
-//   // // if (!providerAuthProfile.emailVerified) throw new Error("provider is not verified")
-//   // const providerEmail = providerAuthProfile.email;
-//   // // now query all the authorized healthcare docs that this provider has been authorized for
-//   // const healthcareProvidersRef = await admin
-//   //   .firestore()
-//   //   .collection("healthcareProviders");
-
-//   const db = admin.firestore();
-//   const healthcareProvidersRef = db.collection("healthcareProviders");
-
-//   let snapshot = await healthcareProvidersRef
-//     .where("providerUid", "==", providerEmail)
-//     .get();
-//   const patientUids: string[] = snapshot.docs.map(
-//     (doc: any) => doc.data().patientUid
-//   );
-
-//   if (patientUids.length == 0) {
-//     return [];
-//   }
-//   // now get patient names
-//   const profilesRef = await admin.firestore().collection("profiles");
-//   snapshot = await profilesRef.where("userUid", "in", patientUids).get();
-//   if (snapshot.empty) return null;
-
-//   // TODO sort by the time it was added
-//   const patients: Profile[] = snapshot.docs.map((doc: any) => {
-//     return doc.data();
-//   });
-//   return patients;
-// };
-
-// export const getPatientsForProvider = async (providerUid: string) => {
-//   try {
-//     const authProfile: AuthProfile = await getAuthProfile(providerUid);
-//     const { email } = authProfile;
-//     if (!email) {
-//       throw new Error("email is required for getting previous patients");
-//     }
-
-//     const profiles = await admin.firestore().collection("profiles");
-
-//     const snapshot = await profiles.where("userUid", "==", providerUid).get();
-
-//     if (!snapshot || snapshot.empty) return null;
-
-//     const profile: Profile = snapshot.docs[0].data();
-
-//     const profileId = snapshot.docs[0].id;
-//     profile.uid = profileId;
-
-//     return profile;
-//   } catch (e) {
-//     console.log(e);
-//     throw e;
-//   }
-// };
-
-// https://firebase.google.com/docs/firestore/manage-data/add-data

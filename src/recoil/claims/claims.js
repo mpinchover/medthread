@@ -110,13 +110,13 @@ export const recordsActiveCategoryState = atom({
 
 export const getClaimsDataByUserUidCallback =
   ({ set, snapshot }) =>
-  async (patientUid) => {
+  async (patientUuid) => {
     try {
       set(isLoadingClaimsDataState, true);
 
       let claimsData;
-      if (patientUid) {
-        claimsData = await getClaimsDataByUserUidForProvider(patientUid);
+      if (patientUuid) {
+        claimsData = await getClaimsDataByUserUidForProvider(patientUuid);
       } else {
         claimsData = await getClaimsDataByUserUid();
       }

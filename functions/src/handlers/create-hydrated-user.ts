@@ -3,16 +3,18 @@ import * as careProviderController from "../controllers/care-providers";
 export const createHydratedUserProfile = async (req: any, res: any) => {
   try {
     const { body } = req;
-    const { profile, providerUid } = body;
+    const { profile, providerUuid } = body;
 
+    console.log("BODY IS");
+    console.log(body);
     const createdProfile = await userController.createHydratedUserProfile(
       profile
     );
-    
-    if (providerUid) {
+
+    if (providerUuid) {
       await careProviderController.addAuthorizedHealthcareProviderForPatient(
-        createdProfile.userUid,
-        providerUid
+        createdProfile.userUuid,
+        providerUuid
       );
     }
     res.send({ profile: createdProfile });

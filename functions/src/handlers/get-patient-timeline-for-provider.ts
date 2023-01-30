@@ -5,14 +5,15 @@ import * as careProviderController from "../controllers/care-providers";
 // TODO – make another one for the provider
 export const getPatientTimelineDataForProvider = async (req: any, res: any) => {
   try {
-    const { body, user } = req;
-    const userUid = user.user_id;
-    const { patientUid, filter } = body;
+    const { body, auth } = req;
+    const authUid = auth.user_id;
+    const { userUuid, filter } = body;
 
     const careProvider =
       await careProviderController.getAuthorizedHealthcareProviderForPatientRecords(
-        userUid,
-        patientUid
+        authUid,
+        userUuid,
+        filter.userUuid
       );
 
     if (!careProvider) {
