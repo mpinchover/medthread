@@ -1,7 +1,7 @@
 import { useContext } from "react";
 import PreviousPatients from "./care-provider-patients";
 import { FirebaseContext } from "../firebase/firebase-context";
-import Settings from "./settings";
+import Settings from "./home/settings";
 import PatientSignup from "./signup-patient";
 import { useRecoilValue } from "recoil";
 import { authorizedProfileState } from "../recoil/auth/auth";
@@ -11,6 +11,8 @@ const Home = () => {
   // const { getAuthUser } = useContext(FirebaseContext);
   // const authUser = getAuthUser();
   const authorizedProfile = useRecoilValue(authorizedProfileState);
+  console.log("AUTHORIZED PROFILE");
+  console.log(authorizedProfile);
   if (!authorizedProfile) return <LoggedOutHome />;
   const { role } = authorizedProfile;
   if (role === "PROVIDER") return <Settings />;

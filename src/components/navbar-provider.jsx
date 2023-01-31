@@ -67,7 +67,7 @@ const ProviderNavbar = ({ authUser }) => {
   return (
     <div
       id="navbar"
-      className="shadow-sm py-7 px-2 md:px-28 flex flex-row sticky top-0 z-10  bg-[#030c1a] "
+      className="shadow-sm py-4 px-8 md:px-28 flex flex-row sticky top-0 z-10  bg-gradient-to-r from-cyan-600 to-[#0867b2]"
     >
       <div className="flex-1 flex flex-row ">
         <button

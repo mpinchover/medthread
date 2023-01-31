@@ -41,14 +41,17 @@ const Settings = () => {
   //   return <WelcomePage />;
   // }
 
-  return (
-    <WelcomePage
-      authProfile={authProfile}
-      accountSettings={accountSettings}
-      healthcareProviders={healthcareProviders}
-      insuranceProviders={insuranceProviders}
-    />
-  );
+  if (authProfile.role === "PATIENT") {
+    return (
+      <WelcomePage
+        authProfile={authProfile}
+        accountSettings={accountSettings}
+        healthcareProviders={healthcareProviders}
+        insuranceProviders={insuranceProviders}
+      />
+    );
+  }
+
   return (
     <PatientSettings
       authProfile={authProfile}

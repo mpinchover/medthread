@@ -55,20 +55,17 @@ const WelcomePage = ({ authProfile, accountSettings }) => {
 
   return (
     <div className="relative flex flex-1 flex-col text-gray-700">
-      <div className=" px-8 md:px-28 py-8 md:py-10 flex flex-1 flex-col md:mb-[268px] mb-[304px]">
-        <section className="mb-16">
-          <h2 className="text-xl md:text-3xl">
-            Thank you for participating in the MedThread x The Lanby pilot
-            program.
-          </h2>
-          <p className="mt-3 md:text-lg font-bold">
-            Please add both your previous & current insurance provider(s) to
-            allow us to gather your medical history.
-          </p>
-        </section>
-        <section className="">
-          <div className="text-xl md:text-3xl   ">Insurance providers</div>
+      <div className=" px-8 md:px-28 py-8 md:py-10 flex flex-1 flex-col">
+        <h2 className="text-xl md:text-3xl">
+          Thank you for participating in the MedThread x The Lanby pilot
+          program.
+        </h2>
+        <p className="md:text-lg mt-3">
+          Please add both your previous & current insurance provider(s) to allow
+          us to gather your medical history. You can add as many as you'd like.
+        </p>
 
+        <section className="mt-12">
           <section>
             {accountSettings?.insuranceProviders?.map((element, i) => {
               return (
@@ -85,7 +82,7 @@ const WelcomePage = ({ authProfile, accountSettings }) => {
               );
             })}
           </section>
-          <section className="mt-3">
+          <section className="">
             <button
               onClick={openFlexpaLink}
               className="w-full md:w-auto p-3 px-6 font-bold border rounded-lg bg-cyan-600 text-gray-100"
@@ -96,27 +93,12 @@ const WelcomePage = ({ authProfile, accountSettings }) => {
         </section>
       </div>
 
-      <section className=" text-sm px-8 md:px-28 text-gray-300 py-8 md:py-10 bottom-0 bg-gradient-to-r from-cyan-600 to-blue-500 w-full absolute">
-        <div className="mb-6">
-          <a className="font-bold " href="mailto:info@usemedthread.com">
-            Contact us
-          </a>{" "}
-          with any questions
-        </div>
-        <div className="text-xl md:text-xl   ">FAQs</div>
-
-        <section className="mt-3">
-          <p className="font-bold">Is MedThread HIPAA compliant?</p>
+      <section className=" text-sm px-8 md:px-28 text-gray-300 py-4 md:py-10 bottom-0 bg-gradient-to-r from-cyan-600 to-[#0867b2] w-full absolute">
+        <section className="">
           <p>
             MedThread is a HIPAA complaint organization that helps your provider
-            understand your health history. We do not sell / share your data
-          </p>
-        </section>
-
-        <section className="mt-3">
-          <p className="font-bold">Will anyone else be able to see my data?</p>
-          <p>
-            No one else will have access to your data. Your data is not to any
+            understand your health history. We do not sell / share your data. No
+            one else will have access to your data. Your data is not sold to any
             third parties.
           </p>
         </section>

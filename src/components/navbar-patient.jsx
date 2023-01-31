@@ -73,7 +73,7 @@ const PatientNavbar = ({ authUser }) => {
   return (
     <div
       id="navbar"
-      className="shadow-sm py-7 px-8 md:px-28 flex flex-row sticky top-0 z-50  bg-gradient-to-r from-cyan-600 to-blue-500"
+      className="shadow-sm py-4 px-8 md:px-28 flex flex-row sticky top-0 z-50  bg-gradient-to-r from-cyan-600 to-[#0867b2]"
     >
       <div className="flex-1 flex flex-row ">
         <button
@@ -94,7 +94,19 @@ const PatientNavbar = ({ authUser }) => {
         </button>
       </div>
 
-      <div className="relative">
+      <div className="relative flex flex-row items-center">
+        <div className="hidden md:block mr-6  text-white ">
+          <a className="font-bold" href="mailto:info@usemedthread.com">
+            Contact us
+          </a>{" "}
+          with any questions
+        </div>
+        <div className="block md:hidden mr-4 text-white ">
+          <a className="font-bold" href="mailto:info@usemedthread.com">
+            Contact us
+          </a>{" "}
+        </div>
+
         <button
           onClick={handleToggleOpen}
           ref={mainDropdownRefBtn}

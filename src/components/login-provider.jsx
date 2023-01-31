@@ -43,7 +43,7 @@ const ProviderLogin = (props) => {
   return (
     <div className="flex flex-col  flex-1 items-center justify-center ">
       <div className="text-bold text-2xl w-72 text-center ">Provider login</div>
-      <div className="  w-96   border-b border-black my-6"></div>
+      <div className="  w-96   border-b border-gray-300 my-6"></div>
       <form onSubmit={handleSubmit} className="flex flex-col space-y-6">
         <TextInput
           value={emailVal}
@@ -69,33 +69,33 @@ const ProviderLogin = (props) => {
           <div className="">
             <button
               onClick={handleSubmit}
-              className="p-3 px-8 font-bold border rounded-lg bg-black text-white"
+              className="p-3 px-8 font-bold border rounded-lg bg-cyan-600 text-white w-full"
             >
               Submit
             </button>
           </div>
         )}
       </form>
-      <div className="  w-96   border-b border-black my-6"></div>
+      <div className="  w-96   border-b border-gray-300 my-6"></div>
       {/* <div className="  w-72 border-b border-blue-400 my-4"></div> */}
 
       <div className="mb-6 w-96">
         <button
           onClick={() => navigate("/forgot-password")}
-          className=" text-sm   text-left  text-black hover:opacity-50"
+          className=" text-sm   text-center w-full  text-black hover:opacity-50"
         >
           Forgot password?
         </button>
       </div>
 
-      <div className=" w-96">
+      {/* <div className=" w-96">
         <button
           onClick={() => navigate("/provider-signup")}
           className="p-3 px-8 font-bold border rounded-lg"
         >
           Sign up
         </button>
-      </div>
+      </div> */}
     </div>
   );
 };

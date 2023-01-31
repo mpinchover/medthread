@@ -93,6 +93,7 @@ const PatientListHeader = ({ onChange, authorizedProfile, searchQuery }) => {
           </div>
         </Fade>
         <Button
+          type="PRIMARY"
           Icon={FaRegCopy}
           onClick={handleCopyNewPatientLink}
           display={"New patient link"}

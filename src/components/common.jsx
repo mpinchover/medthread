@@ -282,14 +282,19 @@ export const HeadlessDropdown = ({
   );
 };
 
+const buttonColorMap = {
+  PRIMARY: "bg-cyan-600",
+};
 export const Button = ({ Icon, display, type, onClick, disabled }) => {
   if (!type) type = "PRIMARY";
+
+  const bgColor = buttonColorMap[type];
 
   return (
     <button
       disabled={disabled}
       onClick={onClick}
-      className="flex flex-row  items-center space-x-2 text-sm  p-3 px-8 font-bold border rounded-lg bg-black text-white"
+      className={`flex flex-row  items-center space-x-2 text-sm  p-3 px-8 font-bold border rounded-lg ${bgColor} text-white`}
     >
       <Icon />
       <span>{display}</span>

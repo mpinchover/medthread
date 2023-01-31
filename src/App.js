@@ -29,7 +29,7 @@ import VerificationPage from "./components/verification-page";
 import MedicationListPatient from "./components/medication-list-patient";
 import TermsOfService from "./components/terms-of-service";
 import PatientTimeline from "./components/patient-timeline";
-import Home from "./components/home/settings";
+import Home from "./components/home";
 import { accountSettingsState } from "./recoil/account/account";
 import GetEmrRecordsModal from "./components/modals/get-emr-records-modal";
 import SendMedicationsModal from "./components/medication-modal-send-meds";

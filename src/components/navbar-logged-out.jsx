@@ -60,7 +60,7 @@ const NavbarLoggedOut = () => {
   return (
     <div
       id="navbar"
-      className="py-7 px-2 md:px-28 flex flex-row sticky top-0 z-50 bg-gradient-to-r from-cyan-600 to-blue-500"
+      className="py-4 px-8 md:px-28 flex flex-row sticky top-0 z-50 bg-gradient-to-r from-cyan-600 to-blue-500"
     >
       <div className="flex-1 flex flex-row ">
         <button
@@ -96,16 +96,15 @@ const NavbarLoggedOut = () => {
           toggleOpen={toggleOpen}
           mainDropdownRefBtn={mainDropdownRefBtn}
         /> */}
-        {/* 
+
         <button
-          id="logout"
-          onClick={handleClick}
+          onClick={() => navigate("/provider-login")}
           className={`${
-            activeTab === "logout" ? "black" : "text-gray-400"
-          } hover:opacity-50 cursor-pointer mr-4 `}
+            activeTab === "logout" ? "black" : "text-gray-300"
+          } hover:text-white cursor-pointer  `}
         >
-          Log out
-        </button> */}
+          Log In
+        </button>
       </div>
     </div>
   );
