@@ -1,22 +1,22 @@
 import PatientSettings from "./settings-patient";
-import ProviderSettings from "./settings-provider";
 import { useRecoilValue, useRecoilCallback, useRecoilState } from "recoil";
-import { isLoadingSettingsState } from "../recoil/profile/profile";
-import { LoadingSettingsData } from "./common";
+import { isLoadingSettingsState } from "../../recoil/profile/profile";
+import { LoadingSettingsData } from "../common";
 import { useEffect, useContext } from "react";
 import {
   insuranceProvidersState,
   healthcareProvidersState,
   getPatientProfileCallback,
-} from "../recoil/profile/profile";
+} from "../../recoil/profile/profile";
 import {
   getAccountSettingsCallback,
   accountSettingsState,
-} from "../recoil/account/account";
-import { withPrivateRoute } from "./hocs";
-import { FirebaseContext } from "../firebase/firebase-context";
-import { authorizedProfileState } from "../recoil/auth/auth";
-import { activeCareProviderPatientState } from "../recoil/provider/provider";
+} from "../../recoil/account/account";
+import { withPrivateRoute } from "../hocs";
+import { FirebaseContext } from "../../firebase/firebase-context";
+import { authorizedProfileState } from "../../recoil/auth/auth";
+import { activeCareProviderPatientState } from "../../recoil/provider/provider";
+import WelcomePage from "./welcome-page";
 
 const Settings = () => {
   const { getAuthUser } = useContext(FirebaseContext);
@@ -37,6 +37,18 @@ const Settings = () => {
 
   if (isLoadingSettings) return <LoadingSettingsData />;
 
+  // if (accountSettings?.insuranceProviders?.length === 0) {
+  //   return <WelcomePage />;
+  // }
+
+  return (
+    <WelcomePage
+      authProfile={authProfile}
+      accountSettings={accountSettings}
+      healthcareProviders={healthcareProviders}
+      insuranceProviders={insuranceProviders}
+    />
+  );
   return (
     <PatientSettings
       authProfile={authProfile}

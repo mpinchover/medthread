@@ -250,37 +250,31 @@ export const HeadlessDropdown = ({
       ref={dropDownRef}
       className={`${
         isOpen ? "flex" : "hidden"
-      }  absolute top-full w-72 bg-black text-gray-300 shadow-md flex-col right-0 `}
+      }  rounded-md  shadow-md overflow-hidden absolute top-full w-72 bg-gray-50 text-gray-500  flex-col right-0 z-30`}
     >
       {options.map((e, i) => {
-        if (e.link) {
-          return (
-            <li
-              key={i}
-              className="border border-t-0 last:border-b-0 hover:text-white"
-            >
-              <div className="text-left w-full p-6 flex flex-row items-center">
-                {e.icon ? <div className="mr-2">{<e.icon />}</div> : null}
-                <a href={e.link}>{e.display}</a>
-              </div>
-            </li>
-          );
-        }
         return (
-          <li
-            key={i}
-            className="border border-t-0 last:border-b-0 hover:text-white"
-          >
-            <button
-              className="text-left w-full p-6"
-              name={e.name}
-              onClick={handleClick}
-            >
-              <div className="flex flex-row items-center">
+          <li key={i} className="last:border-0 border-b hover:text-black">
+            {e.link ? (
+              <a
+                href={e.link}
+                className="text-left w-full p-6 flex flex-row items-center"
+              >
                 {e.icon ? <div className="mr-2">{<e.icon />}</div> : null}
-                <div>{e.display}</div>
-              </div>
-            </button>
+                <span>{e.display}</span>
+              </a>
+            ) : (
+              <button
+                className="text-left w-full p-6 "
+                name={e.name}
+                onClick={handleClick}
+              >
+                <div className="flex flex-row items-center">
+                  {e.icon ? <div className="mr-2">{<e.icon />}</div> : null}
+                  <div>{e.display}</div>
+                </div>
+              </button>
+            )}
           </li>
         );
       })}

@@ -11,18 +11,17 @@ import {
 } from "recoil";
 
 import { FaPills } from "react-icons/fa";
-import { withPrivateRoute } from "./hocs";
-import axios from "axios";
+import { withPrivateRoute } from "../hocs";
 import { getAuth } from "firebase/auth";
-import { FirebaseContext } from "../firebase/firebase-context";
-import { TextInput, DatePicker, LoadingWindow } from "./common";
+import { FirebaseContext } from "../../firebase/firebase-context";
+import { TextInput, DatePicker, LoadingWindow } from "../common";
 import {
   accountUpdateState,
   addInsuranceProviderCallback,
   removeInsuranceProviderCallback,
   isAccountLoadingState,
   isAccountLoadingStateV2,
-} from "../recoil/account/account";
+} from "../../recoil/account/account";
 
 const PatientSettings = ({ authProfile, accountSettings }) => {
   const navigate = useNavigate();
@@ -33,7 +32,7 @@ const PatientSettings = ({ authProfile, accountSettings }) => {
   const [accountUpdates, setAccountUpdates] =
     useRecoilState(accountUpdateState);
 
-  const [passwordValue, setPasswordValue] = useState("");
+  const [passwordValue, setPasswordValue] = useState("somepassword");
   const [email, setEmail] = useState(authProfile.email);
   const [activeRemoveInsuranceUid, setActiveRemoveInsuranceUid] = useState("");
 
@@ -64,7 +63,7 @@ const PatientSettings = ({ authProfile, accountSettings }) => {
 
   const handleSavePassword = (e) => {
     updateUserPassword(passwordValue);
-    setPasswordValue("");
+    setPasswordValue("somepassword");
   };
 
   const handleClick = (e) => {
@@ -87,8 +86,9 @@ const PatientSettings = ({ authProfile, accountSettings }) => {
         ...accountUpdates,
         isUpdatingPassword: true,
       });
-    } else if (name === "CANCEL_PASSWORD") {
       setPasswordValue("");
+    } else if (name === "CANCEL_PASSWORD") {
+      setPasswordValue("somepassword");
       setAccountUpdates({
         ...accountUpdates,
         isUpdatingPassword: false,
@@ -100,7 +100,17 @@ const PatientSettings = ({ authProfile, accountSettings }) => {
     return (
       <>
         <section className="mb-6">
-          <div className="text-3xl font-bold ">Insurance providers</div>
+          <div className="text-xl md:text-3xl font-bold  ">
+            Insurance providers
+          </div>
+          <a
+            target="_blank"
+            className="text-blue-500 font-bold"
+            href="https://www.youtube.com/watch?v=np0UVYlnWGw"
+          >
+            See example
+          </a>
+
           <section>
             {accountSettings?.insuranceProviders?.map((element, i) => {
               return (
@@ -147,7 +157,7 @@ const PatientSettings = ({ authProfile, accountSettings }) => {
         <section>
           <button
             onClick={openFlexpaLink}
-            className="p-3 px-6 font-bold border rounded-lg bg-black text-white"
+            className="w-full md:w-auto p-3 px-6 font-bold border rounded-lg bg-black text-white"
           >
             Add insurance provider
           </button>
@@ -161,9 +171,9 @@ const PatientSettings = ({ authProfile, accountSettings }) => {
   }
 
   return (
-    <div className="px-2 md:px-28 p-2 md:py-10 flex flex-1 flex-col">
+    <div className="px-8 md:px-28 py-8 md:py-10 flex flex-1 flex-col">
       <section className="mb-16">
-        <div className="text-3xl font-bold mb-6 ">Account</div>
+        <div className="text-xl md:text-3xl font-bold mb-6 ">Account</div>
         <section className=" flex flex-col space-y-6">
           <section className="m-0 flex flex-row justify-between items-center">
             <TextInput
@@ -174,13 +184,23 @@ const PatientSettings = ({ authProfile, accountSettings }) => {
               label="Email"
             />
             {accountUpdates.isUpdatingEmail ? (
-              <button
-                name={"CANCEL_EMAIL"}
-                onClick={handleClick}
-                className=" font-bold"
-              >
-                Cancel
-              </button>
+              <div className="ml-4 space-x-2 flex flex-row">
+                <button
+                  name={"CANCEL_EMAIL"}
+                  onClick={handleClick}
+                  className=" font-bold"
+                >
+                  Cancel
+                </button>
+                <div className="border-l h-[20px] border-black"></div>
+                <button
+                  name={"SAVE_EMAIL"}
+                  onClick={handleSaveEmail}
+                  className=" font-bold"
+                >
+                  Save
+                </button>
+              </div>
             ) : (
               <button
                 name={"EDIT_EMAIL"}
@@ -191,61 +211,53 @@ const PatientSettings = ({ authProfile, accountSettings }) => {
               </button>
             )}
           </section>
-
-          {accountUpdates.isUpdatingEmail ? (
-            <section className="">
-              <button
-                name="SAVE_EMAIL"
-                onClick={handleSaveEmail}
-                className=" p-3 px-6 font-bold border rounded-lg bg-black text-white"
-              >
-                Save
-              </button>
-            </section>
-          ) : null}
         </section>
         <div className="border-b my-6"></div>
 
-        <section className="space-y-6">
-          <section className="flex flex-row justify-between">
+        <section className=" flex flex-col space-y-6">
+          <section className="m-0 flex flex-row justify-between items-center">
+            <TextInput
+              disabled={!accountUpdates.isUpdatingPassword}
+              onChange={(e) => setPasswordValue(e.target.value)}
+              name="password"
+              type={accountUpdates.isUpdatingPassword ? "text" : "password"}
+              value={
+                accountUpdates.isUpdatingPassword
+                  ? passwordValue
+                  : "somepassword"
+              }
+              label={
+                accountUpdates.isUpdatingPassword ? "New password" : "password"
+              }
+            />
             {accountUpdates.isUpdatingPassword ? (
-              <TextInput
-                onChange={(e) => setPasswordValue(e.target.value)}
-                name="password"
-                type="password"
-                value={passwordValue}
-                label="New password"
-              />
+              <div className="ml-4 space-x-2 flex flex-row">
+                <button
+                  name={"CANCEL_PASSWORD"}
+                  onClick={handleClick}
+                  className=" font-bold"
+                >
+                  Cancel
+                </button>
+                <div className="border-l h-[20px] border-black"></div>
+                <button
+                  name="SAVE_PASSWORD"
+                  onClick={handleSavePassword}
+                  className=" font-bold"
+                >
+                  Save
+                </button>
+              </div>
             ) : (
               <button
                 name={"EDIT_PASSWORD"}
                 onClick={handleClick}
-                className="p-3 px-6 font-bold border rounded-lg bg-black text-white"
-              >
-                Update password
-              </button>
-            )}
-            {accountUpdates.isUpdatingPassword ? (
-              <button
-                name={"CANCEL_PASSWORD"}
-                onClick={handleClick}
                 className=" font-bold"
               >
-                Cancel
+                Edit
               </button>
-            ) : null}
+            )}
           </section>
-          {accountUpdates.isUpdatingPassword ? (
-            <section>
-              <button
-                name="SAVE_PASSWORD"
-                onClick={handleSavePassword}
-                className=" p-3 px-6 font-bold border rounded-lg bg-black text-white"
-              >
-                Save
-              </button>
-            </section>
-          ) : null}
         </section>
       </section>
       {authProfile.role === "PATIENT" && renderInsuranceProviders()}

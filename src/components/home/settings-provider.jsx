@@ -5,14 +5,12 @@ import { useState, useContext, useEffect } from "react";
 import {
   isUpdatingProfileAccountState,
   profileAccountState,
-} from "../recoil/profile/profile";
-import { TextInput } from "./common";
+} from "../../recoil/profile/profile";
+import { TextInput } from "../common";
 import { useRecoilValue } from "recoil";
-import { FaPills } from "react-icons/fa";
-import { withPrivateRoute } from "./hocs";
-import axios from "axios";
+import { withPrivateRoute } from "../hocs";
 import { getAuth } from "firebase/auth";
-import { FirebaseContext } from "../firebase/firebase-context";
+import { FirebaseContext } from "../../firebase/firebase-context";
 
 const InsuranceProvider = ({ providerName }) => {
   return (

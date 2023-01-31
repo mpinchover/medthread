@@ -4,12 +4,12 @@ import {
   createUserWithEmailAndPassword,
   updateProfile,
 } from "firebase/auth";
-import { FirebaseContext } from "../firebase/firebase-context";
+import { FirebaseContext } from "../../firebase/firebase-context";
 import { collection, addDoc, getFirestore } from "firebase/firestore";
 import { useNavigate } from "react-router-dom";
 import { useRecoilValue } from "recoil";
-import { authorizedProfileState } from "../recoil/auth/auth";
-import { withPrivateRoute } from "./hocs";
+import { authorizedProfileState } from "../../recoil/auth/auth";
+import { withPrivateRoute } from "../hocs";
 
 const UpdatePassword = () => {
   const navigate = useNavigate();

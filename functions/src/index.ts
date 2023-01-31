@@ -22,6 +22,7 @@ import { getPatientTimelineDataForProvider } from "./handlers/get-patient-timeli
 import { getPatientsByHealthcareProviderUid } from "./handlers/get-patients-by-healthcare-provider-uid";
 import { sendRequestForEMRDataForEOBEvent } from "./handlers/send-request-for-emr-data-for-eob-event";
 // import { getMedicationsByPatientUid } from "./get-medications-by-patient-uid";
+// import { publicIp, publicIpv4, publicIpv6 } from "public-ip";
 const app = express();
 
 // https://firebase.google.com/docs/firestore/query-data/get-data#get_multiple_documents_from_a_collection
@@ -53,6 +54,15 @@ const validateFirebaseIdToken = async (req: any, res: any, next: any) => {
     return;
   }
 };
+
+app.get("/test-fn", async (req, res) => {
+  try {
+    // const outboundIP = await publicIp();
+    res.send({ success: "success" });
+  } catch (e) {
+    res.status(501).send({ error: e });
+  }
+});
 
 app.post(
   "/get-patients-by-healthcare-provider-uid",

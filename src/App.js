@@ -20,7 +20,7 @@ import PatientHomepage from "./components/homepage-patient";
 import PatientAuthorizationPage from "./components/patient-authorization-page";
 import PatientSignup from "./components/signup-patient";
 import ForgotPassword from "./components/forgot-password";
-import Settings from "./components/settings";
+import Settings from "./components/home/settings";
 
 import { BrowserRouter as Router, Route, Link, Routes } from "react-router-dom";
 import MedicationListProvider from "./components/medication-list-provider";
@@ -29,7 +29,7 @@ import VerificationPage from "./components/verification-page";
 import MedicationListPatient from "./components/medication-list-patient";
 import TermsOfService from "./components/terms-of-service";
 import PatientTimeline from "./components/patient-timeline";
-import Home from "./components/home";
+import Home from "./components/home/settings";
 import { accountSettingsState } from "./recoil/account/account";
 import GetEmrRecordsModal from "./components/modals/get-emr-records-modal";
 import SendMedicationsModal from "./components/medication-modal-send-meds";

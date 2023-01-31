@@ -13,9 +13,9 @@ import { modalState } from "../recoil/utils/utils";
 import { useRecoilState } from "recoil";
 
 const navbarDropdownMenuOptions = [
-  { name: "RECORDS", display: "Records", icon: TbFiles },
-  { name: "ACCOUNT", display: "Account", icon: MdAccountCircle },
-  { name: "SEND_RECORDS", display: "Send records", icon: RiSendPlaneFill },
+  // { name: "RECORDS", display: "Records", icon: TbFiles },
+  // { name: "ACCOUNT", display: "Account", icon: MdAccountCircle },
+  // { name: "SEND_RECORDS", display: "Send records", icon: RiSendPlaneFill },
   {
     name: "CONTACT",
     link: "mailto:info@usemedthread.com",
@@ -73,7 +73,7 @@ const PatientNavbar = ({ authUser }) => {
   return (
     <div
       id="navbar"
-      className="shadow-sm py-7 px-2 md:px-28 flex flex-row sticky top-0 z-50  bg-[#030c1a] "
+      className="shadow-sm py-7 px-8 md:px-28 flex flex-row sticky top-0 z-50  bg-gradient-to-r from-cyan-600 to-blue-500"
     >
       <div className="flex-1 flex flex-row ">
         <button
