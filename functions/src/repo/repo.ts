@@ -5,83 +5,87 @@ import {
   Profile,
   AuthProfile,
 } from "../types";
+import Database from "./mysql";
 
-export const getUserProfile = async (uid: string): Promise<Profile> => {
+const profilesTable = "profiles";
+
+export const getUserProfile = async (uuid: string): Promise<Profile> => {
   try {
-    const profiles = await admin.firestore().collection("profiles");
+    const conn = await Database.getDb();
 
-    const snapshot = await profiles.where("userUid", "==", uid).get();
-
-    if (!snapshot || snapshot.empty) return null;
-
-    const profile: Profile = snapshot.docs[0].data();
-
-    const profileId = snapshot.docs[0].id;
-    profile.uid = profileId;
-
-    return profile;
+    const query = `select * from ${profilesTable} where userUuid = ?`;
+    const params: any[] = [uuid];
+    const [rows] = await conn.query<any>(query, params);
+    if (rows?.length === 0) return null;
+    return rows[0];
   } catch (e) {
     console.log(e);
     throw e;
   }
 };
 
-export const getUserProfilesByUids = async (
-  uids: string[]
+export const getUserProfilesByUuids = async (
+  uuids: string[]
 ): Promise<Profile[]> => {
   try {
-    const profiles = await admin.firestore().collection("profiles");
+    const profiles: Profile[] = [];
+    if (uuids.length === 0) return profiles;
 
-    const snapshot = await profiles.where("userUid", "in", uids).get();
+    const conn = await Database.getDb();
 
-    if (!snapshot || snapshot.empty) return [];
-
-    return snapshot.docs.map((doc) => {
-      return doc.data();
-    });
+    const query = `select * from ${profilesTable} where userUuid in (?)`;
+    const params: any[] = [uuids];
+    const [rows] = await conn.query<any>(query, params);
+    for (const record of rows) {
+      profiles.push(record);
+    }
+    return profiles;
   } catch (e) {
     console.log(e);
     throw e;
   }
 };
 
-export const getDerivedMedications = async (userUid: string) => {
-  const medicationsRef = await admin.firestore().collection("medications");
-  const snapshot = await medicationsRef.where("userUid", "==", userUid).get();
-  if (snapshot.empty) return [];
-  return snapshot.docs.map((e: any) => {
-    const med: Medication = e.data();
-    med.uid = e.id;
-    med.source = "PATIENT";
-    return med;
-  });
-};
+// export const getDerivedMedications = async (userUid: string) => {
+//   const medicationsRef = await admin.firestore().collection("medications");
+//   const snapshot = await medicationsRef.where("userUid", "==", userUid).get();
+//   if (snapshot.empty) return [];
+//   return snapshot.docs.map((e: any) => {
+//     const med: Medication = e.data();
+//     med.uid = e.id;
+//     med.source = "PATIENT";
+//     return med;
+//   });
+// };
 
 export const getAuthProfile = async (uid: string) => {
   const authProfile: AuthProfile = await admin.auth().getUser(uid);
   return authProfile;
 };
 
-export const hydrateUserProfile = async (userUid: string): Promise<Profile> => {
-  if (!userUid) return null;
+export const hydrateUserProfile = async (
+  userUuid: string
+): Promise<Profile> => {
+  if (!userUuid) return null;
 
-  const db = admin.firestore();
-  const profilesRef = db.collection("profiles");
-  const snapshot = await profilesRef.where("userUid", "==", userUid).get();
+  const conn = await Database.getDb();
 
-  if (snapshot.empty) return null;
-  return snapshot.docs[0].data();
+  const query = `select * from ${profilesTable} where userUuid = ?`;
+  const params: any[] = [userUuid];
+  const [rows] = await conn.query<any>(query, params);
+  if (rows.length === 0) return null;
+  return rows[0];
 };
 
 export const createHydratedUserProfile = async (
-  params: Profile
+  profile: Profile
 ): Promise<Profile> => {
-  const db = admin.firestore();
+  const conn = await Database.getDb();
 
-  const profilesDocRef = db.collection("profiles").doc();
-  params.uid = profilesDocRef.id;
-  await profilesDocRef.set(params);
-  return params;
+  const query = `insert into ${profilesTable} set ?`;
+  const params: any[] = [profile];
+  await conn.query<any>(query, params);
+  return profile;
 };
 
 // export const getPatientsByProviderUid = async (providerUid: string) => {

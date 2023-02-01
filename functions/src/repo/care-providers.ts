@@ -1,6 +1,6 @@
 import * as admin from "firebase-admin";
 import { AuthorizedCareProviderLink, AuthProfile, Profile } from "../types";
-import { getUserProfile, getUserProfilesByUids } from "./repo";
+import { getUserProfile, getUserProfilesByUuids } from "./repo";
 import { AUTHORIZED_CARE_PROVIDER_LINKS_COLLECTION } from "../config/constants";
 import { stringSplitIntoBatches } from "../utils/utils";
 import Database from "./mysql";
@@ -77,7 +77,7 @@ export const getPatientsByHealthcareProviderUid = async (
 
   await Promise.allSettled(
     patientUuidBatches.map((batch) => {
-      return getUserProfilesByUids(batch);
+      return getUserProfilesByUuids(batch);
     })
   ).then((results) => {
     results.forEach((result) => {

@@ -220,92 +220,39 @@ export const getClaimsMedicationDispenseByUserUid = async (
 export const getClaimsProcedureByUserUid = async (
   filter: PatientRecordsQueryFilter
 ): Promise<Procedure[]> => {
-  const db = admin.firestore();
-
-  const procedureRef = db.collection(procedureCollection);
-  const snapshot = await procedureRef
-    .where("userUid", "==", filter.userUid)
-    .get();
-
-  if (snapshot.empty) return [];
-
-  const res: Procedure[] = snapshot.docs.map((doc) => {
-    const data: any = doc.data();
-    return {
-      ...data,
-      uid: doc.id,
-    };
-  });
-  return res;
+  const procedures: Procedure[] = await getClaimsItemByUserUuid(
+    procedureTable,
+    filter.userUuid
+  );
+  return procedures;
 };
 
 export const getClaimsEncounterByUserUid = async (
   filter: PatientRecordsQueryFilter
-): Promise<Procedure[]> => {
-  const db = admin.firestore();
-
-  const encounterRef = db.collection(encounterCollection);
-
-  let query = encounterRef.where("userUid", "==", filter.userUid);
-  if (filter.encounterTypes?.length > 0) {
-    query = query.where("code", "in", filter.encounterTypes);
-  }
-  const snapshot = await query.get();
-
-  if (snapshot.empty) return [];
-
-  const res: Encounter[] = snapshot.docs.map((doc) => {
-    const data: any = doc.data();
-    return {
-      ...data,
-      uid: doc.id,
-    };
-  });
-  return res;
+): Promise<Encounter[]> => {
+  const encounters: Encounter[] = await getClaimsItemByUserUuid(
+    encounterTable,
+    filter.userUuid
+  );
+  return encounters;
 };
 
 export const getClaimsConditionByUserUid = async (
   filter: PatientRecordsQueryFilter
 ): Promise<Condition[]> => {
-  const db = admin.firestore();
-
-  const conditionRef = db.collection(conditionCollection);
-  const snapshot = await conditionRef
-    .where("userUid", "==", filter.userUid)
-    .get();
-
-  if (snapshot.empty) return [];
-
-  const res: Condition[] = snapshot.docs.map((doc) => {
-    const data: any = doc.data();
-    return {
-      ...data,
-      uid: doc.id,
-    };
-  });
-  return res;
+  const conditions: Condition[] = await getClaimsItemByUserUuid(
+    conditionTable,
+    filter.userUuid
+  );
+  return conditions;
 };
 
 export const getClaimsAllergyIntoleranceByUserUid = async (
   filter: PatientRecordsQueryFilter
 ): Promise<AllergyIntolerance[]> => {
-  const db = admin.firestore();
-
-  const allergyIntoleranceRef = db.collection(allergyIntoleranceCollection);
-  const snapshot = await allergyIntoleranceRef
-    .where("userUid", "==", filter.userUid)
-    .get();
-
-  if (snapshot.empty) return [];
-
-  const res: AllergyIntolerance[] = snapshot.docs.map((doc) => {
-    const data: any = doc.data();
-    return {
-      ...data,
-      uid: doc.id,
-    };
-  });
-  return res;
+  const allergyIntolerance: AllergyIntolerance[] =
+    await getClaimsItemByUserUuid(allergyIntoleranceTable, filter.userUuid);
+  return allergyIntolerance;
 };
 
 // need make this in batches
@@ -360,17 +307,19 @@ export const getProceduresByFhirReferences = async (references: string[]) => {
   return new Promise(async (res, rej) => {
     try {
       if (references.length === 0) return res([]);
-      const db = admin.firestore();
 
-      const proceduresRef = db.collection(procedureCollection);
-      const snapshot = await proceduresRef
-        .where("fhirReference", "in", references)
-        .get();
+      const conn = await Database.getDb();
 
-      if (snapshot.empty) res([]);
+      const query = `select * from ${procedureTable} where fhirReference in (?)`;
+      const params: any[] = [references];
+      const [rows] = await conn.query<any>(query, params);
+      const items: any[] = [];
 
-      const result: Procedure[] = snapshot.docs.map((doc) => doc.data());
-      res(result);
+      for (const record of rows) {
+        items.push(record);
+      }
+      return items;
+      res(items);
     } catch (e) {
       console.log(e);
       rej(e);
@@ -381,21 +330,9 @@ export const getProceduresByFhirReferences = async (references: string[]) => {
 export const getClaimsImmunizationByUserUid = async (
   filter: PatientRecordsQueryFilter
 ): Promise<Immunization[]> => {
-  const db = admin.firestore();
-
-  const immunizationRef = db.collection(immunizationCollection);
-  const snapshot = await immunizationRef
-    .where("userUid", "==", filter.userUid)
-    .get();
-
-  if (snapshot.empty) return [];
-
-  const res: Immunization[] = snapshot.docs.map((doc) => {
-    const data: any = doc.data();
-    return {
-      ...data,
-      uid: doc.id,
-    };
-  });
-  return res;
+  const immunizations: Immunization[] = await getClaimsItemByUserUuid(
+    immunizationTable,
+    filter.userUuid
+  );
+  return immunizations;
 };
