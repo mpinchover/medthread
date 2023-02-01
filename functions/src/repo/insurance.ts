@@ -14,205 +14,131 @@ import {
   PatientRecordsQueryFilter,
   ExplanationOfBenefit,
 } from "../types";
-const medicationRequestCollection = "medicationRequest";
-const allergyIntoleranceCollection = "allergyIntolerance";
-const medicationDispenseCollection = "medicationDispense";
-const procedureCollection = "procedure";
-const immunizationCollection = "immunization";
-const conditionCollection = "condition";
-const insuranceProvidersCollection = "insuranceProviders";
-const encounterCollection = "encounters";
-const careTeamCollection = "careTeams";
-const observationCollection = "observations";
-const explanationOfBenefitCollection = "explanationOfBenefit";
+import Database from "./mysql";
+const medicationRequestTable = "claimsMedicationRequest";
+const allergyIntoleranceTable = "claimsAllergyTolerance";
+const medicationDispenseTable = "claimsMedicationDispense";
+const procedureTable = "claimsProcedure";
+const immunizationTable = "claimsImmunization";
+const conditionTable = "claimsCondition";
+const insuranceProvidersTable = "insuranceProviders";
+const encounterTable = "claimsEncounter";
+const careTeamTable = "claimsCareTeam";
+const observationTable = "claimsObesrvation";
+const explanationOfBenefitTable = "claimsExplanationOfBenefit";
 
 export const addInsuranceProviderForPatient = async (
-  params: InsuranceProvider
+  insuranceProvider: InsuranceProvider
 ) => {
   try {
-    const db = admin.firestore();
-    const insuranceProviderDocRef = db
-      .collection(insuranceProvidersCollection)
-      .doc();
-    params.uid = insuranceProviderDocRef.id;
-    await insuranceProviderDocRef.set(params);
+    const conn = await Database.getDb();
+    const query = `insert into ${insuranceProvidersTable} set ?`;
+    const params: any[] = [insuranceProvider];
+
+    await conn.query<any>(query, params);
   } catch (e) {
     console.log(e);
   }
-  return params;
+  return insuranceProvider;
 };
 
-export const updateAccessTokenForInsuranceProvider = async (
-  uid: string,
-  accessToken: string
-) => {
-  const db = admin.firestore();
-  const docRef = db.collection(insuranceProvidersCollection).doc(uid);
-  await docRef.update({ accessToken });
-};
+// export const updateAccessTokenForInsuranceProvider = async (
+//   uid: string,
+//   accessToken: string
+// ) => {
+//   const db = admin.firestore();
+//   const docRef = db.collection(insuranceProvidersCollection).doc(uid);
+//   await docRef.update({ accessToken });
+// };
 
-export const getInsuranceProvidersByUserUid = async (
-  userUid: string
+export const getInsuranceProvidersByUserUuid = async (
+  userUuid: string
 ): Promise<null | InsuranceProvider[]> => {
-  const db = admin.firestore();
-  const insuranceProvidersRef = db.collection(insuranceProvidersCollection);
-  const snapshot = await insuranceProvidersRef
-    .where("userUid", "==", userUid)
-    .get();
+  const conn = await Database.getDb();
+  const query = `select * from ${insuranceProvidersTable} where userUuid = ?`;
+  const params: any[] = [userUuid];
 
-  if (snapshot.empty) return [];
-  return snapshot.docs.map((doc) => {
-    const data: any = doc.data();
-    const uid = doc.id;
-    return {
-      ...data,
-      uid,
-    };
-  });
+  const [rows] = await conn.query<any>(query, params);
+  if (rows?.length === 0) return [];
+
+  const providers: InsuranceProvider[] = [];
+  for (const record of rows) {
+    providers.push(record);
+  }
+  return providers;
 };
 
-export const removeHealthInsuranceProvider = async (
-  insuranceProviderUid: string
-) => {
-  const db = admin.firestore();
-  const insuranceProvidersRef = db.collection(insuranceProvidersCollection);
-  await insuranceProvidersRef.doc(insuranceProviderUid).delete();
-};
+// export const removeHealthInsuranceProvider = async (
+//   insuranceProviderUid: string
+// ) => {
+//   const db = admin.firestore();
+//   const insuranceProvidersRef = db.collection(insuranceProvidersCollection);
+//   await insuranceProvidersRef.doc(insuranceProviderUid).delete();
+// };
 
-export const getInsuranceProviderByUserUidAndName = async (
-  providerName: string,
-  userUid: string
+export const getInsuranceProviderByUserUuidAndName = async (
+  providerUuid: string, // i tthink is uuid for now?
+  userUuid: string
 ): Promise<null | InsuranceProvider> => {
-  const db = admin.firestore();
-  const insuranceProvidersRef = db.collection(insuranceProvidersCollection);
-  const snapshot = await insuranceProvidersRef
-    .where("providerName", "==", providerName)
-    .where("userUid", "==", userUid)
-    .get();
+  const conn = await Database.getDb();
 
-  if (snapshot.empty) return null;
+  const query = `select * from ${insuranceProvidersTable} where providerUuid = ? and userUuid = ?`;
+  const params: any[] = [providerUuid, userUuid];
 
-  const data: any = snapshot.docs[0].data();
-  const uid = snapshot.docs[0].id;
-
-  const res: InsuranceProvider = {
-    ...data,
-    uid,
-  };
-  return res;
-};
-
-export const getHealthInsuranceProvidersByPatientUid = async (
-  userUid: string
-): Promise<InsuranceProvider[]> => {
-  const db = admin.firestore();
-  const insuranceProvidersRef = db.collection(insuranceProvidersCollection);
-  const snapshot = await insuranceProvidersRef
-    .where("userUid", "==", userUid)
-    .get();
-
-  if (snapshot.empty) return [];
-
-  const res: InsuranceProvider[] = snapshot.docs.map((doc) => {
-    const data: any = doc.data();
-    return {
-      ...data,
-      uid: doc.id,
-    };
-  });
-
-  return res;
+  const [rows] = await conn.query<any>(query, params);
+  if (rows?.length === 0) return null;
+  return rows[0];
 };
 
 export const batchWriteClaimsData = async (
   claimsDataToWrite: ClaimsData
 ): Promise<ClaimsData> => {
   try {
-    const db = admin.firestore();
-    const batch = db.batch();
+    const conn = await Database.getDb();
 
-    for (let i = 0; i < claimsDataToWrite.explanationOfBenefit.length; i++) {
-      const doc: ExplanationOfBenefit =
-        claimsDataToWrite.explanationOfBenefit[i];
-      const docRef = db.collection(explanationOfBenefitCollection).doc();
-      doc.uid = docRef.id;
-      batch.set(docRef, doc);
-      claimsDataToWrite.explanationOfBenefit[i] = doc;
-    }
+    await conn.query("START TRANSACTION");
 
-    for (let i = 0; i < claimsDataToWrite.medicationRequest.length; i++) {
-      const doc: MedicationRequest = claimsDataToWrite.medicationRequest[i];
-      const docRef = db.collection(medicationRequestCollection).doc();
-      doc.uid = docRef.id;
-      batch.set(docRef, doc);
-      claimsDataToWrite.medicationRequest[i] = doc;
-    }
+    let query = `insert into ${explanationOfBenefitTable} set ?`;
+    let params: any[] = [claimsDataToWrite.explanationOfBenefit];
+    await conn.query(query, params);
 
-    for (let i = 0; i < claimsDataToWrite.allergyIntolerance.length; i++) {
-      const doc: AllergyIntolerance = claimsDataToWrite.allergyIntolerance[i];
-      const docRef = db.collection(allergyIntoleranceCollection).doc();
-      doc.uid = docRef.id;
-      batch.set(docRef, doc);
-      claimsDataToWrite.allergyIntolerance[i] = doc;
-    }
+    query = `insert into ${medicationRequestTable} set ?`;
+    params = [claimsDataToWrite.medicationRequest];
+    await conn.query(query, params);
 
-    for (let i = 0; i < claimsDataToWrite.medicationDispense.length; i++) {
-      const doc: MedicationDispense = claimsDataToWrite.medicationDispense[i];
-      const docRef = db.collection(medicationDispenseCollection).doc();
-      doc.uid = docRef.id;
-      batch.set(docRef, doc);
-      claimsDataToWrite.medicationDispense[i] = doc;
-    }
+    query = `insert into ${allergyIntoleranceTable} set ?`;
+    params = [claimsDataToWrite.allergyIntolerance];
+    await conn.query(query, params);
 
-    for (let i = 0; i < claimsDataToWrite.procedure.length; i++) {
-      const doc: Procedure = claimsDataToWrite.procedure[i];
-      const docRef = db.collection(procedureCollection).doc();
-      doc.uid = docRef.id;
-      batch.set(docRef, doc);
-      claimsDataToWrite.condition[i] = doc;
-    }
+    query = `insert into ${medicationDispenseTable} set ?`;
+    params = [claimsDataToWrite.medicationDispense];
+    await conn.query(query, params);
 
-    for (let i = 0; i < claimsDataToWrite.immunization.length; i++) {
-      const doc: Immunization = claimsDataToWrite.immunization[i];
-      const docRef = db.collection(immunizationCollection).doc();
-      doc.uid = docRef.id;
-      batch.set(docRef, doc);
-      claimsDataToWrite.immunization[i] = doc;
-    }
+    query = `insert into ${procedureTable} set ?`;
+    params = [claimsDataToWrite.procedure];
+    await conn.query(query, params);
 
-    for (let i = 0; i < claimsDataToWrite.condition.length; i++) {
-      const doc: Condition = claimsDataToWrite.condition[i];
-      const docRef = db.collection(conditionCollection).doc();
-      doc.uid = docRef.id;
-      batch.set(docRef, doc);
-      claimsDataToWrite.condition[i] = doc;
-    }
+    query = `insert into ${immunizationTable} set ?`;
+    params = [claimsDataToWrite.immunization];
+    await conn.query(query, params);
 
-    for (let i = 0; i < claimsDataToWrite.encounter.length; i++) {
-      const doc: Encounter = claimsDataToWrite.encounter[i];
-      const docRef = db.collection(encounterCollection).doc();
-      doc.uid = docRef.id;
-      batch.set(docRef, doc);
-      claimsDataToWrite.encounter[i] = doc;
-    }
+    query = `insert into ${conditionTable} set ?`;
+    params = [claimsDataToWrite.condition];
+    await conn.query(query, params);
 
-    for (let i = 0; i < claimsDataToWrite.observation.length; i++) {
-      const doc: Observation = claimsDataToWrite.observation[i];
-      const docRef = db.collection(observationCollection).doc();
-      doc.uid = docRef.id;
-      batch.set(docRef, doc);
-      claimsDataToWrite.observation[i] = doc;
-    }
+    query = `insert into ${encounterTable} set ?`;
+    params = [claimsDataToWrite.encounter];
+    await conn.query(query, params);
 
-    for (let i = 0; i < claimsDataToWrite.careTeam.length; i++) {
-      const doc: CareTeam = claimsDataToWrite.careTeam[i];
-      const docRef = db.collection(careTeamCollection).doc();
-      doc.uid = docRef.id;
-      batch.set(docRef, doc);
-      claimsDataToWrite.careTeam[i] = doc;
-    }
+    query = `insert into ${observationTable} set ?`;
+    params = [claimsDataToWrite.observation];
+    await conn.query(query, params);
 
-    await batch.commit();
+    query = `insert into ${careTeamTable} set ?`;
+    params = [claimsDataToWrite.careTeam];
+    await conn.query(query, params);
+
+    await conn.query("COMMIT");
     return claimsDataToWrite;
   } catch (e) {
     console.log(e);
@@ -221,104 +147,74 @@ export const batchWriteClaimsData = async (
 };
 
 export const batchWriteMedicationRequest = async (
-  params: MedicationRequest[]
+  medicationReqs: MedicationRequest[]
 ) => {
-  const db = admin.firestore();
-  const batch = db.batch();
+  const conn = await Database.getDb();
 
-  for (let i = 0; i < params.length; i++) {
-    const doc: MedicationRequest = params[i];
-    const docRef = db.collection(medicationRequestCollection).doc();
+  const query = `select * from ${medicationRequestTable} where careProviderUuid = ?`;
+  const params: any[] = [medicationReqs];
 
-    doc.uid = docRef.id;
-    batch.set(docRef, doc);
-    params[i] = doc;
-  }
-  await batch.commit();
-  return params;
+  await conn.query<any>(query, params);
+  return medicationReqs;
 };
 
 export const batchWriteAllergyIntolerances = async (
-  params: AllergyIntolerance[]
+  allergyIntolerances: AllergyIntolerance[]
 ) => {
-  const db = admin.firestore();
-  const batch = db.batch();
+  const conn = await Database.getDb();
 
-  for (let i = 0; i < params.length; i++) {
-    const doc: AllergyIntolerance = params[i];
-    const docRef = db.collection(allergyIntoleranceCollection).doc();
+  const query = `select * from ${allergyIntoleranceTable} where careProviderUuid = ?`;
+  const params: any[] = [allergyIntolerances];
 
-    doc.uid = docRef.id;
-    batch.set(docRef, doc);
-    params[i] = doc;
-  }
-  await batch.commit();
-  return params;
+  await conn.query<any>(query, params);
+  return allergyIntolerances;
 };
 
-export const getExplanationOfBenefitByUserUid = async (
+export const getClaimsItemByUserUuid = async (
+  table: string,
+  userUuid: string
+) => {
+  const conn = await Database.getDb();
+
+  const query = `select * from ${table} where userUuid = ?`;
+  const params: any[] = [userUuid];
+  const [rows] = await conn.query<any>(query, params);
+  const items: any[] = [];
+
+  for (const record of rows) {
+    items.push(record);
+  }
+  return items;
+};
+
+export const getExplanationOfBenefitByUserUuid = async (
   filter: PatientRecordsQueryFilter
 ): Promise<ExplanationOfBenefit[]> => {
-  const db = admin.firestore();
-
-  const explanationOfBenefit = db.collection(explanationOfBenefitCollection);
-  let query = explanationOfBenefit.where("userUid", "==", filter.userUid);
-
-  if (filter.encounterTypes?.length > 0) {
-    query = query.where("types", "array-contains-any", filter.encounterTypes);
-  }
-
-  const snapshot = await query.get();
-
-  if (snapshot.empty) return [];
-
-  const res: ExplanationOfBenefit[] = snapshot.docs.map((doc) => doc.data());
-
-  return res;
+  const eobs: ExplanationOfBenefit[] = await getClaimsItemByUserUuid(
+    explanationOfBenefitTable,
+    filter.userUuid
+  );
+  return eobs;
 };
 
 export const getClaimsMedicationRequestByUserUid = async (
   filter: PatientRecordsQueryFilter
 ): Promise<MedicationRequest[]> => {
-  const db = admin.firestore();
-
-  const medicationsReqRef = db.collection(medicationRequestCollection);
-  const snapshot = await medicationsReqRef
-    .where("userUid", "==", filter.userUid)
-    .get();
-
-  if (snapshot.empty) return [];
-
-  const res: MedicationRequest[] = snapshot.docs.map((doc) => {
-    const data: any = doc.data();
-    return {
-      ...data,
-      uid: doc.id,
-    };
-  });
-  return res;
+  const medReq: MedicationRequest[] = await getClaimsItemByUserUuid(
+    medicationRequestTable,
+    filter.userUuid
+  );
+  return medReq;
 };
 
 export const getClaimsMedicationDispenseByUserUid = async (
   filter: PatientRecordsQueryFilter
 ): Promise<MedicationDispense[]> => {
-  const db = admin.firestore();
-
-  const medicationsDisRef = db.collection(medicationDispenseCollection);
-  const snapshot = await medicationsDisRef
-    .where("userUid", "==", filter.userUid)
-    .get();
-
-  if (snapshot.empty) return [];
-
-  const res: MedicationDispense[] = snapshot.docs.map((doc) => {
-    const data: any = doc.data();
-    return {
-      ...data,
-      uid: doc.id,
-    };
-  });
-  return res;
+  const medDis: MedicationDispense[] = await getClaimsItemByUserUuid(
+    medicationDispenseTable,
+    filter.userUuid
+  );
+  return medDis;
 };
 
 export const getClaimsProcedureByUserUid = async (

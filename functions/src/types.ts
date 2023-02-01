@@ -1,13 +1,13 @@
 export interface AuthorizedCareProviderLink {
-  careProviderUid?: string;
+  careProviderUuid?: string;
   careProviderEmail?: string;
-  patientUid?: string;
+  patientUuid?: string;
   providerName?: string;
-  uid?: string;
+  uuid?: string;
 }
 
 export interface Medication {
-  uid?: string;
+  uuid?: string;
   dateStarted?: Date;
   medicationName?: string;
   source?: string;
@@ -51,7 +51,7 @@ export interface DerivedMedication {
 }
 
 export interface MedicationRequest {
-  uid?: string;
+  uuid?: string;
   authoredOn?: string; // when request was made
   code?: string;
   codeDisplay?: string;
@@ -65,16 +65,16 @@ export interface MedicationRequest {
   doseAndRateQuantityValue?: number;
   doseAndRateQuantityUnit?: string;
   fhirReference?: string;
-  insuranceProviderUid?: string;
-  userUid?: string;
+  insuranceProviderUuid?: string;
+  userUuid?: string;
   primaryDate?: string;
   resourceType?: string;
 }
 
 export interface MedicationDispense {
-  uid?: string;
+  uuid?: string;
   fhirReference?: string;
-  insuranceProviderUid?: string;
+  insuranceProviderUuid?: string;
   status?: string;
   code?: string;
   codeDisplay?: string;
@@ -85,15 +85,15 @@ export interface MedicationDispense {
   whenHandedOver?: string;
   intent?: string;
   source?: string;
-  userUid?: string;
+  userUuid?: string;
   primaryDate?: string;
   resourceType?: string;
 }
 
 export interface AllergyIntolerance {
-  uid?: string;
+  uuid?: string;
   fhirReference?: string;
-  insuranceProviderUid?: string;
+  insuranceProviderUuid?: string;
   source?: string;
   clinicalStatus?: string;
   verificationStatus?: string;
@@ -106,13 +106,13 @@ export interface AllergyIntolerance {
   reactionManifestation?: string;
   recorderIdentifier?: string;
   asserterIdentifier?: string;
-  userUid?: string;
+  userUuid?: string;
   primaryDate?: string;
   resourceType?: string;
 }
 
 export interface Condition {
-  uid?: string;
+  uuid?: string;
   fhirReference?: string;
   insuranceProviderUid?: string;
   source?: string;
@@ -121,29 +121,29 @@ export interface Condition {
   category?: string;
   code?: string;
   codeDisplay?: string; // the condition
-  userUid?: string;
+  userUuid?: string;
   primaryDate?: string;
   resourceType?: string;
 }
 
 export interface Immunization {
-  uid?: string;
+  uuid?: string;
   fhirReference?: string;
-  insuranceProviderUid?: string;
+  insuranceProviderUuid?: string;
   source?: string;
   status?: string;
   code?: string;
   codeDisplay?: string; // the vaccine display
   occurenceDateTime?: string;
-  userUid?: string;
+  userUuid?: string;
   primaryDate?: string;
   resourceType?: string;
 }
 
 export interface Procedure {
-  uid?: string;
+  uuid?: string;
   fhirReference?: string;
-  insuranceProviderUid?: string;
+  insuranceProviderUuid?: string;
   source?: string;
   status?: string;
   code?: string;
@@ -153,22 +153,22 @@ export interface Procedure {
   recorderIdentifier?: string;
   performer?: string;
   performerIdentifier?: string; // NPI code
-  userUid?: string;
+  userUuid?: string;
   primaryDate?: string;
   resourceType?: string;
 }
 
 export interface Encounter {
-  uid?: string;
+  uuid?: string;
   fhirReference?: string;
-  insuranceProviderUid?: string;
+  insuranceProviderUuid?: string;
   source?: string;
-  userUid?: string;
+  userUuid?: string;
   status?: string;
-  start?: string;
-  end?: string;
+  start?: string | Date;
+  end?: string | Date;
   code?: string;
-  primaryDate?: string;
+  primaryDate?: string | Date;
   resourceType?: string;
 }
 
@@ -180,14 +180,14 @@ export interface CareTeamParticipant {
 }
 
 export interface CareTeam {
-  uid?: string;
+  uuid?: string;
   fhirReference?: string;
   insuranceProviderUid?: string;
   source?: string;
-  userUid?: string;
+  userUuid?: string;
   status?: string;
   participants?: CareTeamParticipant[];
-  primaryDate?: string;
+  primaryDate?: string | Date;
   resourceType?: string;
 }
 
@@ -212,25 +212,26 @@ export interface ClaimsData {
 }
 
 export interface Observation {
-  uid?: string;
+  uuid?: string;
   source?: string;
   status?: string;
   category?: string;
   code?: string;
   codeDisplay?: string;
-  effectiveDateTime?: string;
+  effectiveDateTime?: string | Date;
   issued?: string;
-  userUid?: string;
+  userUuid?: string;
   fhirReference?: string;
-  primaryDate?: string;
+  primaryDate?: string | Date;
   resourceType?: string;
 }
 
 export interface Profile {
-  uid?: string;
+  authUid?: string; // firebase auth link
+  uuid?: string;
   role?: string;
   account?: UserAccount;
-  userUid?: string;
+  userUuid?: string;
 }
 export interface UserAccount {
   nameValue?: string;
@@ -249,11 +250,11 @@ export interface AddHealthInsuranceProviderResponse {
 }
 
 export interface InsuranceProvider {
-  userUid: string;
+  userUuid: string;
   accessToken: string;
   providerName: string;
   // providerCode: string;
-  uid?: string;
+  uuid?: string;
   capabilities: string[];
 }
 
@@ -276,15 +277,15 @@ export interface PatientRecordsQueryFilter {
   immunization?: boolean;
   allergyIntolernace?: boolean;
   condition?: boolean;
-  userUid?: string;
+  userUuid?: string;
 }
 
 // TODO
 // use npi code api?
 // https://clinicaltables.nlm.nih.gov/apidoc/npi_org/v3/doc.html
 export interface ExplanationOfBenefit {
-  uid?: string;
-  userUid?: string;
+  uuid?: string;
+  userUuid?: string;
   source?: string;
   jsonResponse?: string;
   fhirReference?: string;
@@ -298,11 +299,12 @@ export interface ExplanationOfBenefit {
   facilityDisplay?: string;
   outcome?: string;
   items?: EOBItem[];
-  billablePeriod?: EOBBillablePeriod;
-  created?: string;
+  billablePeriodStart?: string | Date;
+  billablePeriodEnd?: string | Date;
+  created?: string | Date;
   diagnosis?: EOBDiagnosis[];
   procedure?: EOBProcedure[];
-  primaryDate?: string;
+  primaryDate?: string | Date;
   resourceType?: string;
 }
 
@@ -326,10 +328,10 @@ export interface EOBPrescription {
   display?: string;
 }
 
-export interface EOBBillablePeriod {
-  start?: string;
-  end?: string;
-}
+// export interface EOBBillablePeriod {
+//   start?: string;
+//   end?: string;
+// }
 
 export interface EOBDiagnosis {
   sequence: number;
@@ -346,7 +348,7 @@ export interface EOBDagnosisCodeableConcept {
 
 export interface EOBProcedure {
   sequence?: number;
-  date?: string;
+  date?: string | Date;
   reference?: string;
   display?: string;
   procedure?: Procedure;

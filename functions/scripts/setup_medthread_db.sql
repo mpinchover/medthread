@@ -10,6 +10,7 @@ CREATE TABLE authorizedCareProviderLink (
 
 CREATE TABLE profile (
     uuid VARCHAR(36) NOT NULL UNIQUE PRIMARY KEY,
+    authUid VARCHAR(36) NOT NULL UNIQUE,
     userUuid VARCHAR(36),
     userRole VARCHAR(36),
     firstName TEXT,
@@ -65,6 +66,19 @@ CREATE TABLE claimsMedicationDispense (
     createdAt DATETIME,
     updatedAt DATETIME,
     deletedAt DATETIME
+);
+
+CREATE TABLE claimsImmunization (
+    uuid VARCHAR(36) NOT NULL UNIQUE PRIMARY KEY, 
+    fhirReference VARCHAR(36),
+    insuranceProviderUuid VARCHAR(36),
+    source VARCHAR(36),
+    immunizationStatus TEXT,
+    code VARCHAR(36),
+    codeDisplay TEXT,
+    occurenceDateTime DATETIME,
+    userUid VARCHAR(36),
+    resourceType VARCHAR(36)
 );
 
 CREATE TABLE claimsAllergyTolerance (
