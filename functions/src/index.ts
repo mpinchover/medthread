@@ -23,7 +23,6 @@ import { getPatientsByHealthcareProviderUid } from "./handlers/get-patients-by-h
 import { sendRequestForEMRDataForEOBEvent } from "./handlers/send-request-for-emr-data-for-eob-event";
 // import { getMedicationsByPatientUid } from "./get-medications-by-patient-uid";
 // import { publicIp, publicIpv4, publicIpv6 } from "public-ip";
-import * as mysql2 from "mysql2/promise";
 const app = express();
 
 // https://firebase.google.com/docs/firestore/query-data/get-data#get_multiple_documents_from_a_collection
@@ -58,20 +57,18 @@ const validateFirebaseIdToken = async (req: any, res: any, next: any) => {
 
 app.get("/test-fn", async (req, res) => {
   try {
-    const connection = await mysql2.createConnection({
-      host: "",
-      user: "",
-      password: "",
-      database: "",
-      port: 3306,
-    });
-
-    const result = await connection.query(
-      "CREATE TABLE TESTING (uuid varchar(36) );"
-    );
-
-    // const outboundIP = await publicIp();
-    res.send({ success: "success" });
+    // const connection = await mysql2.createConnection({
+    //   host: "",
+    //   user: "",
+    //   password: "",
+    //   database: "",
+    //   port: 3306,
+    // });
+    // const result = await connection.query(
+    //   "CREATE TABLE TESTING (uuid varchar(36) );"
+    // );
+    // // const outboundIP = await publicIp();
+    // res.send({ success: "success" });
   } catch (e) {
     console.log(e);
     res.status(501).send({ error: e });
