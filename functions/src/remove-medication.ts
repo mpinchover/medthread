@@ -1,17 +1,17 @@
-import * as medicationsRepo from "./repo/medications";
-import {Medication} from "./types";
+// import * as medicationsRepo from "./repo/medications";
+// import {Medication} from "./types";
 
-export const removeMedication = async (req: any, res: any) => {
-  try {
-    const {body, user} = req;
-    const {medUid} = body;
-    const userUid = user.user_id;
+// export const removeMedication = async (req: any, res: any) => {
+//   try {
+//     const {body, user} = req;
+//     const {medUid} = body;
+//     const userUid = user.user_id;
 
-    await medicationsRepo.removeMedications(medUid);
+//     await medicationsRepo.removeMedications(medUid);
 
-    res.send({success: "success"});
-  } catch (e) {
-    console.log(e);
-    res.status(501).send({error: e});
-  }
-};
+//     res.send({success: "success"});
+//   } catch (e) {
+//     console.log(e);
+//     res.status(501).send({error: e});
+//   }
+// };

@@ -43,15 +43,15 @@ const TimelineEventHeader = ({
   activeListViewEvents,
   setActiveListViewEvents,
 }) => {
-  const isSelected = activeListViewEvents?.includes(event?.uid);
+  const isSelected = activeListViewEvents?.includes(event?.uuid);
 
   const handleClick = () => {
     setActiveListViewEvents((prevState) => {
-      if (prevState.includes(event.uid)) {
-        const newActiveElements = prevState.filter((x) => x !== event.uid);
+      if (prevState.includes(event.uuid)) {
+        const newActiveElements = prevState.filter((x) => x !== event.uuid);
         return newActiveElements;
       } else {
-        return [...prevState, event.uid];
+        return [...prevState, event.uuid];
       }
     });
   };
@@ -338,7 +338,7 @@ const ListViewContainer = () => {
     timelineDataFiltersState
   );
 
-  const { patientUid } = useParams();
+  const { patientUuid } = useParams();
 
   const onSelectFilterInput = (e) => {
     const filterInput = e.currentTarget.name;
@@ -368,8 +368,8 @@ const ListViewContainer = () => {
   };
 
   useEffect(() => {
-    if (patientUid) {
-      getPatientTimelineData(patientUid, timelineFilter);
+    if (patientUuid) {
+      getPatientTimelineData(patientUuid, timelineFilter);
     } else {
       getPatientTimelineData();
     }
@@ -386,7 +386,7 @@ const ListViewContainer = () => {
       activeTimelineEvent={activeTimelineEvent}
       isLoadingTimelineData={isLoadingTimelineData}
       timelineData={timelineData}
-      patientUid={patientUid}
+      patientUuid={patientUuid}
       timelineFilter={timelineFilter}
       onSelectFilterInput={onSelectFilterInput}
       setModal={setModal}

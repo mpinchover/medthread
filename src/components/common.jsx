@@ -73,7 +73,7 @@ export const Medication = ({ e }) => {
       {role === "PATIENT" ? (
         <section className="mt-2">
           <button
-            onClick={() => navigate(`/update-medication?medId=${e.uid}`)}
+            onClick={() => navigate(`/update-medication?medId=${e.uuid}`)}
             className="text-md text-blue-400"
           >
             Update medication

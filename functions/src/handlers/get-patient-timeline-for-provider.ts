@@ -6,14 +6,15 @@ import * as functions from "firebase-functions";
 export const getPatientTimelineDataForProvider = async (req: any, res: any) => {
   const logger = functions.logger;
   try {
-    const { body, user } = req;
-    const userUid = user.user_id;
-    const { patientUid, filter } = body;
+    const { body, authUid } = req;
+    // const userUid = user.user_id;
+    const { patientUuid, filter, userUuid } = body;
 
     const careProvider =
       await careProviderController.getAuthorizedHealthcareProviderForPatientRecords(
-        userUid,
-        patientUid
+        authUid,
+        userUuid,
+        patientUuid
       );
 
     if (!careProvider) {

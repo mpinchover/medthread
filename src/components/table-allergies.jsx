@@ -12,7 +12,7 @@ const AllergiesTable = ({ allergies }) => {
     return (
       <div
         className={`${
-          activeAllergies.includes(allergy.uid) ? "block" : "hidden"
+          activeAllergies.includes(allergy.uuid) ? "block" : "hidden"
         } mt-2 bg-gray-100 p-4 text-xs`}
       >
         <div className="mb-2 text-xs">{allergy.codeDisplay}</div>
@@ -44,15 +44,15 @@ const AllergiesTable = ({ allergies }) => {
 
   const renderAllergiesList = () => {
     const handleClick = (e) => {
-      const allergyUid = e.currentTarget.name;
-      if (activeAllergies.includes(allergyUid)) {
+      const allergyUuid = e.currentTarget.name;
+      if (activeAllergies.includes(allergyUuid)) {
         setActiveAllergies((active) =>
-          active.filter((uid) => uid !== allergyUid)
+          active.filter((uuid) => uuid !== allergyUuid)
         );
 
         return;
       }
-      setActiveAllergies([...activeAllergies, allergyUid]);
+      setActiveAllergies([...activeAllergies, allergyUuid]);
     };
     return (
       <div className="w-full text-xs ">
@@ -62,7 +62,7 @@ const AllergiesTable = ({ allergies }) => {
               <div className="relative">
                 <button
                   onClick={handleClick}
-                  name={e.uid}
+                  name={e.uuid}
                   className=" text-left relative flex w-full flex-row "
                 >
                   <div className="pr-6 w-72 text-ellipsis overflow-hidden whitespace-nowrap">

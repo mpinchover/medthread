@@ -3,10 +3,10 @@ import * as functions from "firebase-functions";
 export const hydrateUserProfile = async (req: any, res: any) => {
   const logger = functions.logger;
   try {
-    const { user } = req;
-    const userUid = user.user_id;
+    const { body } = req;
+    const { userUuid } = body;
 
-    const profile = await userController.hydrateUserProfile(userUid);
+    const profile = await userController.hydrateUserProfile(userUuid);
     res.send({ profile });
   } catch (e) {
     logger.error(e);

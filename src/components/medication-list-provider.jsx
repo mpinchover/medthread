@@ -32,8 +32,8 @@ const MedicationListProvider = () => {
   const isLoadingClaimsData = useRecoilValue(isLoadingClaimsDataState);
   const authUser = getAuthUser();
   // const getMedications = useRecoilCallback(getMedicationsByUserUidCallback);
-  const getClaimsDatabyUserUid = useRecoilCallback(
-    getClaimsDataByUserUidCallback
+  const getClaimsDatabyUserUuid = useRecoilCallback(
+    getClaimsDataByUserUuidCallback
   );
   const [activeCareProviderPatient, setActiveCareProviderPatient] =
     useRecoilState(activeCareProviderPatientState);
@@ -58,12 +58,12 @@ const MedicationListProvider = () => {
   // );
 
   const [searchTerm, setSearchTerm] = useRecoilState(recordsSearchQueryState);
-  const { patientUid } = useParams();
+  const { patientUuid } = useParams();
 
   // get the patient uis from the params
   useEffect(() => {
     // getMedications();
-    getClaimsDatabyUserUid(patientUid);
+    getClaimsDatabyUserUuid(patientUuid);
   }, []);
 
   const isLoadingMedicationList = useRecoilValue(loadingGetMedicationState);

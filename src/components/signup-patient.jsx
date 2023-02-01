@@ -18,8 +18,8 @@ const PatientSignup = () => {
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
   const { createPatient } = useContext(FirebaseContext);
-  const [providerUid, setProviderUid] = useState(
-    searchParams.get("providerUid")
+  const [providerUuid, setProviderUuid] = useState(
+    searchParams.get("providerUuid")
   );
   const [nameValue, setNameValue] = useState("");
   const [emailValue, setEmailValue] = useState("");
@@ -36,7 +36,7 @@ const PatientSignup = () => {
         confirmPasswordValue,
         nameValue,
       };
-      await createPatient(params, providerUid);
+      await createPatient(params, providerUuid);
     } catch (e) {
       console.log(e);
     }

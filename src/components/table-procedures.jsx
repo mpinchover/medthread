@@ -14,7 +14,7 @@ const ProceduresTable = ({ procedures }) => {
     return (
       <div
         className={`${
-          activeProcedures.includes(procedure.uid) ? "block" : "hidden"
+          activeProcedures.includes(procedure.uuid) ? "block" : "hidden"
         } mt-2 bg-gray-100 p-4`}
       >
         <div className="mb-2 text-xs">{procedure.codeDisplay}</div>
@@ -40,16 +40,16 @@ const ProceduresTable = ({ procedures }) => {
 
   const renderProceduresList = () => {
     const handleClick = (e) => {
-      const procedureUid = e.currentTarget.name;
-      if (activeProcedures.includes(procedureUid)) {
+      const procedureUuid = e.currentTarget.name;
+      if (activeProcedures.includes(procedureUuid)) {
         setActiveProcedures((active) =>
-          active.filter((uid) => uid !== procedureUid)
+          active.filter((uuid) => uuid !== procedureUuid)
         );
 
         return;
       }
 
-      setActiveProcedures([...activeProcedures, procedureUid]);
+      setActiveProcedures([...activeProcedures, procedureUuid]);
     };
     return (
       <div className="w-full  ">
@@ -59,7 +59,7 @@ const ProceduresTable = ({ procedures }) => {
               <div className="relative">
                 <button
                   onClick={handleClick}
-                  name={e.uid}
+                  name={e.uuid}
                   className=" text-left  flex w-full flex-row "
                 >
                   <div className="pr-6 w-72 text-ellipsis overflow-hidden whitespace-nowrap">

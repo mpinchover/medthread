@@ -1,6 +1,6 @@
 import { atom, selector } from "recoil";
-import { getClaimsDataByUserUid } from "../../rpc/get-claims-by-user-uid";
-import { getClaimsDataByUserUidForProvider } from "../../rpc/get-claims-data-by-user-uid-for-provider";
+import { getClaimsDataByUserUuid } from "../../rpc/get-claims-by-user-uuid";
+import { getClaimsDataByUserUuidForProvider } from "../../rpc/get-claims-data-by-user-uuid-for-provider";
 import { isLoadingClaimsDataState } from "../utils/utils";
 import { activeCareProviderPatientState } from "../provider/provider";
 export const recordsSearchQueryState = atom({
@@ -108,17 +108,17 @@ export const recordsActiveCategoryState = atom({
   default: "LIST_VIEW",
 });
 
-export const getClaimsDataByUserUidCallback =
+export const getClaimsDataByUserUuidCallback =
   ({ set, snapshot }) =>
-  async (patientUid) => {
+  async (patientUuid) => {
     try {
       set(isLoadingClaimsDataState, true);
 
       let claimsData;
-      if (patientUid) {
-        claimsData = await getClaimsDataByUserUidForProvider(patientUid);
+      if (patientUuid) {
+        claimsData = await getClaimsDataByUserUuidForProvider(patientUuid);
       } else {
-        claimsData = await getClaimsDataByUserUid();
+        claimsData = await getClaimsDataByUserUuid();
       }
 
       if (claimsData.allergyIntolerance) {

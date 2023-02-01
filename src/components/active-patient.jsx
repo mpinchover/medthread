@@ -17,7 +17,7 @@ import { patientImmunizations } from "../recoil/patient/immunizations";
 import { patientAllergies } from "../recoil/patient/allergies";
 import { patientInformation } from "../recoil/patient/patient-information";
 import { PrivateRoute, withPrivateRoute } from "./hocs";
-import { getMedicationsByUid } from "../rpc/get-medications-by-patient-uid";
+import { getMedicationsByUid } from "../rpc/get-medications-by-patient-uuid";
 const filters = [
   {
     display: "Medications",

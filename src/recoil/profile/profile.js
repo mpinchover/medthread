@@ -77,11 +77,14 @@ export const hydrateUserProfileCallback =
       // const authUser = JSON.parse(localStorage.getItem("med_thread_auth_user"));
       // const { idToken } = authUser;
       set(isLoadingSettingsState, true);
+
+      const { uuid } = JSON.parse(localStorage.get("med_thread_auth_user"));
+
       const idToken = await auth.currentUser.getIdToken(
         /* forceRefresh */ true
       );
 
-      const hydratedProfile = await hydrateUserProfile(idToken);
+      const hydratedProfile = await hydrateUserProfile(idToken, uuid);
 
       if (!idToken) {
         throw new Error("No auth token");
@@ -113,6 +116,7 @@ export const addHealthcareProviderCallback =
   async (healthcareProviderEmail, healthcareProviderName) => {
     try {
       set(isAddingHealthcareProviderState, true);
+
       const res = await addAuthorizedHealthcareProviderdicationsByUid(
         healthcareProviderEmail,
         healthcareProviderName
@@ -132,7 +136,7 @@ export const addHealthcareProviderCallback =
 
 export const createPatientCallback =
   ({ set, snapshot }) =>
-  async (params, auth, providerUid) => {
+  async (params, auth, providerUuid) => {
     try {
       let { emailValue, passwordValue, confirmPasswordValue, nameValue } =
         params;
@@ -154,10 +158,8 @@ export const createPatientCallback =
 
       const newUserParams = {
         role: "PATIENT",
-        userUid: res.user.uid,
-        account: {
-          nameValue,
-        },
+        authUid: res.user.uid,
+        nameValue,
       };
 
       // TODO – create hydrated user profile on backend
@@ -165,7 +167,7 @@ export const createPatientCallback =
       try {
         hydratedUserProfile = await createHydratedUserProfile(
           newUserParams,
-          providerUid
+          providerUuid
         );
       } catch (e) {
         console.log(e);
@@ -176,7 +178,7 @@ export const createPatientCallback =
       }
 
       const authUser = {
-        uid: res.user.uid,
+        authUid: res.user.uid,
         email: res.user.email,
         emailVerified: res.user.emailVerified,
         providerData: res.user.providerData,
@@ -223,7 +225,7 @@ export const signInCallback =
 
       const hydratedUserProfile = await hydrateUserProfile(idToken);
       const authUser = {
-        uid: res.user.uid,
+        authUid: res.user.uid,
         email: res.user.email,
         emailVerified: res.user.emailVerified,
         providerData: res.user.providerData,
@@ -279,9 +281,7 @@ export const createProviderCallback =
       const newUser = {
         role: "PROVIDER",
         userUid: res.user.uid,
-        account: {
-          nameValue,
-        },
+        nameValue,
       };
 
       let hydratedUserProfile;
@@ -296,7 +296,7 @@ export const createProviderCallback =
       }
 
       const authUser = {
-        uid: res.user.uid,
+        authUid: res.user.uid,
         email: res.user.email,
         emailVerified: res.user.emailVerified,
         providerData: res.user.providerData,

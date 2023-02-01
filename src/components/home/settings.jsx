@@ -32,7 +32,7 @@ const Settings = () => {
     if (authProfile) {
       getAccountSettings();
     }
-  }, [authProfile.uid]);
+  }, [authProfile.authUid]);
   const isLoadingSettings = useRecoilValue(isLoadingSettingsState);
 
   if (isLoadingSettings) return <LoadingSettingsData />;

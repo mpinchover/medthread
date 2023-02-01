@@ -34,7 +34,7 @@ const PatientSettings = ({ authProfile, accountSettings }) => {
 
   const [passwordValue, setPasswordValue] = useState("somepassword");
   const [email, setEmail] = useState(authProfile.email);
-  const [activeRemoveInsuranceUid, setActiveRemoveInsuranceUid] = useState("");
+  // const [activeRemoveInsuranceUid, setActiveRemoveInsuranceUid] = useState("");
 
   const addInsuranceProvider = useRecoilCallback(addInsuranceProviderCallback);
   const removeInsuranceProvider = useRecoilCallback(

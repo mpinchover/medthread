@@ -197,7 +197,7 @@ export const getExplanationOfBenefitByUserUuid = async (
   return eobs;
 };
 
-export const getClaimsMedicationRequestByUserUid = async (
+export const getClaimsMedicationRequestByUserUuid = async (
   filter: PatientRecordsQueryFilter
 ): Promise<MedicationRequest[]> => {
   const medReq: MedicationRequest[] = await getClaimsItemByUserUuid(
@@ -207,7 +207,7 @@ export const getClaimsMedicationRequestByUserUid = async (
   return medReq;
 };
 
-export const getClaimsMedicationDispenseByUserUid = async (
+export const getClaimsMedicationDispenseByUserUuid = async (
   filter: PatientRecordsQueryFilter
 ): Promise<MedicationDispense[]> => {
   const medDis: MedicationDispense[] = await getClaimsItemByUserUuid(
@@ -217,7 +217,7 @@ export const getClaimsMedicationDispenseByUserUid = async (
   return medDis;
 };
 
-export const getClaimsProcedureByUserUid = async (
+export const getClaimsProcedureByUserUuid = async (
   filter: PatientRecordsQueryFilter
 ): Promise<Procedure[]> => {
   const procedures: Procedure[] = await getClaimsItemByUserUuid(
@@ -227,7 +227,7 @@ export const getClaimsProcedureByUserUid = async (
   return procedures;
 };
 
-export const getClaimsEncounterByUserUid = async (
+export const getClaimsEncounterByUserUuid = async (
   filter: PatientRecordsQueryFilter
 ): Promise<Encounter[]> => {
   const encounters: Encounter[] = await getClaimsItemByUserUuid(
@@ -237,7 +237,7 @@ export const getClaimsEncounterByUserUid = async (
   return encounters;
 };
 
-export const getClaimsConditionByUserUid = async (
+export const getClaimsConditionByUserUuid = async (
   filter: PatientRecordsQueryFilter
 ): Promise<Condition[]> => {
   const conditions: Condition[] = await getClaimsItemByUserUuid(
@@ -247,7 +247,7 @@ export const getClaimsConditionByUserUid = async (
   return conditions;
 };
 
-export const getClaimsAllergyIntoleranceByUserUid = async (
+export const getClaimsAllergyIntoleranceByUserUuid = async (
   filter: PatientRecordsQueryFilter
 ): Promise<AllergyIntolerance[]> => {
   const allergyIntolerance: AllergyIntolerance[] =
@@ -327,7 +327,7 @@ export const getProceduresByFhirReferences = async (references: string[]) => {
   });
 };
 
-export const getClaimsImmunizationByUserUid = async (
+export const getClaimsImmunizationByUserUuid = async (
   filter: PatientRecordsQueryFilter
 ): Promise<Immunization[]> => {
   const immunizations: Immunization[] = await getClaimsItemByUserUuid(

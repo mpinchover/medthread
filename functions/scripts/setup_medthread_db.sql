@@ -22,7 +22,7 @@ CREATE TABLE insuranceProvider (
     userUuid VARCHAR(36) NOT NULL,
     accessToken TEXT,
     providerName TEXT,
-    capabilities TEXT -- just stringify it
+    capabilitiesJSON TEXT
 );
 
 CREATE TABLE claimsMedicationRequest (
@@ -162,7 +162,7 @@ CREATE TABLE claimsCareTeam (
     userUid VARCHAR(36),
     careTeamStatus VARCHAR(36),
     resourceType VARCHAR(36),
-    participants TEXT -- just stringify it
+    participantsJSON TEXT
 );
 
 
@@ -187,18 +187,18 @@ CREATE TABLE claimsExplanationOfBenefit (
     jsonResponse TEXT,
     fhirReference VARCHAR(36),
     eobStatus TEXT,
-    types TEXT, -- just stringify
+    typesJSON TEXT, -- just stringify
     eobUse TEXT,
     patientReference VARCHAR(36),
     insurer TEXT,
-    prescription TEXT, -- just stringify
+    prescriptionJSON TEXT, -- just stringify
     facilityDisplay TEXT,
     outcome TEXT,
-    items TEXT, -- just stringify
+    itemsJSON TEXT, -- just stringify
     billablePeriodStart DATETIME,
     billablePeriodEND DATETIME,
     claimCreated DATETIME,
-    diagnosis TEXT, -- just stringify
+    diagnosisJSON TEXT, -- just stringify
     eobProcedures TEXT, -- justify stringify
-    resourceType VARCHAR(36)
+    resourceTypeJSON VARCHAR(36)
 );

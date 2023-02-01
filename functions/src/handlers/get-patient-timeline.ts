@@ -5,8 +5,7 @@ import * as functions from "firebase-functions";
 export const getPatientTimelineData = async (req: any, res: any) => {
   const logger = functions.logger;
   try {
-    const { user, body } = req;
-    const userUid = user.user_id;
+    const { body } = req;
     const { filter } = body;
 
     const timeline = await insuranceController.getPatientTimeline(filter);

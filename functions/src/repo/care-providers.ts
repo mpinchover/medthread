@@ -8,46 +8,45 @@ import Database from "./mysql";
 const authorizedCareProviderLinkTable = "authorizedCareProviderLink";
 
 // deprecate?
-export const getAuthorizedHealthcareProviders = async (patientUid: string) => {
-  const healthcareProvidersRef = await admin
-    .firestore()
-    .collection("healthcareProviders");
+// export const getAuthorizedHealthcareProviders = async (patientUid: string) => {
+//   const healthcareProvidersRef = await admin
+//     .firestore()
+//     .collection("healthcareProviders");
 
-  const snapshot = await healthcareProvidersRef
-    .where("patientUid", "==", patientUid)
-    .get();
+//   const snapshot = await healthcareProvidersRef
+//     .where("patientUid", "==", patientUid)
+//     .get();
 
-  if (snapshot.empty) return [];
+//   if (snapshot.empty) return [];
 
-  return snapshot.docs.map((doc) => {
-    const data: any = doc.data();
+//   return snapshot.docs.map((doc) => {
+//     const data: any = doc.data();
 
-    const hcp: AuthorizedCareProviderLink = {
-      ...data,
-      uid: doc.id,
-    };
-    return hcp;
-  });
-};
+//     const hcp: AuthorizedCareProviderLink = {
+//       ...data,
+//       uid: doc.id,
+//     };
+//     return hcp;
+//   });
+// };
 
 export const getAuthorizedHealthcareProviderForPatient = async (
-  providerUid: string,
-  patientUid: string
+  authUid: string,
+  providerUuid: string,
+  patientUuid: string
 ) => {
-  const userProfile = await getUserProfile(providerUid);
+  const userProfile = await getUserProfile(providerUuid);
   if (userProfile.role !== "PROVIDER") throw new Error("must be a provider");
   // check verification
-  const providerAuthProfile: AuthProfile = await admin
-    .auth()
-    .getUser(providerUid);
+  const providerAuthProfile: AuthProfile = await admin.auth().getUser(authUid);
 
   if (!providerAuthProfile.emailVerified) {
     throw new Error("provider is not verified");
   }
 
   const existingHealthcareProvider = await getAuthorizedHealthcareProvider(
-    providerUid,
-    patientUid
+    providerUuid,
+    patientUuid
   );
 
   if (existingHealthcareProvider) return existingHealthcareProvider;
@@ -56,7 +55,7 @@ export const getAuthorizedHealthcareProviderForPatient = async (
 
 // TODO – make sure that the care provider is authorized
 // TODO – make sure that you get the insurance provider refresh state
-export const getPatientsByHealthcareProviderUid = async (
+export const getPatientsByHealthcareProviderUuid = async (
   providerUuid: string
 ): Promise<Profile[]> => {
   if (!providerUuid) {
@@ -64,7 +63,7 @@ export const getPatientsByHealthcareProviderUid = async (
   }
 
   // get all patient uids this provider is authorized for
-  const patientUuids = await getPatientUidsByHealthcareProviderUuid(
+  const patientUuids = await getPatientUuidsByHealthcareProviderUuid(
     providerUuid
   );
   if (patientUuids.length === 0) {
@@ -98,11 +97,11 @@ export const getPatientsByHealthcareProviderUid = async (
 
 //  get all the patient uids this provider is authorized for
 // TODO - https://stackoverflow.com/questions/54583950/using-typescript-how-do-i-strongly-type-mysql-query-results
-export const getPatientUidsByHealthcareProviderUuid = async (
+export const getPatientUuidsByHealthcareProviderUuid = async (
   providerUuid: string
 ): Promise<string[]> => {
   if (!providerUuid) {
-    throw new Error("provider uid cannot be null");
+    throw new Error("provider uuid cannot be null");
   }
 
   const conn = await Database.getDb();

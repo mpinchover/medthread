@@ -1,5 +1,5 @@
 import { atom, selector } from "recoil";
-import { getPatientsByHealthcareProviderUid } from "../../rpc/get-patients-by-healthcare-provider-uid";
+import { getPatientsByHealthcareProviderUuid } from "../../rpc/get-patients-by-healthcare-provider-uuid";
 
 export const isGettingHealthcareProviderPatientsState = atom({
   key: "isGettingHealthcareProviderPatientsState",
@@ -43,7 +43,7 @@ export const getPatientsByHealthcareProviderUidCallback =
   async () => {
     try {
       set(isGettingHealthcareProviderPatientsState, true);
-      let providerPatients = await getPatientsByHealthcareProviderUid();
+      let providerPatients = await getPatientsByHealthcareProviderUuid();
       if (!providerPatients) providerPatients = [];
       set(healthcareProviderPatientsState, providerPatients);
     } catch (e) {

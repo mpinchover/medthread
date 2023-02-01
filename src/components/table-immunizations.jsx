@@ -10,24 +10,24 @@ const ImmunizationsTable = ({ immunizations }) => {
   const [activeNote, setActiveNote] = useState();
 
   const handleClick = (e) => {
-    const immunizationUid = e.currentTarget.name;
-    if (activeImmunizations.includes(immunizationUid)) {
+    const immunizationUuid = e.currentTarget.name;
+    if (activeImmunizations.includes(immunizationUuid)) {
       setActiveImmunizations((active) =>
-        active.filter((uid) => uid !== immunizationUid)
+        active.filter((uuid) => uuid !== immunizationUuid)
       );
 
       return;
     }
 
-    setActiveImmunizations([...activeImmunizations, immunizationUid]);
+    setActiveImmunizations([...activeImmunizations, immunizationUuid]);
   };
 
   const renderImmunizationDetails = (e) => {
-    const { uid, requestAndDispense, codeDisplay } = e;
+    const { uuid, requestAndDispense, codeDisplay } = e;
     return (
       <div
         className={`${
-          activeImmunizations.includes(uid) ? "block" : "hidden"
+          activeImmunizations.includes(uuid) ? "block" : "hidden"
         } mt-6 bg-gray-100 p-6`}
       >
         <div className="mb-2 text-xs">{codeDisplay}</div>
@@ -44,7 +44,7 @@ const ImmunizationsTable = ({ immunizations }) => {
               <div className="relative">
                 <button
                   onClick={handleClick}
-                  name={e.uid}
+                  name={e.uuid}
                   // disabled
                   className=" text-left relative flex w-full flex-row "
                 >

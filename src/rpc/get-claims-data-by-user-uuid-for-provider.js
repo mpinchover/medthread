@@ -4,7 +4,7 @@ import { getServerConfig } from "../config/config";
 export const getClaimsDataByUserUidForProvider = async (patientUid) => {
   const config = getServerConfig();
   const authUser = JSON.parse(localStorage.getItem("med_thread_auth_user"));
-  const { idToken } = authUser;
+  const { idToken, uuid } = authUser;
 
   const filter = {
     encounter: true,
@@ -24,7 +24,8 @@ export const getClaimsDataByUserUidForProvider = async (patientUid) => {
       Authorization: `Bearer ${idToken}`,
     },
     data: {
-      patientUid,
+      userUuid: uuid,
+      patientUuid,
       filter,
     },
   });

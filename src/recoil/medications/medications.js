@@ -1,11 +1,11 @@
 import { atom, selector } from "recoil";
 import axios from "axios";
-import { getMedicationByUid } from "../../rpc/get-medication-by-uid";
+import { getMedicationByUid } from "../../rpc/get-medication-by-uuid";
 import { getPatientSourcedMedications } from "../../rpc/get-patient-sourced-medications";
 import { removeMedication } from "../../rpc/remove-medication";
 import { sendMedicationsToProvider } from "../../rpc/send-medications";
 import { getMedicationsForProvider } from "../../rpc/get-medications-for-provider";
-import { getMedicationsForPatient } from "../../rpc/get-medications-by-patient-uid";
+import { getMedicationsForPatient } from "../../rpc/get-medications-by-patient-uuid";
 import { removeHealthcareProvider } from "../../rpc/remove-healthcare-provider";
 import { saveMedication } from "../../rpc/save-medication";
 import { getPatientProfileForProviderByUid } from "../../rpc/get-patient-profile-for-provider-by-uid";

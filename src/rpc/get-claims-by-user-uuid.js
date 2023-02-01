@@ -5,7 +5,7 @@ import { getServerConfig } from "../config/config";
 export const getClaimsDataByUserUid = async () => {
   const config = getServerConfig();
   const authUser = JSON.parse(localStorage.getItem("med_thread_auth_user"));
-  const { idToken } = authUser;
+  const { idToken, uuid } = authUser;
 
   const filter = {
     encounter: true,
@@ -19,7 +19,10 @@ export const getClaimsDataByUserUid = async () => {
 
   const res = await axios({
     method: "post",
-    url: `${config.baseUrl}/get-claims-data-by-user-uid`,
+    url: `${config.baseUrl}/get-claims-data-by-user-uuid`,
+    data: {
+      userUuid: uuid,
+    },
     headers: {
       "Access-Control-Allow-Origin": "*",
       Authorization: `Bearer ${idToken}`,

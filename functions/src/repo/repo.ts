@@ -13,7 +13,7 @@ export const getUserProfile = async (uuid: string): Promise<Profile> => {
   try {
     const conn = await Database.getDb();
 
-    const query = `select * from ${profilesTable} where userUuid = ?`;
+    const query = `select * from ${profilesTable} where uuid = ?`;
     const params: any[] = [uuid];
     const [rows] = await conn.query<any>(query, params);
     if (rows?.length === 0) return null;
@@ -33,7 +33,7 @@ export const getUserProfilesByUuids = async (
 
     const conn = await Database.getDb();
 
-    const query = `select * from ${profilesTable} where userUuid in (?)`;
+    const query = `select * from ${profilesTable} where uuid in (?)`;
     const params: any[] = [uuids];
     const [rows] = await conn.query<any>(query, params);
     for (const record of rows) {
@@ -58,8 +58,8 @@ export const getUserProfilesByUuids = async (
 //   });
 // };
 
-export const getAuthProfile = async (uid: string) => {
-  const authProfile: AuthProfile = await admin.auth().getUser(uid);
+export const getAuthProfile = async (authUid: string) => {
+  const authProfile: AuthProfile = await admin.auth().getUser(authUid);
   return authProfile;
 };
 
@@ -70,7 +70,7 @@ export const hydrateUserProfile = async (
 
   const conn = await Database.getDb();
 
-  const query = `select * from ${profilesTable} where userUuid = ?`;
+  const query = `select * from ${profilesTable} where uuid = ?`;
   const params: any[] = [userUuid];
   const [rows] = await conn.query<any>(query, params);
   if (rows.length === 0) return null;

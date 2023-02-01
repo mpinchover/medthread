@@ -17,7 +17,7 @@ import Fade from "@mui/material/Fade";
 
 const PatientItem = ({ patient, setActiveCareProviderPatient }) => {
   const navigate = useNavigate();
-  const link = `/records/${patient.userUid}`;
+  const link = `/records/${patient.userUuid}`;
 
   const handleClick = () => {
     setActiveCareProviderPatient(patient);
@@ -75,7 +75,7 @@ const PatientListHeader = ({ onChange, authorizedProfile, searchQuery }) => {
     setShowCopyPopup(true);
     setTimeout(() => setShowCopyPopup(false), 1000);
     navigator.clipboard.writeText(
-      `${baseUrl}/patient-signup?providerUid=${authorizedProfile.userUid}`
+      `${baseUrl}/patient-signup?providerUuid=${authorizedProfile.userUuid}`
     );
   };
 
@@ -148,8 +148,8 @@ const CareProviderPatientsContainer = () => {
   );
   const [activeCareProviderPatient, setActiveCareProviderPatient] =
     useRecoilState(activeCareProviderPatientState);
-  const getPatientsByHealthcareProviderUid = useRecoilCallback(
-    getPatientsByHealthcareProviderUidCallback
+  const getPatientsByHealthcareProviderUuid = useRecoilCallback(
+    getPatientsByHealthcareProviderUuidCallback
   );
   const isGettingHealthcareProviderPatients = useRecoilValue(
     isGettingHealthcareProviderPatientsState
@@ -158,7 +158,7 @@ const CareProviderPatientsContainer = () => {
 
   useEffect(() => {
     setActiveCareProviderPatient(null);
-    getPatientsByHealthcareProviderUid();
+    getPatientsByHealthcareProviderUuid();
   }, []);
 
   if (isGettingHealthcareProviderPatients) {
