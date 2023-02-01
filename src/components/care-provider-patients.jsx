@@ -13,6 +13,7 @@ import { Button } from "./common";
 import { modalState } from "../recoil/utils/utils";
 import { FaRegCopy } from "react-icons/fa";
 import { authorizedProfileState } from "../recoil/auth/auth";
+import { getAuth } from "firebase/auth";
 import Fade from "@mui/material/Fade";
 
 const PatientItem = ({ patient, setActiveCareProviderPatient }) => {
@@ -156,10 +157,14 @@ const CareProviderPatientsContainer = () => {
   );
   const authorizedProfile = useRecoilValue(authorizedProfileState);
 
+  const auth = getAuth();
   useEffect(() => {
     setActiveCareProviderPatient(null);
-    getPatientsByHealthcareProviderUid();
-  }, []);
+
+    if (auth?.currentUser) {
+      getPatientsByHealthcareProviderUid(auth);
+    }
+  }, [auth?.currentUser]);
 
   if (isGettingHealthcareProviderPatients) {
     return <LoadingWindow display="Getting patients..." />;

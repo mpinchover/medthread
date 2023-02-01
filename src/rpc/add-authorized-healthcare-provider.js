@@ -2,13 +2,13 @@ import axios from "axios";
 import { getAuth } from "firebase/auth";
 import { getServerConfig } from "../config/config";
 export const addAuthorizedHealthcareProviderdicationsByUid = async (
+  idToken,
   healthcareProviderEmail,
   healthcareProviderName
 ) => {
   const config = getServerConfig();
-  const authUser = JSON.parse(localStorage.getItem("med_thread_auth_user"));
-  const { idToken } = authUser;
-
+  // const authUser = JSON.parse(localStorage.getItem("med_thread_auth_user"));
+  // const { idToken } = authUser;
 
   const res = await axios({
     method: "post",

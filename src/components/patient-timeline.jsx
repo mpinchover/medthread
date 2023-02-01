@@ -12,6 +12,7 @@ import { activeTimelineEventState } from "../recoil/timeline/timeline";
 import { useRecoilState } from "recoil";
 import { useParams } from "react-router-dom";
 import { modalState } from "../recoil/utils/utils";
+import { getAuth } from "firebase/auth";
 // import { Timeline } from 'react-svg-timeline'
 import InteractiveTimeline from "./timeline/interactive-timeline";
 const DiagnosisInfo = ({ display, code }) => {
@@ -383,18 +384,20 @@ const PatientTimeline = () => {
       setActiveTimelineEvent(null);
     }
   };
+
+  const auth = getAuth();
   // TODO – add in a filter for inpatient, outpatient, etc
   useEffect(() => {
     document.addEventListener("keydown", handleKeyDown, false);
-    if (patientUid) {
-      getPatientTimelineData(patientUid);
-    } else {
-      getPatientTimelineData();
+    if (patientUid && auth?.currentUser) {
+      getPatientTimelineData(auth, patientUid);
+    } else if (!patientUid && auth?.currentUser) {
+      getPatientTimelineData(auth);
     }
     return () => {
       document.removeEventListener("keydown", handleKeyDown, false);
     };
-  }, []);
+  }, [auth?.currentUser]);
 
   let height = 400;
   if (activeTimelineEvent) {

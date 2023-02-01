@@ -110,10 +110,15 @@ export const hydrateUserProfileCallback =
 
 export const addHealthcareProviderCallback =
   ({ set, snapshot }) =>
-  async (healthcareProviderEmail, healthcareProviderName) => {
+  async (auth, healthcareProviderEmail, healthcareProviderName) => {
     try {
       set(isAddingHealthcareProviderState, true);
+      const idToken = await auth.currentUser.getIdToken(
+        /* forceRefresh */ true
+      );
+
       const res = await addAuthorizedHealthcareProviderdicationsByUid(
+        idToken,
         healthcareProviderEmail,
         healthcareProviderName
       );
@@ -332,11 +337,15 @@ export const createProviderCallback =
 
 export const addInsuranceProviderCallback =
   ({ set, snapshot }) =>
-  async (publicToken) => {
-    const authUser = JSON.parse(localStorage.getItem("med_thread_auth_user"));
-    const { idToken } = authUser;
+  async (auth, publicToken) => {
+    // const authUser = JSON.parse(localStorage.getItem("med_thread_auth_user"));
+    // const { idToken } = authUser;
     try {
       set(isAddingInsuranceProviderState, true);
+      const idToken = await auth.currentUser.getIdToken(
+        /* forceRefresh */ true
+      );
+
       const res = await axios({
         method: "post",
         url: "http://127.0.0.1:5001/healthcare-f57e8/us-central1/app/store-health-insurance-tokens",
@@ -371,13 +380,17 @@ export const addInsuranceProviderCallback =
 
 export const getPatientProfileCallback =
   ({ set, snapshot }) =>
-  async (publicToken) => {
+  async (auth, publicToken) => {
     const authUser = JSON.parse(localStorage.getItem("med_thread_auth_user"));
     const { uid } = authUser;
 
     try {
+      const idToken = await auth.currentUser.getIdToken(
+        /* forceRefresh */ true
+      );
+
       set(isLoadingSettingsState, true);
-      const patientProfile = await hydrateUserProfile(authUser.idToken);
+      const patientProfile = await hydrateUserProfile(idToken);
 
       const listOfInsuranceProviders = getInsuranceProviders(patientProfile);
       set(insuranceProvidersState, listOfInsuranceProviders);

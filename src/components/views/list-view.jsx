@@ -19,6 +19,7 @@ import { modalState } from "../../recoil/utils/utils";
 import { LoadingWindow } from "../common";
 import { authorizedProfileState } from "../../recoil/auth/auth";
 import { claimTypeEvent } from "../common";
+import { getAuth } from "firebase/auth";
 
 const DiagnosisInfo = ({ display, code }) => {
   if (!display) {
@@ -367,14 +368,14 @@ const ListViewContainer = () => {
     }
   };
 
+  const auth = getAuth();
   useEffect(() => {
-    if (patientUid) {
-      getPatientTimelineData(patientUid, timelineFilter);
-    } else {
-      getPatientTimelineData();
+    if (patientUid && auth?.currentUser) {
+      getPatientTimelineData(auth, patientUid, timelineFilter);
+    } else if (!patientUid && auth?.currentUser) {
+      getPatientTimelineData(auth);
     }
-    console.log("RE_RENDER");
-  }, [timelineFilter]);
+  }, [timelineFilter, auth.currentUser]);
 
   if (isLoadingTimelineData) {
     return <LoadingWindow display="Generating timeline..." />;

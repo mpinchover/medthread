@@ -18,11 +18,15 @@ export const activeEMREobUidState = atom({
 
 export const sendEMRRequestForEobEventCallback =
   ({ set, snapshot }) =>
-  (event) => {
+  async (auth, event) => {
     try {
+      const idToken = await auth.currentUser.getIdToken(
+        /* forceRefresh */ true
+      );
+
       const { userUid, uid } = event;
       set(isSendingEMRRequestForEobEventState, true);
-      sendRequestForEMRDataForEOBEvent(userUid, uid);
+      sendRequestForEMRDataForEOBEvent(idToken, userUid, uid);
     } catch (e) {
       console.log(e);
     } finally {

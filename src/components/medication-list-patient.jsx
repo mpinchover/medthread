@@ -29,6 +29,7 @@ import { LoadingMedicationData, LoadingWindow } from "./common";
 import { FirebaseContext } from "../firebase/firebase-context";
 import { withPrivateRoute } from "./hocs";
 import { isLoadingClaimsDataState } from "../recoil/utils/utils";
+import { getAuth } from "firebase/auth";
 
 const MedicationListPatient = () => {
   const { getAuthUser } = useContext(FirebaseContext);
@@ -63,10 +64,14 @@ const MedicationListPatient = () => {
 
   const [searchTerm, setSearchTerm] = useRecoilState(recordsSearchQueryState);
 
+  const auth = getAuth();
+
   useEffect(() => {
     // getMedications();
-    getClaimsDatabyUserUid();
-  }, []);
+    if (auth?.currentUser) {
+      getClaimsDatabyUserUid(auth);
+    }
+  }, [auth.currentUser]);
 
   // const isLoadingClaimsData = useRecoilValue(isLoadingClaimsDataState);
   const isLoadingMedicationList = useRecoilValue(loadingGetMedicationState);

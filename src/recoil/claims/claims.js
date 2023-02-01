@@ -110,15 +110,21 @@ export const recordsActiveCategoryState = atom({
 
 export const getClaimsDataByUserUidCallback =
   ({ set, snapshot }) =>
-  async (patientUid) => {
+  async (auth, patientUid) => {
     try {
       set(isLoadingClaimsDataState, true);
+      const idToken = await auth.currentUser.getIdToken(
+        /* forceRefresh */ true
+      );
 
       let claimsData;
       if (patientUid) {
-        claimsData = await getClaimsDataByUserUidForProvider(patientUid);
+        claimsData = await getClaimsDataByUserUidForProvider(
+          idToken,
+          patientUid
+        );
       } else {
-        claimsData = await getClaimsDataByUserUid();
+        claimsData = await getClaimsDataByUserUid(idToken);
       }
 
       if (claimsData.allergyIntolerance) {

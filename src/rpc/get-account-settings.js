@@ -2,10 +2,8 @@ import axios from "axios";
 import { getAuth } from "firebase/auth";
 import { getServerConfig } from "../config/config";
 
-export const getAccountSettings = async (uid) => {
+export const getAccountSettings = async (idToken) => {
   const config = getServerConfig();
-  const authUser = JSON.parse(localStorage.getItem("med_thread_auth_user"));
-  const { idToken } = authUser;
 
   let res;
   try {

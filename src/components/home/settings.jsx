@@ -17,8 +17,10 @@ import { FirebaseContext } from "../../firebase/firebase-context";
 import { authorizedProfileState } from "../../recoil/auth/auth";
 import { activeCareProviderPatientState } from "../../recoil/provider/provider";
 import WelcomePage from "./welcome-page";
+import { getAuth } from "firebase/auth";
 
 const Settings = () => {
+  const auth = getAuth();
   const { getAuthUser } = useContext(FirebaseContext);
   const insuranceProviders = useRecoilValue(insuranceProvidersState);
   const healthcareProviders = useRecoilValue(healthcareProvidersState);
@@ -27,12 +29,14 @@ const Settings = () => {
   const accountSettings = useRecoilValue(accountSettingsState);
   const [activeCareProviderActivePatient, setActiveCareProviderPatient] =
     useRecoilState(activeCareProviderPatientState);
+
+    
   useEffect(() => {
     setActiveCareProviderPatient(null);
-    if (authProfile) {
-      getAccountSettings();
+    if (auth?.currentUser) {
+      getAccountSettings(auth);
     }
-  }, [authProfile.uid]);
+  }, [auth.currentUser]);
   const isLoadingSettings = useRecoilValue(isLoadingSettingsState);
 
   if (isLoadingSettings) return <LoadingSettingsData />;

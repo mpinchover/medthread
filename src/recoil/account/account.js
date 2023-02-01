@@ -45,6 +45,7 @@ export const updateEmailCallback =
     try {
       if (!email) alert("Email required for update");
       set(isAccountLoadingState, true);
+
       await updateEmail(auth.currentUser, email);
 
       const newAccountUpdateState = {
@@ -110,12 +111,16 @@ export const removeInsuranceProviderCallback =
 // instead of ading meds, you need to add everything here
 export const addInsuranceProviderCallback =
   ({ set, snapshot }) =>
-  async (publicToken) => {
+  async (auth, publicToken) => {
     try {
       set(isAccountLoadingState, true);
 
+      const idToken = await auth.currentUser.getIdToken(
+        /* forceRefresh */ true
+      );
+
       const { insuranceProvider, claimsData } =
-        await addHealthInsuranceProvider(publicToken);
+        await addHealthInsuranceProvider(idToken, publicToken);
 
       // if (claimsData?.derivedClaimsMedications?.length > 0) {
       //   set(derivedMedicationsState, (curMeds) => [
@@ -142,11 +147,15 @@ export const addInsuranceProviderCallback =
 
 export const getAccountSettingsCallback =
   ({ set, snapshot }) =>
-  async () => {
+  async (auth) => {
     try {
       set(isAccountLoadingState, true);
 
-      const account = await getAccountSettings();
+      const idToken = await auth.currentUser.getIdToken(
+        /* forceRefresh */ true
+      );
+
+      const account = await getAccountSettings(idToken);
 
       set(accountSettingsState, account);
     } catch (e) {

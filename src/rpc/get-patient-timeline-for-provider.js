@@ -2,10 +2,9 @@ import axios from "axios";
 import { getAuth } from "firebase/auth";
 import { getServerConfig } from "../config/config";
 
-export const getPatientTimelineForProvider = async (patientUid, filter) => {
+export const getPatientTimelineForProvider = async (idToken, patientUid, filter) => {
   const config = getServerConfig();
-  const authUser = JSON.parse(localStorage.getItem("med_thread_auth_user"));
-  const { idToken } = authUser;
+
 
   filter.userUid = patientUid;
   const res = await axios({

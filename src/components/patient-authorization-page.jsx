@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { PrivateRoute, withPrivateRoute } from "./hocs";
 import { useRecoilCallback } from "recoil";
 import { addHealthcareProviderCallback } from "../recoil/profile/profile";
+import { getAuth } from "firebase/auth";
 const PatientAuthorizationPage = () => {
   const navigate = useNavigate();
 
@@ -13,7 +14,9 @@ const PatientAuthorizationPage = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    addHealthcareProviderCbk(email, name);
+
+    const auth = getAuth();
+    addHealthcareProviderCbk(auth, email, name);
     setConfirmEmail("");
     setName("");
     setEmail("");

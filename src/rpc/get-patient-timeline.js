@@ -2,13 +2,10 @@ import axios from "axios";
 import { getAuth } from "firebase/auth";
 import { getServerConfig } from "../config/config";
 
-export const getPatientTimeline = async (filter) => {
+export const getPatientTimeline = async (idToken, filter) => {
   const config = getServerConfig();
   const authUser = JSON.parse(localStorage.getItem("med_thread_auth_user"));
-  const { idToken } = authUser;
-
-  console.log("AUTH USER IS");
-  console.log(authUser);
+  
   filter.userUid = authUser.userUid;
   const res = await axios({
     method: "post",

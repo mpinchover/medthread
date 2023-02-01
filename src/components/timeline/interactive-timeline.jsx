@@ -178,6 +178,12 @@ const InteractiveTimeline = ({ width, timelineData, height }) => {
   const dateFormat = (ms) => new Date(ms).toLocaleString();
 
   const handleZoomChange = (startMs, endMs) => {};
+
+  const today = Date.now();
+
+  var d = new Date(today);
+  d.setFullYear(d.getFullYear() - 1);
+
   return (
     <div>
       <Timeline
@@ -188,7 +194,7 @@ const InteractiveTimeline = ({ width, timelineData, height }) => {
         dateFormat={dateFormat}
         onEventClick={handleEventClick}
         onZoomRangeChange={handleZoomChange}
-        customRange={[1136091600000, 1641013200000]} // TODO - get the last, first dates of events
+        customRange={[d.getTime(), today]} // TODO - get the last, first dates of events
       />
     </div>
   );

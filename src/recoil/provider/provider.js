@@ -40,10 +40,14 @@ export const activeCareProviderPatientState = atom({
 
 export const getPatientsByHealthcareProviderUidCallback =
   ({ set, snapshot }) =>
-  async () => {
+  async (auth) => {
     try {
       set(isGettingHealthcareProviderPatientsState, true);
-      let providerPatients = await getPatientsByHealthcareProviderUid();
+      const idToken = await auth.currentUser.getIdToken(
+        /* forceRefresh */ true
+      );
+
+      let providerPatients = await getPatientsByHealthcareProviderUid(idToken);
       if (!providerPatients) providerPatients = [];
       set(healthcareProviderPatientsState, providerPatients);
     } catch (e) {

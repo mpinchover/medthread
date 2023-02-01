@@ -9,6 +9,7 @@ import {
   activeEMRPatientUidState,
   activeEMREobUidState,
 } from "../../recoil/emr/emr";
+import { getAuth } from "firebase/auth";
 const claimTypeEvent = {
   institutional: {
     title: "Inpatient",
@@ -65,7 +66,10 @@ const GetEMRRecordsModal = ({ isOpen, onClose }) => {
   };
 
   const handleSend = async () => {
-    sendEMRRequestForEobEvent(activeTimelineEvent);
+    const auth = await getAuth();
+    if (auth?.currentUser) {
+      sendEMRRequestForEobEvent(auth, activeTimelineEvent);
+    }
     onClose();
   };
 

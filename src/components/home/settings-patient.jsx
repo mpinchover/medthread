@@ -44,12 +44,12 @@ const PatientSettings = ({ authProfile, accountSettings }) => {
   useEffect(() => {
     // set the eamil from the auth profile state
     // make dependencies on email
-  });
+  }, [auth?.currentUser]);
 
   window?.FlexpaLink?.create({
-    publishableKey: "pk_test_pKDGhsAjAOiDxw6LdHuoogYupzm9VNnQh113WuCoK6I",
+    publishableKey: "pk_test_pKDGhsAjAOiDxw6LdHuoogYupzm9VNnQh113WuCoK6I ",
     onSuccess: async (publicToken) => {
-      addInsuranceProvider(publicToken);
+      addInsuranceProvider(auth, publicToken);
     },
   });
 

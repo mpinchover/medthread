@@ -26,6 +26,7 @@ import { FirebaseContext } from "../firebase/firebase-context";
 import { withPrivateRoute } from "./hocs";
 import { useParams } from "react-router-dom";
 import { isLoadingClaimsDataState } from "../recoil/utils/utils";
+import { getAuth } from "firebase/auth";
 
 const MedicationListProvider = () => {
   const { getAuthUser } = useContext(FirebaseContext);
@@ -59,12 +60,15 @@ const MedicationListProvider = () => {
 
   const [searchTerm, setSearchTerm] = useRecoilState(recordsSearchQueryState);
   const { patientUid } = useParams();
-
+  const auth = getAuth();
   // get the patient uis from the params
   useEffect(() => {
     // getMedications();
-    getClaimsDatabyUserUid(patientUid);
-  }, []);
+
+    if (auth?.currentUser) {
+      getClaimsDatabyUserUid(auth, patientUid);
+    }
+  }, [auth.currentUser]);
 
   const isLoadingMedicationList = useRecoilValue(loadingGetMedicationState);
   const isSendingMedications = useRecoilValue(isSendingMedicationsState);
