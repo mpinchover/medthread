@@ -1,14 +1,14 @@
-# Update cloud function permissions
+## Update cloud function permissions
 
-# Go to https://console.cloud.google.com/functions/list?project=healthcare-f57e8
+Go to https://console.cloud.google.com/functions/list?project=healthcare-f57e8
 
-# Click permissions
+Click permissions
 
-# Add principal
+Add principal
 
-# Name it allUsers and add it as a cloud functions invoker
+Name it allUsers and add it as a cloud functions invoker
 
-# Staging deploy
+## Staging deploy
 
 ```
 npm run build-staging && firebase deploy
@@ -20,14 +20,21 @@ npm run build-staging && firebase deploy
 npm run build-production && firebase deploy
 ```
 
-####
+## Common errors
 
-Common errors
+### Domain not whitelisted by project (auth/unauthorized-continue-uri)
 
-####
+Open the firebase console for this env
+Go to authentication -> settings -> Authorized domains and add the domain
 
-## Domain not whitelisted by project (auth/unauthorized-continue-uri)
+## updating the database
 
-# Open the firebase console for this env
+To update the schema of the database run:
 
-# Go to authentication -> settings -> Authorized domains and add the domain
+```
+mysql -h [host] -P [port] -u[user] -p < setup_medthread_db.sql
+```
+
+If you want to make a change to an existing column, make sure to add the column first, migrate over all the data, and then delete the column.
+
+Always try on staging first.

@@ -1,11 +1,12 @@
+// /get-claims-data-by-user-uid",
 import axios from "axios";
 
 import { getServerConfig } from "../config/config";
-export const getClaimsDataByUserUidForProvider = async (
-  idToken,
-  patientUid
-) => {
+
+export const getClaimsDataByUserUuid = async (idToken) => {
   const config = getServerConfig();
+  const authUser = JSON.parse(localStorage.getItem("med_thread_auth_user"));
+  const { uuid } = authUser;
 
   const filter = {
     encounter: true,
@@ -19,13 +20,15 @@ export const getClaimsDataByUserUidForProvider = async (
 
   const res = await axios({
     method: "post",
-    url: `${config.baseUrl}/get-claims-data-by-user-uid-for-provider`,
+    url: `${config.baseUrl}/get-claims-data-by-user-uuid`,
+    data: {
+      userUuid: uuid,
+    },
     headers: {
       "Access-Control-Allow-Origin": "*",
       Authorization: `Bearer ${idToken}`,
     },
     data: {
-      patientUid,
       filter,
     },
   });

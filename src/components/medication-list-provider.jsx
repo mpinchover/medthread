@@ -10,7 +10,7 @@ import {
 } from "../recoil/medications/medications";
 import { accountSettingsState } from "../recoil/account/account";
 import {
-  getClaimsDataByUserUidCallback,
+  getClaimsDataByUserUuidCallback,
   filteredClaimsDerivedMedicationsState,
   filteredClaimsImmunizationsState,
   claimsMedicationDispenseState,
@@ -27,14 +27,15 @@ import { withPrivateRoute } from "./hocs";
 import { useParams } from "react-router-dom";
 import { isLoadingClaimsDataState } from "../recoil/utils/utils";
 import { getAuth } from "firebase/auth";
+import { authorizedProfileState } from "../recoil/auth/auth";
 
 const MedicationListProvider = () => {
   const { getAuthUser } = useContext(FirebaseContext);
   const isLoadingClaimsData = useRecoilValue(isLoadingClaimsDataState);
   const authUser = getAuthUser();
   // const getMedications = useRecoilCallback(getMedicationsByUserUidCallback);
-  const getClaimsDatabyUserUid = useRecoilCallback(
-    getClaimsDataByUserUidCallback
+  const getClaimsDatabyUserUuid = useRecoilCallback(
+    getClaimsDataByUserUuidCallback
   );
   const [activeCareProviderPatient, setActiveCareProviderPatient] =
     useRecoilState(activeCareProviderPatientState);
@@ -54,6 +55,7 @@ const MedicationListProvider = () => {
 
   const accountSettings = useRecoilValue(accountSettingsState);
 
+  const authProfile = useRecoilValue(authorizedProfileState);
   // const [medicationList, setMedicationList] = useRecoilState(
   //   filteredDerivedMedicationsState
   // );
@@ -62,13 +64,14 @@ const MedicationListProvider = () => {
   const { patientUid } = useParams();
   const auth = getAuth();
   // get the patient uis from the params
-  useEffect(() => {
-    // getMedications();
 
+  const { patientUuid } = useParams();
+
+  useEffect(() => {
     if (auth?.currentUser) {
-      getClaimsDatabyUserUid(auth, patientUid);
+      getClaimsDatabyUserUuid(auth, patientUuid, authProfile?.uuid);
     }
-  }, [auth.currentUser]);
+  }, [authProfile]);
 
   const isLoadingMedicationList = useRecoilValue(loadingGetMedicationState);
   const isSendingMedications = useRecoilValue(isSendingMedicationsState);

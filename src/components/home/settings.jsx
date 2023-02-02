@@ -30,13 +30,13 @@ const Settings = () => {
   const [activeCareProviderActivePatient, setActiveCareProviderPatient] =
     useRecoilState(activeCareProviderPatientState);
 
-    
   useEffect(() => {
     setActiveCareProviderPatient(null);
     if (auth?.currentUser) {
       getAccountSettings(auth);
     }
   }, [auth.currentUser]);
+
   const isLoadingSettings = useRecoilValue(isLoadingSettingsState);
 
   if (isLoadingSettings) return <LoadingSettingsData />;
@@ -45,7 +45,7 @@ const Settings = () => {
   //   return <WelcomePage />;
   // }
 
-  if (authProfile.role === "PATIENT") {
+  if (authProfile.userRole === "PATIENT") {
     return (
       <WelcomePage
         authProfile={authProfile}

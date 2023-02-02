@@ -13,6 +13,7 @@ import { useRecoilState } from "recoil";
 import { useParams } from "react-router-dom";
 import { modalState } from "../recoil/utils/utils";
 import { getAuth } from "firebase/auth";
+import { authorizedProfileState } from "../recoil/auth/auth";
 // import { Timeline } from 'react-svg-timeline'
 import InteractiveTimeline from "./timeline/interactive-timeline";
 const DiagnosisInfo = ({ display, code }) => {
@@ -111,15 +112,15 @@ const TimelineEventContent = ({ event, claimType }) => {
     });
   };
 
-  const isSelected = activeTimelineEvent.uid === event.uid;
+  const isSelected = activeTimelineEvent.uuid === event.uuid;
   return (
     <div className={`${isSelected ? "block" : "hidden"} mt-8`}>
       <div className="font-bold text-xs">
         {getFormattedDate(event?.primaryDate)}
       </div>
       <div className=" text-xs">{event?.provider?.display}</div>
-      <div className={` text-xs font-bold  ${claimType.textColor}`}>
-        {claimType.title}
+      <div className={` text-xs font-bold  ${claimType?.textColor}`}>
+        {claimType?.title}
       </div>
       {/* <div className=" font-bold text-xs mt-1">{event?.provider?.display}</div> */}
       {/* 
@@ -184,7 +185,7 @@ const TimelineEventContent = ({ event, claimType }) => {
 // https://www.hl7.org/fhir/valueset-claim-type.html
 // claim tpyes
 const TimelineEvent = ({ event }) => {
-  const claimTypeCode = event?.type?.[0]?.code;
+  const claimTypeCode = event?.types?.[0];
   // console.log(claimTypeCode);
   // if (claimTypeCode === "oral" || claimTypeCode === "pharmacy") return null;
 
@@ -197,123 +198,6 @@ const TimelineEvent = ({ event }) => {
     </div>
   );
 };
-
-// const Timeline = ({ timelineData }) => {
-//   const isLoadingTimeline = useRecoilValue(isLoadingTimelineDataState);
-
-//   if (isLoadingTimeline) {
-//     return (
-//       <div className=" w-full relative">
-//         <div className="absolute top-1/2 right-1/2 -translate-y-1/2">
-//           Generating timeline...
-//         </div>
-//       </div>
-//     );
-//   }
-//   return (
-//     <div className=" w-full">
-//       {timelineData.map((e, i) => {
-//         return <TimelineEvent key={i} event={e} />;
-//       })}
-//     </div>
-//   );
-// };
-
-// const FilterSidebarCheckboxOption = ({
-//   label,
-//   color,
-//   name,
-//   onSelectFilterInput,
-//   timelineFilter,
-// }) => {
-//   const isSelected = () => {
-//     return (
-//       (name === "PROCEDURE" && timelineFilter?.procedure) ||
-//       timelineFilter?.encounterTypes?.includes(name)
-//     );
-//   };
-
-//   const selected = isSelected();
-//   return (
-//     <div className="flex flex-row items-center justify-between">
-//       <label className={`text-sm `}>{label}</label>
-//       <button
-//         name={name}
-//         onClick={onSelectFilterInput}
-//         className={`w-5 h-5 p-[1px] border-gray-400 border rounded-sm`}
-//       >
-//         <div
-//           className={`h-full w-full ${selected ? "bg-black" : null} rounded-sm`}
-//         ></div>
-//       </button>
-//     </div>
-//   );
-// };
-
-// const FilterSidebar = ({ timelineFilter, onSelectFilterInput, onReset }) => {
-//   return (
-//     <div className="w-60 border p-4">
-//       <div className="font-bold mb-6">Timeline options</div>
-//       <div className="space-y-6">
-//         <FilterSidebarCheckboxOption
-//           timelineFilter={timelineFilter}
-//           onSelectFilterInput={onSelectFilterInput}
-//           name={"IMP"}
-//           label={"Inpatient"}
-//         />
-//         <FilterSidebarCheckboxOption
-//           timelineFilter={timelineFilter}
-//           onSelectFilterInput={onSelectFilterInput}
-//           name={"AMB"}
-//           label={"Ambulatory"}
-//         />
-//         <FilterSidebarCheckboxOption
-//           timelineFilter={timelineFilter}
-//           onSelectFilterInput={onSelectFilterInput}
-//           name={"OBSENC"}
-//           label={"Observation"}
-//         />
-//         <FilterSidebarCheckboxOption
-//           timelineFilter={timelineFilter}
-//           onSelectFilterInput={onSelectFilterInput}
-//           name={"EMER"}
-//           label={"Emergency"}
-//         />
-//         <FilterSidebarCheckboxOption
-//           timelineFilter={timelineFilter}
-//           onSelectFilterInput={onSelectFilterInput}
-//           name={"VR"}
-//           label={"Virtual"}
-//         />
-//         <FilterSidebarCheckboxOption
-//           timelineFilter={timelineFilter}
-//           onSelectFilterInput={onSelectFilterInput}
-//           name={"HH"}
-//           label={"Home visit"}
-//         />
-//         <FilterSidebarCheckboxOption
-//           timelineFilter={timelineFilter}
-//           onSelectFilterInput={onSelectFilterInput}
-//           name={"PROCEDURE"}
-//           label={"Procedure"}
-//         />
-//         <button
-//           onClick={onReset}
-//           className="p-3 px-6 font-bold border rounded-lg bg-black text-white"
-//         >
-//           Reset
-//         </button>
-//       </div>
-//     </div>
-//   );
-// };
-
-// const encounterTypes = ["HH", "IMP", "VR", "EMER", "AMB", "OBSENC"];
-// const idleFilterState = {
-//   encounter: true,
-//   encounterTypes: encounterTypes,
-//   procedure: true,
-// };
 
 const renderTimelineEvent = (event) => {
   return <TimelineEvent event={event} />;
@@ -331,53 +215,10 @@ const PatientTimeline = () => {
   const [activeTimelineEvent, setActiveTimelineEvent] = useRecoilState(
     activeTimelineEventState
   );
-
-  // should refire the query to BE
-  // const onSelectFilterInput = (e) => {
-  //   const filterInput = e.currentTarget.name;
-
-  //   if (filterInput === "PROCEDURE") {
-  //     setTimelineFilter((prevState) => {
-  //       return {
-  //         ...prevState,
-  //         procedure: !timelineFilter.procedure,
-  //       };
-  //     });
-  //   }
-
-  //   if (isEncounterType(filterInput)) {
-  //     if (timelineFilter.encounterTypes?.includes(filterInput)) {
-  //       const newEncounterTypes = timelineFilter.encounterTypes.filter(
-  //         (x) => x !== filterInput
-  //       );
-
-  //       setTimelineFilter((prevState) => {
-  //         return {
-  //           ...prevState,
-  //           encounterTypes: newEncounterTypes,
-  //         };
-  //       });
-  //     } else {
-  //       setTimelineFilter((prevState) => {
-  //         return {
-  //           ...prevState,
-  //           encounterTypes: [...prevState.encounterTypes, filterInput],
-  //         };
-  //       });
-  //     }
-  //   }
-  // };
-
-  // const isEncounterType = (filterInput) => {
-  //   return encounterTypes.includes(filterInput);
-  // };
-
-  // const onReset = () => {
-  //   setTimelineFilter(idleFilterState);
-  // };
+  const authProfile = useRecoilValue(authorizedProfileState);
 
   const timelineContainerRef = useRef();
-  const { patientUid } = useParams();
+  const { patientUuid } = useParams();
 
   const handleKeyDown = (event) => {
     if (event.key === "Escape") {
@@ -386,18 +227,30 @@ const PatientTimeline = () => {
   };
 
   const auth = getAuth();
+  const [timelineWidth, setTimelineWidth] = useState(
+    timelineContainerRef?.current?.offsetWidth
+  );
+
+  const onResize = () => {
+    setTimelineWidth(timelineContainerRef?.current?.offsetWidth);
+  };
   // TODO – add in a filter for inpatient, outpatient, etc
+
   useEffect(() => {
     document.addEventListener("keydown", handleKeyDown, false);
-    if (patientUid && auth?.currentUser) {
-      getPatientTimelineData(auth, patientUid);
-    } else if (!patientUid && auth?.currentUser) {
+    window.addEventListener("resize", onResize);
+
+    if (patientUuid && authProfile?.uuid) {
+      getPatientTimelineData(auth, patientUuid, authProfile?.uuid);
+    } else {
       getPatientTimelineData(auth);
     }
+
     return () => {
       document.removeEventListener("keydown", handleKeyDown, false);
+      window.removeEventListener("resize", onResize);
     };
-  }, [auth?.currentUser]);
+  }, [authProfile]);
 
   let height = 400;
   if (activeTimelineEvent) {

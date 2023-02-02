@@ -6,8 +6,8 @@ import { useRecoilCallback, useRecoilState } from "recoil";
 import { getFormattedDate } from "../utils";
 import { sendEMRRequestForEobEventCallback } from "../../recoil/emr/emr";
 import {
-  activeEMRPatientUidState,
-  activeEMREobUidState,
+  activeEMRPatientUuidState,
+  activeEMREobUuidState,
 } from "../../recoil/emr/emr";
 import { getAuth } from "firebase/auth";
 const claimTypeEvent = {

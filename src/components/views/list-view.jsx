@@ -44,15 +44,15 @@ const TimelineEventHeader = ({
   activeListViewEvents,
   setActiveListViewEvents,
 }) => {
-  const isSelected = activeListViewEvents?.includes(event?.uid);
+  const isSelected = activeListViewEvents?.includes(event?.uuid);
 
   const handleClick = () => {
     setActiveListViewEvents((prevState) => {
-      if (prevState.includes(event.uid)) {
-        const newActiveElements = prevState.filter((x) => x !== event.uid);
+      if (prevState.includes(event.uuid)) {
+        const newActiveElements = prevState.filter((x) => x !== event.uuid);
         return newActiveElements;
       } else {
-        return [...prevState, event.uid];
+        return [...prevState, event.uuid];
       }
     });
   };
@@ -97,7 +97,7 @@ const TimelineEventContent = ({
     });
   };
 
-  const isSelected = activeListViewEvents?.includes(event?.uid);
+  const isSelected = activeListViewEvents?.includes(event?.uuid);
   return (
     <div className={`${isSelected ? "block" : "hidden"} mt-8`}>
       <div className="font-bold text-xs">
@@ -338,8 +338,9 @@ const ListViewContainer = () => {
   const [timelineFilter, setTimelineFilter] = useRecoilState(
     timelineDataFiltersState
   );
+  const authProfile = useRecoilValue(authorizedProfileState);
 
-  const { patientUid } = useParams();
+  const { patientUuid } = useParams();
 
   const onSelectFilterInput = (e) => {
     const filterInput = e.currentTarget.name;
@@ -370,12 +371,12 @@ const ListViewContainer = () => {
 
   const auth = getAuth();
   useEffect(() => {
-    if (patientUid && auth?.currentUser) {
-      getPatientTimelineData(auth, patientUid, timelineFilter);
-    } else if (!patientUid && auth?.currentUser) {
+    if (patientUuid && auth?.currentUser) {
+      getPatientTimelineData(auth, patientUuid, authProfile?.uuid);
+    } else if (!patientUuid && auth?.currentUser) {
       getPatientTimelineData(auth);
     }
-  }, [timelineFilter, auth.currentUser]);
+  }, [timelineFilter, authProfile]);
 
   if (isLoadingTimelineData) {
     return <LoadingWindow display="Generating timeline..." />;
@@ -387,7 +388,7 @@ const ListViewContainer = () => {
       activeTimelineEvent={activeTimelineEvent}
       isLoadingTimelineData={isLoadingTimelineData}
       timelineData={timelineData}
-      patientUid={patientUid}
+      patientUuid={patientUuid}
       timelineFilter={timelineFilter}
       onSelectFilterInput={onSelectFilterInput}
       setModal={setModal}

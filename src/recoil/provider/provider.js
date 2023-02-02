@@ -1,5 +1,5 @@
 import { atom, selector } from "recoil";
-import { getPatientsByHealthcareProviderUid } from "../../rpc/get-patients-by-healthcare-provider-uid";
+import { getPatientsByHealthcareProviderUuid } from "../../rpc/get-patients-by-healthcare-provider-uuid";
 
 export const isGettingHealthcareProviderPatientsState = atom({
   key: "isGettingHealthcareProviderPatientsState",
@@ -38,16 +38,21 @@ export const activeCareProviderPatientState = atom({
 //   },
 // });
 
-export const getPatientsByHealthcareProviderUidCallback =
+export const getPatientsByHealthcareProviderUuidCallback =
   ({ set, snapshot }) =>
-  async (auth) => {
+  async (auth, uuid) => {
     try {
       set(isGettingHealthcareProviderPatientsState, true);
       const idToken = await auth.currentUser.getIdToken(
         /* forceRefresh */ true
       );
 
-      let providerPatients = await getPatientsByHealthcareProviderUid(idToken);
+      set(isGettingHealthcareProviderPatientsState, true);
+      let providerPatients = await getPatientsByHealthcareProviderUuid(
+        idToken,
+        uuid
+      );
+
       if (!providerPatients) providerPatients = [];
       set(healthcareProviderPatientsState, providerPatients);
     } catch (e) {

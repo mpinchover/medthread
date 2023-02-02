@@ -1,6 +1,6 @@
 import axios from "axios";
 import { getServerConfig } from "../config/config";
-export const getPatientsByHealthcareProviderUid = async (idToken) => {
+export const getPatientsByHealthcareProviderUuid = async (uuid) => {
   try {
     // const authUser = JSON.parse(localStorage.getItem("med_thread_auth_user"));
 
@@ -9,10 +9,13 @@ export const getPatientsByHealthcareProviderUid = async (idToken) => {
 
     const res = await axios({
       method: "post",
-      url: `${config.baseUrl}/get-patients-by-healthcare-provider-uid`,
+      url: `${config.baseUrl}/get-patients-by-healthcare-provider-uuid`,
       headers: {
         "Access-Control-Allow-Origin": "*",
         Authorization: `Bearer ${idToken}`,
+      },
+      data: {
+        uuid,
       },
     });
     return res.data?.patients;

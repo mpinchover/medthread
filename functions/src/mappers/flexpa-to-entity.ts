@@ -19,14 +19,14 @@ import {
   EOBDagnosisCodeableConcept,
   EOBDiagnosis,
   EOBProcedure,
-  EOBBillablePeriod,
-} from "../types";
+  // EOBBillablePeriod,
+} from "../types/types";
 
 import * as constants from "../config/constants";
 
 export const setEOBPrimaryDate = (eob: ExplanationOfBenefit) => {
-  if (eob.billablePeriod?.start) {
-    eob.primaryDate = eob.billablePeriod.start;
+  if (eob?.billablePeriodStart) {
+    eob.primaryDate = eob.billablePeriodStart;
   } else if (eob.created) {
     eob.primaryDate = eob.created;
   } else if (eob.procedure?.length > 0) {
@@ -61,6 +61,18 @@ export const fromFlexpaToEntityEOBList = (
 
 // TODO – can you query provider by npi code
 export const fromFlexpaToEntityEOB = (params: any) => {
+  let billablePeriodStart = params.resource?.billablePeriod?.start;
+  if (billablePeriodStart) {
+    billablePeriodStart = new Date(billablePeriodStart);
+  }
+  let billablePeriodEnd = params.resource?.billablePeriod?.end;
+  if (billablePeriodEnd) {
+    billablePeriodEnd = new Date(billablePeriodEnd);
+  }
+
+  let created = params.resource?.created;
+  if (created) created = new Date(created);
+
   const eob: ExplanationOfBenefit = {
     resourceType: constants.EXPLANATION_OF_BENEFIT,
     source: constants.CLAIMS,
@@ -69,7 +81,7 @@ export const fromFlexpaToEntityEOB = (params: any) => {
     status: params.resource?.status,
     types: fromFlexpaToEntityEOBType(params.resource?.type?.coding),
     use: params.resource?.use,
-    created: params.resource?.created,
+    created,
     insurer: params.resource?.insurer?.display,
     provider: fromFlexpaToEntityEOBProvider(params.resource?.provider),
     prescription: fromFlexpaToEntityEOBPrescription(
@@ -80,29 +92,12 @@ export const fromFlexpaToEntityEOB = (params: any) => {
     items: fromFlexpaToEntityItems(params.resource?.item),
     diagnosis: fromFlexpaToEntityDiagnosis(params.resource?.diagnosis),
     procedure: fromFlexpaToEntityEOBProcedure(params.resource?.procedure),
-    billablePeriod: fromFlexpaToEntityEOBBillablePeriod(
-      params.resource?.billablePeriod
-    ),
+    billablePeriodStart,
+    billablePeriodEnd,
+    patientReference: params.resource?.patient?.reference,
   };
-
-  if (eob.billablePeriod?.start) {
-    eob.primaryDate = eob.billablePeriod.start;
-  } else if (eob.created) {
-    eob.primaryDate = eob.created;
-  }
 
   return eob;
-};
-
-export const fromFlexpaToEntityEOBBillablePeriod = (
-  billablePeriod: any
-): EOBBillablePeriod => {
-  if (!billablePeriod) return null;
-  const period: EOBBillablePeriod = {
-    start: billablePeriod.start,
-    end: billablePeriod.end,
-  };
-  return period;
 };
 
 export const fromFlexpaToEntityEOBProcedure = (
@@ -112,9 +107,13 @@ export const fromFlexpaToEntityEOBProcedure = (
 
   const eobProcedures: EOBProcedure[] = [];
   procedure.forEach((p: any) => {
+    let date;
+    if (p.date) {
+      date = new Date(p.date);
+    }
     const eobProcedure: EOBProcedure = {
       sequence: p.sequence,
-      date: p.date,
+      date,
       display: p.procedureReference?.display,
       reference: p.procedureReference?.reference,
     };
@@ -267,8 +266,8 @@ export const fromFlexpaToEntityMedicationRequest = (
   if (codeDisplay) medicationRequest.codeDisplay = codeDisplay;
 
   let authoredOn = params.resource?.authoredOn;
-  if (authoredOn) medicationRequest.authoredOn = authoredOn;
-  if (authoredOn) medicationRequest.primaryDate = authoredOn;
+  if (authoredOn) medicationRequest.authoredOn = new Date(authoredOn);
+  if (authoredOn) medicationRequest.primaryDate = new Date(authoredOn);
 
   let requesterIdentifier = params.resource?.requester?.identifier?.value;
   if (requesterIdentifier)
@@ -339,15 +338,15 @@ export const fromFlexpaToEntityAllergyIntolerance = (
   if (codeDisplay) allergyIntolerance.codeDisplay = codeDisplay;
 
   let onsetDateTime = params.reousrce?.onsetDateTime;
-  if (onsetDateTime) allergyIntolerance.onsetDateTime = onsetDateTime;
+  if (onsetDateTime) allergyIntolerance.onsetDateTime = new Date(onsetDateTime);
 
   let recordedDate = params.resource?.recordedDate;
-  if (recordedDate) allergyIntolerance.recordedDate = recordedDate;
+  if (recordedDate) allergyIntolerance.recordedDate = new Date(recordedDate);
 
   if (onsetDateTime) {
-    allergyIntolerance.primaryDate = onsetDateTime;
+    allergyIntolerance.primaryDate = new Date(onsetDateTime);
   } else if (recordedDate) {
-    allergyIntolerance.primaryDate = recordedDate;
+    allergyIntolerance.primaryDate = new Date(recordedDate);
   }
 
   let recorder = params.resource?.recorder?.display;
@@ -451,8 +450,9 @@ export const fromFlexpaToEntityProcedure = (params: any): Procedure => {
   if (codeDisplay) procedure.codeDisplay = codeDisplay;
 
   let performedDateTime = params.resource?.performedDateTime;
-  if (performedDateTime) procedure.performedDateTime = performedDateTime;
-  if (performedDateTime) procedure.primaryDate = performedDateTime;
+  if (performedDateTime)
+    procedure.performedDateTime = new Date(performedDateTime);
+  if (performedDateTime) procedure.primaryDate = new Date(performedDateTime);
 
   let recorder = params.resource?.recorder?.display;
   if (recorder) procedure.recorder = recorder;
@@ -472,12 +472,16 @@ export const fromFlexpaToEntityProcedure = (params: any): Procedure => {
 export const fromFlexpaReferenceProcedureToEntityProcedure = (
   params: any
 ): Procedure => {
+  let performedDateTime = params.performedPeriod?.start;
+  if (performedDateTime) {
+    performedDateTime = new Date(performedDateTime);
+  }
   const procedure: Procedure = {
     source: constants.CLAIMS,
     resourceType: constants.PROCEDURE,
     fhirReference: params.id,
     code: params.code?.coding?.[0].code,
-    performedDateTime: params.performedPeriod?.start,
+    performedDateTime,
     performerIdentifier: params.performer?.[0]?.actor?.identifier?.value,
     performer: params.performer?.[0]?.actor?.display,
   };
@@ -534,9 +538,10 @@ export const fromFlexpaToEntityImmunization = (
   const status = params.status;
   if (status) immunization.status = status;
 
-  const occurenceDateTime = params.occurenceDateTime;
-  if (occurenceDateTime) immunization.occurenceDateTime = occurenceDateTime;
-  if (occurenceDateTime) immunization.primaryDate = occurenceDateTime;
+  const occurenceDateTime = params?.occurenceDateTime;
+  if (occurenceDateTime)
+    immunization.occurenceDateTime = new Date(occurenceDateTime);
+  if (occurenceDateTime) immunization.primaryDate = new Date(occurenceDateTime);
 
   return immunization;
 };
@@ -594,8 +599,9 @@ export const fromFlexpaToEntityMedicationDispense = (
   if (daysSupply) medicationDispense.daysSupply = daysSupply;
 
   let whenHandedOver = params.resource?.whenHandedOver;
-  if (whenHandedOver) medicationDispense.whenHandedOver = whenHandedOver;
-  if (whenHandedOver) medicationDispense.primaryDate = whenHandedOver;
+  if (whenHandedOver)
+    medicationDispense.whenHandedOver = new Date(whenHandedOver);
+  if (whenHandedOver) medicationDispense.primaryDate = new Date(whenHandedOver);
 
   return medicationDispense;
 };
@@ -625,13 +631,13 @@ export const fromFlexpaToEntityEncounter = (params: any) => {
   }
 
   if (params.resource?.period?.start) {
-    encounter.start = params.resource.period?.start;
+    encounter.start = new Date(params.resource.period?.start);
   }
   if (params.resource?.period?.start) {
-    encounter.primaryDate = params.resource?.period?.start;
+    encounter.primaryDate = new Date(params.resource?.period?.start);
   }
   if (params.resource?.period?.end) {
-    encounter.end = params.resource.period?.end;
+    encounter.end = new Date(params.resource.period?.end);
   }
 
   if (params.resource?.class?.code) {
@@ -665,7 +671,7 @@ export const fromFlexpaToEntityCareTeam = (params: any) => {
 
   if (params.resource?.participants) {
     careTeam.participants = fromFlexpaToEntityCareTeamParticipants(
-      params.reousrce?.participants
+      params.resource?.participants
     );
   }
   return careTeam;
@@ -729,16 +735,18 @@ export const fromFlexpaToEntityObservation = (params: any) => {
   };
 
   if (params.resource?.effectiveDateTime) {
-    observation.effectiveDateTime = params.resource?.effectiveDateTime;
+    observation.effectiveDateTime = new Date(
+      params.resource?.effectiveDateTime
+    );
   }
   if (params.resource?.issued) {
-    observation.issued = params.resource?.issued;
+    observation.issued = new Date(params.resource?.issued);
   }
 
   if (observation.effectiveDateTime) {
     observation.primaryDate = observation.effectiveDateTime;
   } else {
-    observation.primaryDate = observation.issued;
+    observation.primaryDate = new Date(observation.issued);
   }
 
   if (params.resource?.status) observation.status = params.resource.status;

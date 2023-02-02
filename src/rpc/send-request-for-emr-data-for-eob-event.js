@@ -3,9 +3,11 @@ import { getServerConfig } from "../config/config";
 
 export const sendRequestForEMRDataForEOBEvent = async (
   idToken,
-  patientUid,
-  eobUid
+  patientUuid,
+  eobUuid
 ) => {
+  const authUser = JSON.parse(localStorage.getItem("med_thread_auth_user"));
+  const { uuid } = authUser;
   const config = getServerConfig();
 
   // validation – coudl not get the uid
@@ -13,8 +15,9 @@ export const sendRequestForEMRDataForEOBEvent = async (
     method: "post",
     url: `${config.baseUrl}/send-request-for-emr-data-for-eob-event`,
     data: {
-      patientUid,
-      eobUid,
+      userUuid: uuid,
+      patientUuid,
+      eobUuid,
     },
 
     headers: {

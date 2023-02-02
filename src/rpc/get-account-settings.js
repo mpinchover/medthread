@@ -4,13 +4,17 @@ import { getServerConfig } from "../config/config";
 
 export const getAccountSettings = async (idToken) => {
   const config = getServerConfig();
+  const authUser = JSON.parse(localStorage.getItem("med_thread_auth_user"));
+  const { uuid } = authUser;
 
   let res;
   try {
     res = await axios({
-      method: "get",
+      method: "post",
       url: `${config.baseUrl}/get-user-account`,
-
+      data: {
+        userUuid: uuid,
+      },
       headers: {
         "Access-Control-Allow-Origin": "*",
         Authorization: `Bearer ${idToken}`,

@@ -8,22 +8,23 @@ const cors = require("cors")({ origin: true });
 import * as express from "express";
 import { addHealthInsuranceProvider } from "./add-health-insurance-provider";
 import { getUserAccount } from "./get-user-account";
-import { removeHealthInsuranceProvider } from "./remove-health-insurance-provider";
-import { saveMedication } from "./save-medication";
-import { getMedicationsByUserUid } from "./get-medications-by-user-uid";
-import { removeMedication } from "./remove-medication";
+// import { removeHealthInsuranceProvider } from "./remove-health-insurance-provider";
+// import { saveMedication } from "./save-medication";
+// import { getMedicationsByUserUid } from "./get-medications-by-user-uid";
+// import { removeMedication } from "./remove-medication";
 // import { sendMedicationsToProvider } from "./send-medications";
-import { getClaimsDataByUserUid } from "./handlers/get-claims-data-by-user-uid";
+// import { getClaimsDataByUserUid } from "./handlers/get-claims-data-by-user-uid";
 import { createHydratedUserProfile } from "./handlers/create-hydrated-user";
-import { getClaimsDataByUserUidForProvider } from "./handlers/get-claims-data-by-user-uid-for-provider";
+// import { getClaimsDataByUserUidForProvider } from "./handlers/get-claims-data-by-user-uid-for-provider";
 import { getPatientTimelineData } from "./handlers/get-patient-timeline";
 import { hydrateUserProfile } from "./handlers/hydrate-user-profile";
 import { getPatientTimelineDataForProvider } from "./handlers/get-patient-timeline-for-provider";
-import { getPatientsByHealthcareProviderUid } from "./handlers/get-patients-by-healthcare-provider-uid";
+// import { getPatientsByHealthcareProviderUid } from "./handlers/get-patients-by-healthcare-provider-uid";
 import { sendRequestForEMRDataForEOBEvent } from "./handlers/send-request-for-emr-data-for-eob-event";
 // import { getMedicationsByPatientUid } from "./get-medications-by-patient-uid";
 // import { publicIp, publicIpv4, publicIpv6 } from "public-ip";
-import * as mysql2 from "mysql2/promise";
+import { getPatientsByHealthcareProviderUuid } from "./handlers/get-patients-by-healthcare-provider-uuid";
+import { getClaimsDataByUserUuidForProvider } from "./handlers/get-claims-data-by-user-uiud-for-provider";
 const app = express();
 
 // https://firebase.google.com/docs/firestore/query-data/get-data#get_multiple_documents_from_a_collection
@@ -47,7 +48,8 @@ const validateFirebaseIdToken = async (req: any, res: any, next: any) => {
     if (!headerToken) throw new Error();
     const idToken = req.headers.authorization.split("Bearer ")[1];
     const decodedIdToken = await admin.auth().verifyIdToken(idToken);
-    req.user = decodedIdToken;
+    req.auth = decodedIdToken;
+    req.authUid = decodedIdToken.user_id;
     next();
     return;
   } catch (e) {
@@ -58,20 +60,18 @@ const validateFirebaseIdToken = async (req: any, res: any, next: any) => {
 
 app.get("/test-fn", async (req, res) => {
   try {
-    const connection = await mysql2.createConnection({
-      host: "",
-      user: "",
-      password: "",
-      database: "",
-      port: 3306,
-    });
-
-    const result = await connection.query(
-      "CREATE TABLE TESTING (uuid varchar(36) );"
-    );
-
-    // const outboundIP = await publicIp();
-    res.send({ success: "success" });
+    // const connection = await mysql2.createConnection({
+    //   host: "",
+    //   user: "",
+    //   password: "",
+    //   database: "",
+    //   port: 3306,
+    // });
+    // const result = await connection.query(
+    //   "CREATE TABLE TESTING (uuid varchar(36) );"
+    // );
+    // // const outboundIP = await publicIp();
+    // res.send({ success: "success" });
   } catch (e) {
     console.log(e);
     res.status(501).send({ error: e });
@@ -79,9 +79,9 @@ app.get("/test-fn", async (req, res) => {
 });
 
 app.post(
-  "/get-patients-by-healthcare-provider-uid",
+  "/get-patients-by-healthcare-provider-uuid",
   validateFirebaseIdToken,
-  getPatientsByHealthcareProviderUid
+  getPatientsByHealthcareProviderUuid
 );
 
 app.post(
@@ -102,40 +102,40 @@ app.post(
   getPatientTimelineData
 );
 
-app.post(
-  "/get-claims-data-by-user-uid",
-  validateFirebaseIdToken,
-  getClaimsDataByUserUid
-);
+// app.post(
+//   "/get-claims-data-by-user-uid",
+//   validateFirebaseIdToken,
+//   getClaimsDataByUserUid
+// );
 
 app.post("/create-hydrated-profile", createHydratedUserProfile);
 
 app.post(
-  "/get-claims-data-by-user-uid-for-provider",
+  "/get-claims-data-by-user-uuid-for-provider",
   validateFirebaseIdToken,
-  getClaimsDataByUserUidForProvider
+  getClaimsDataByUserUuidForProvider
 );
 
-app.get("/hydrate-user-profile", validateFirebaseIdToken, hydrateUserProfile);
-app.post(
-  "/remove-health-insurance-provider",
-  validateFirebaseIdToken,
-  removeHealthInsuranceProvider
-);
+app.post("/hydrate-user-profile", validateFirebaseIdToken, hydrateUserProfile);
+// app.post(
+//   "/remove-health-insurance-provider",
+//   validateFirebaseIdToken,
+//   removeHealthInsuranceProvider
+// );
 app.post(
   "/send-request-for-emr-data-for-eob-event",
   validateFirebaseIdToken,
   sendRequestForEMRDataForEOBEvent
 );
 
-app.post("/remove-medication", validateFirebaseIdToken, removeMedication);
-app.post("/save-medication", validateFirebaseIdToken, saveMedication);
-app.get("/get-user-account", validateFirebaseIdToken, getUserAccount);
-app.get(
-  "/get-medications-by-user-uid",
-  validateFirebaseIdToken,
-  getMedicationsByUserUid
-);
+// app.post("/remove-medication", validateFirebaseIdToken, removeMedication);
+// app.post("/save-medication", validateFirebaseIdToken, saveMedication);
+app.post("/get-user-account", validateFirebaseIdToken, getUserAccount);
+// app.get(
+//   "/get-medications-by-user-uid",
+//   validateFirebaseIdToken,
+//   getMedicationsByUserUid
+// );
 
 const runtimeOpts = {
   timeoutSeconds: 300,

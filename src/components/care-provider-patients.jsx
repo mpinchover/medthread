@@ -1,6 +1,6 @@
 import {
   isGettingHealthcareProviderPatientsState,
-  getPatientsByHealthcareProviderUidCallback,
+  getPatientsByHealthcareProviderUuidCallback,
   healthcareProviderPatientsState,
 } from "../recoil/provider/provider";
 import { useRecoilValue, useRecoilCallback, useRecoilState } from "recoil";
@@ -18,7 +18,7 @@ import Fade from "@mui/material/Fade";
 
 const PatientItem = ({ patient, setActiveCareProviderPatient }) => {
   const navigate = useNavigate();
-  const link = `/records/${patient.userUid}`;
+  const link = `/records/${patient.uuid}`;
 
   const handleClick = () => {
     setActiveCareProviderPatient(patient);
@@ -29,7 +29,7 @@ const PatientItem = ({ patient, setActiveCareProviderPatient }) => {
       onClick={handleClick}
       className="text-sm border-b last:border-b-0 py-8 w-full rounded-sm flex flex-row justify-between "
     >
-      <div>{patient?.account?.nameValue}</div>
+      <div>{patient?.nameValue}</div>
     </button>
   );
 };
@@ -76,7 +76,7 @@ const PatientListHeader = ({ onChange, authorizedProfile, searchQuery }) => {
     setShowCopyPopup(true);
     setTimeout(() => setShowCopyPopup(false), 1000);
     navigator.clipboard.writeText(
-      `${baseUrl}/patient-signup?providerUid=${authorizedProfile.userUid}`
+      `${baseUrl}/patient-signup?providerUuid=${authorizedProfile.uuid}`
     );
   };
 
@@ -149,8 +149,8 @@ const CareProviderPatientsContainer = () => {
   );
   const [activeCareProviderPatient, setActiveCareProviderPatient] =
     useRecoilState(activeCareProviderPatientState);
-  const getPatientsByHealthcareProviderUid = useRecoilCallback(
-    getPatientsByHealthcareProviderUidCallback
+  const getPatientsByHealthcareProviderUuid = useRecoilCallback(
+    getPatientsByHealthcareProviderUuidCallback
   );
   const isGettingHealthcareProviderPatients = useRecoilValue(
     isGettingHealthcareProviderPatientsState
@@ -161,10 +161,8 @@ const CareProviderPatientsContainer = () => {
   useEffect(() => {
     setActiveCareProviderPatient(null);
 
-    if (auth?.currentUser) {
-      getPatientsByHealthcareProviderUid(auth);
-    }
-  }, [auth?.currentUser]);
+    getPatientsByHealthcareProviderUuid(auth, authorizedProfile?.uuid);
+  }, [authorizedProfile?.uuid]);
 
   if (isGettingHealthcareProviderPatients) {
     return <LoadingWindow display="Getting patients..." />;

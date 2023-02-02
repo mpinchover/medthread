@@ -5,16 +5,16 @@ export const createHydratedUserProfile = async (req: any, res: any) => {
   const logger = functions.logger;
   try {
     const { body } = req;
-    const { profile, providerUid } = body;
+    const { profile, providerUuid } = body;
 
     const createdProfile = await userController.createHydratedUserProfile(
       profile
     );
 
-    if (providerUid) {
+    if (providerUuid) {
       await careProviderController.addAuthorizedHealthcareProviderForPatient(
-        createdProfile.userUid,
-        providerUid
+        createdProfile.uuid,
+        providerUuid
       );
     }
     res.send({ profile: createdProfile });

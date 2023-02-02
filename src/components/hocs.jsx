@@ -47,7 +47,7 @@ export const withPrivateRoute = (Component) => {
 
     if (
       authorizedProfile &&
-      authorizedProfile.role === "PROVIDER" &&
+      authorizedProfile.userRole === "PROVIDER" &&
       !authorizedProfile.emailVerified
     ) {
       return <Navigate to="/verification" replace={true} />;

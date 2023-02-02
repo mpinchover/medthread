@@ -1,8 +1,8 @@
 import { getAccessToken, getMetadata } from "../gateway/flepxa";
 import * as insuranceRepo from "../repo/insurance";
-import * as medicationsRepo from "../repo/medications";
+// import * as medicationsRepo from "../repo/medications";
 import * as flexpaGateway from "../gateway/flepxa";
-import * as medicationsController from "../controllers/medications";
+// import * as medicationsController from "../controllers/medications";
 import {
   InsuranceMetadata,
   InsuranceProvider,
@@ -20,7 +20,7 @@ import {
   Encounter,
   PatientRecordsQueryFilter,
   ExplanationOfBenefit,
-} from "../types";
+} from "../types/types";
 import {
   fromFlexpaToEntityAllergyIntoleranceList,
   fromFlexpaToEntityMedicationRequestList,
@@ -40,49 +40,17 @@ import {
   fromFlexpaReferenceProcedureToEntityProcedure,
 } from "../mappers/flexpa-to-entity";
 import { promises } from "nodemailer/lib/xoauth2";
-import { stringify } from "uuid";
 import * as constants from "../config/constants";
 import * as functions from "firebase-functions";
+import * as uuid from "uuid";
 
 export const getPatientTimeline = async (filter: PatientRecordsQueryFilter) => {
   let timeline = await getTimelineClaimsExplanationOfBenefit(filter);
-  timeline = timeline.filter((x) => !x.types?.includes("oral"));
+  timeline = timeline.filter((x: any) => !x.types?.includes("oral"));
   return timeline;
 };
 
-// export const getPatientTimeline = async (filter: PatientRecordsQueryFilter) => {
-//   const timelineResults = await Promise.allSettled([
-//     getClaimsEncounterByFilter(filter),
-//     getClaimsProcedureByFilter(filter),
-//   ]);
-
-//   let timelineEvents: TimelineEvent[] = [];
-//   for (let i = 0; i < timelineResults.length; i++) {
-//     const result: any = timelineResults[i];
-//     if (result.status === "rejected") {
-//       // TODO –  log here
-//       continue;
-//     }
-
-//     // check what the type is
-//     const convertedTimelineEvents = toTimelineEvents(
-//       result.value.values,
-//       result.value.type
-//     );
-//     timelineEvents.push(...convertedTimelineEvents);
-//   }
-
-//   timelineEvents = timelineEvents.sort((a, b) => {
-//     return (
-//       new Date(b.primaryDate).valueOf() - new Date(a.primaryDate).valueOf()
-//     );
-//   });
-//   return timelineEvents;
-// };
-
-// take in a claims data array and covnert it to a timeline event
-
-export const getClaimsDataByUserUid = async (
+export const getClaimsDataByUserUuid = async (
   filter: PatientRecordsQueryFilter
 ): Promise<ClaimsData> => {
   // check the userUid profile. If it's a provider then get all
@@ -159,7 +127,7 @@ export const getClaimsEncounterByFilter = async (
       }
 
       // if everything is selected, them just don't filter by any types
-      const claimsValues = await insuranceRepo.getClaimsEncounterByUserUid(
+      const claimsValues = await insuranceRepo.getClaimsEncounterByUserUuid(
         filter
       );
       for (let i = 0; i < claimsValues.length; i++) {
@@ -178,7 +146,7 @@ export const getTimelineClaimsExplanationOfBenefit = async (
 ) => {
   // if everything is selected, them just don't filter by any types
   let explanationofBenefits =
-    await insuranceRepo.getExplanationOfBenefitByUserUid(filter);
+    await insuranceRepo.getExplanationOfBenefitByUserUuid(filter);
 
   const procedureReferences = extractProcedureRefsFromEOB(
     explanationofBenefits
@@ -239,7 +207,7 @@ export const getClaimsConditionByFilter = async (
 ) => {
   return new Promise(async (res, rej) => {
     try {
-      const claimsValues = await insuranceRepo.getClaimsConditionByUserUid(
+      const claimsValues = await insuranceRepo.getClaimsConditionByUserUuid(
         filter
       );
 
@@ -258,7 +226,7 @@ export const getClaimsProcedureByFilter = async (
       if (!filter.procedure) {
         res({ type: constants.PROCEDURE, values: [] });
       }
-      const claimsValues = await insuranceRepo.getClaimsProcedureByUserUid(
+      const claimsValues = await insuranceRepo.getClaimsProcedureByUserUuid(
         filter
       );
 
@@ -278,7 +246,7 @@ export const getClaimsImmunizationByFilter = async (
 ) => {
   return new Promise(async (res, rej) => {
     try {
-      const claimsValues = await insuranceRepo.getClaimsImmunizationByUserUid(
+      const claimsValues = await insuranceRepo.getClaimsImmunizationByUserUuid(
         filter
       );
       res({ type: constants.IMMUNIZATION, values: claimsValues });
@@ -294,7 +262,7 @@ export const getClaimsAllergyIntoleranceByFilter = async (
   return new Promise(async (res, rej) => {
     try {
       const claimsValues =
-        await insuranceRepo.getClaimsAllergyIntoleranceByUserUid(filter);
+        await insuranceRepo.getClaimsAllergyIntoleranceByUserUuid(filter);
       res({ type: constants.ALLERGY_INTOLERANCE, values: claimsValues });
     } catch (e) {
       rej(e);
@@ -308,7 +276,7 @@ export const getClaimsMedicationRequestByFilter = async (
   return new Promise(async (res, rej) => {
     try {
       const claimsValues =
-        await insuranceRepo.getClaimsMedicationRequestByUserUid(filter);
+        await insuranceRepo.getClaimsMedicationRequestByUserUuid(filter);
       res({ type: constants.MEDICATION_REQUEST, values: claimsValues });
     } catch (e) {
       rej(e);
@@ -322,7 +290,7 @@ export const getClaimsMedicationDispenseByFilter = async (
   return new Promise(async (res, rej) => {
     try {
       const claimsValues =
-        await insuranceRepo.getClaimsMedicationDispenseByUserUid(filter);
+        await insuranceRepo.getClaimsMedicationDispenseByUserUuid(filter);
       res({ type: constants.MEDICATION_DISPENSE, values: claimsValues });
     } catch (e) {
       rej(e);
@@ -331,7 +299,7 @@ export const getClaimsMedicationDispenseByFilter = async (
 };
 
 export const addHealthInsuranceProvider = async (
-  userUid: string,
+  userUuid: string,
   publicToken: string
 ): Promise<AddHealthInsuranceProviderResponse> => {
   try {
@@ -340,9 +308,9 @@ export const addHealthInsuranceProvider = async (
 
     // check to see if we've already added this health insurance provider
     const existingInsuranceprovider =
-      await insuranceRepo.getInsuranceProviderByUserUidAndName(
+      await insuranceRepo.getInsuranceProviderByUserUuidAndName(
         metadata.publisher,
-        userUid
+        userUuid
       );
 
     // if this health insurance provider exists, just return it
@@ -360,35 +328,36 @@ export const addHealthInsuranceProvider = async (
 
     // TODO – batch the insurance provider creation with the claims data creation
     // create the new health insurance provider
-    const newProviderParams: InsuranceProvider = {
-      userUid,
+    const newProvider: InsuranceProvider = {
+      userUuid,
       accessToken,
       providerName: metadata.publisher,
       capabilities: metadata.capabilities,
+      uuid: uuid.v4(),
     };
 
-    const newProvider = await insuranceRepo.addInsuranceProviderForPatient(
-      newProviderParams
-    );
+    const repoProviderParams = JSON.parse(JSON.stringify(newProvider));
+    repoProviderParams.capabilities = JSON.stringify(metadata.capabilities);
+
+    await insuranceRepo.addInsuranceProviderForPatient(repoProviderParams);
 
     // TODO – test this
     const claimsData = await getClaimsFromInsuranceProvider(newProvider);
 
-    appendInsuranceAndUserUidToClaims(claimsData, newProvider);
+    appendInsuranceAndUserUuidToClaims(claimsData, newProvider);
+
     // TODO – make sure not to save duplicates
-    const savedClaimsData = await insuranceRepo.batchWriteClaimsData(
-      claimsData
-    );
+    await insuranceRepo.batchWriteClaimsData(claimsData);
 
     const derivedClaimsMedications = deriveClaimsMedications(
-      savedClaimsData.medicationRequest,
-      savedClaimsData.medicationDispense
+      claimsData.medicationRequest,
+      claimsData.medicationDispense
     );
 
-    savedClaimsData.derivedClaimsMedications = derivedClaimsMedications;
+    claimsData.derivedClaimsMedications = derivedClaimsMedications;
     const res: AddHealthInsuranceProviderResponse = {
       insuranceProvider: newProvider,
-      claimsData: savedClaimsData,
+      claimsData: claimsData,
     };
     return res;
   } catch (e) {
@@ -397,65 +366,82 @@ export const addHealthInsuranceProvider = async (
   }
 };
 // TODO – put this in a loop
-export const appendInsuranceAndUserUidToClaims = (
+export const appendInsuranceAndUserUuidToClaims = (
   claimsData: ClaimsData,
   insuranceProvider: InsuranceProvider
 ) => {
-  const userUid = insuranceProvider.userUid;
-  const providerUid = insuranceProvider.uid;
+  const userUuid = insuranceProvider.userUuid;
+  const providerUuid = insuranceProvider.uuid;
 
-  _appendInsuranceAndUseUidToClaims(
-    userUid,
-    providerUid,
+  _appendInsuranceAndUserUuidToClaims(
+    userUuid,
+    providerUuid,
     claimsData.medicationRequest
   );
 
-  _appendInsuranceAndUseUidToClaims(
-    userUid,
-    providerUid,
+  _appendInsuranceAndUserUuidToClaims(
+    userUuid,
+    providerUuid,
     claimsData.medicationDispense
   );
 
-  _appendInsuranceAndUseUidToClaims(
-    userUid,
-    providerUid,
+  _appendInsuranceAndUserUuidToClaims(
+    userUuid,
+    providerUuid,
     claimsData.allergyIntolerance
   );
 
-  _appendInsuranceAndUseUidToClaims(userUid, providerUid, claimsData.condition);
+  _appendInsuranceAndUserUuidToClaims(
+    userUuid,
+    providerUuid,
+    claimsData.condition
+  );
 
-  _appendInsuranceAndUseUidToClaims(userUid, providerUid, claimsData.procedure);
+  _appendInsuranceAndUserUuidToClaims(
+    userUuid,
+    providerUuid,
+    claimsData.procedure
+  );
 
-  _appendInsuranceAndUseUidToClaims(
-    userUid,
-    providerUid,
+  _appendInsuranceAndUserUuidToClaims(
+    userUuid,
+    providerUuid,
     claimsData.immunization
   );
 
-  _appendInsuranceAndUseUidToClaims(userUid, providerUid, claimsData.encounter);
+  _appendInsuranceAndUserUuidToClaims(
+    userUuid,
+    providerUuid,
+    claimsData.encounter
+  );
 
-  _appendInsuranceAndUseUidToClaims(
-    userUid,
-    providerUid,
+  _appendInsuranceAndUserUuidToClaims(
+    userUuid,
+    providerUuid,
     claimsData.observation
   );
 
-  _appendInsuranceAndUseUidToClaims(userUid, providerUid, claimsData.careTeam);
-  _appendInsuranceAndUseUidToClaims(
-    userUid,
-    providerUid,
+  _appendInsuranceAndUserUuidToClaims(
+    userUuid,
+    providerUuid,
+    claimsData.careTeam
+  );
+  _appendInsuranceAndUserUuidToClaims(
+    userUuid,
+    providerUuid,
     claimsData.explanationOfBenefit
   );
 };
 
-export const _appendInsuranceAndUseUidToClaims = (
-  userUid: string,
-  providerUid: string,
+export const _appendInsuranceAndUserUuidToClaims = (
+  userUuid: string,
+  providerUuid: string,
   values: any[]
 ) => {
   for (let i = 0; i < values.length; i++) {
-    values[i].insuranceProviderUid = providerUid;
-    values[i].userUid = userUid;
+    values[i].insuranceProviderUuid = providerUuid;
+    values[i].userUuid = userUuid;
+    values[i].uuid = uuid.v4();
   }
 };
 
@@ -704,12 +690,12 @@ export const getClaimsFromInsuranceProvider = async (
 
   const claimsResults = await Promise.allSettled(
     concurrentPromisesToExecute.map((fn) =>
-      fn(insuranceProvider.accessToken, insuranceProvider.uid)
+      fn(insuranceProvider.accessToken, insuranceProvider.uuid)
     )
   );
   logger.info({
     message: "CLAIMS RESULTS FROM ADDING PROVIDER",
-    userUid: insuranceProvider?.userUid,
+    userUuid: insuranceProvider?.userUuid,
     data: claimsResults,
   });
 

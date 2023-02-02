@@ -1,6 +1,7 @@
 import axios from "axios";
-import { InsuranceMetadata } from "../types";
+import { InsuranceMetadata } from "../types/types";
 import * as functions from "firebase-functions";
+import { ResultStorage } from "firebase-functions/v1/testLab";
 export const getAccessToken = async (publicToken: string) => {
   const res = await axios({
     method: "post",

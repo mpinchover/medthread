@@ -23,11 +23,11 @@ const Navbar = () => {
   // const authUser = getAuthUser();
   const authUser = authorizedProfile;
 
-  if (authUser && authUser.role === "PATIENT") {
+  if (authUser && authUser.userRole === "PATIENT") {
     return <PatientNavbar authUser={authUser} />;
   }
 
-  if (authUser && authUser.role === "PROVIDER") {
+  if (authUser && authUser.userRole === "PROVIDER") {
     return <ProviderNavbar authUser={authUser} />;
   }
 

@@ -24,9 +24,9 @@ export const sendEMRRequestForEobEventCallback =
         /* forceRefresh */ true
       );
 
-      const { userUid, uid } = event;
+      const { userUuid, uuid } = event;
       set(isSendingEMRRequestForEobEventState, true);
-      sendRequestForEMRDataForEOBEvent(idToken, userUid, uid);
+      sendRequestForEMRDataForEOBEvent(idToken, userUuid, uuid);
     } catch (e) {
       console.log(e);
     } finally {

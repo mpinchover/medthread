@@ -1,18 +1,21 @@
 import * as admin from "firebase-admin";
 import * as careProviderController from "../controllers/care-providers";
 import * as functions from "firebase-functions";
-export const getPatientsByHealthcareProviderUid = async (
+export const getPatientsByHealthcareProviderUuid = async (
   req: any,
   res: any
 ) => {
   const logger = functions.logger;
   try {
-    const { user } = req;
-    const userUid = user.user_id;
+    // care provider uuid
+    const { body } = req;
+    const { uuid } = body;
+
     // get the provider uid out of the header
     const patients = await careProviderController.getPatientsForCareProvider(
-      userUid
+      uuid
     );
+
     res.send({ patients });
   } catch (e) {
     logger.error(e);

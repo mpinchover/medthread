@@ -4,13 +4,13 @@ import { useEffect, useContext } from "react";
 import {
   // filteredDerivedMedicationsState,
   isSendingMedicationsState,
-  getMedicationsByUserUidCallback,
+  // getMedicationsByUserUidCallback,
   loadingGetMedicationState,
   isAddingMedicationState,
 } from "../recoil/medications/medications";
 import { accountSettingsState } from "../recoil/account/account";
 import {
-  getClaimsDataByUserUidCallback,
+  getClaimsDataByUserUuidCallback,
   filteredClaimsDerivedMedicationsState,
   filteredClaimsImmunizationsState,
   claimsMedicationDispenseState,
@@ -37,8 +37,8 @@ const MedicationListPatient = () => {
   const isLoadingClaimsData = useRecoilValue(isLoadingClaimsDataState);
   const authUser = getAuthUser();
   // const getMedications = useRecoilCallback(getMedicationsByUserUidCallback);
-  const getClaimsDatabyUserUid = useRecoilCallback(
-    getClaimsDataByUserUidCallback
+  const getClaimsDatabyUserUuid = useRecoilCallback(
+    getClaimsDataByUserUuidCallback
   );
   const claimsAllergyIntolerance = useRecoilValue(
     filteredClaimsAllergyIntolerancesState
@@ -68,8 +68,9 @@ const MedicationListPatient = () => {
 
   useEffect(() => {
     // getMedications();
+
     if (auth?.currentUser) {
-      getClaimsDatabyUserUid(auth);
+      getClaimsDatabyUserUuid(auth);
     }
   }, [auth.currentUser]);
 
