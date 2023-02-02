@@ -318,7 +318,7 @@ export const addHealthInsuranceProvider = async (
       const res: AddHealthInsuranceProviderResponse = {
         insuranceProvider: existingInsuranceprovider,
       };
-      // return res;
+      return res;
     }
     // TODO – add a condition here to solve this.
     // if we are adding a health insurance provider now, we still want to get new details
@@ -346,7 +346,6 @@ export const addHealthInsuranceProvider = async (
 
     appendInsuranceAndUserUuidToClaims(claimsData, newProvider);
 
-    console.log("BATCH WRITING");
     // TODO – make sure not to save duplicates
     await insuranceRepo.batchWriteClaimsData(claimsData);
 

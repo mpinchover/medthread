@@ -21,23 +21,30 @@ class Database {
   //     return this.mongoClient;
   //   }
 
+  public static async closeConn() {
+    if (this.mysqlDB) {
+      await this.mysqlDB.end();
+    }
+  }
+
   public static async getDb(): Promise<mysql2.Connection> {
     if (this.mysqlDB) {
       return this.mysqlDB;
     }
 
-    const port: number = parseInt(process.env.MYSQL_PORT);
+    const port: number = parseInt(process.env.PORT);
     const connection = await mysql2.createConnection({
       //   host: process.env.MYSQL_HOST,
       host: "localhost",
       //   user: process.env.MYSQL_USER,
-      user: "root",
+      user: "root", // process.env.USER,
       //   password: process.env.MYSQL_PASSWORD,
-      password: "root",
+      password: "root", //process.env.PASSWORD,
       // database: process.env.MYSQL_DATABASE,
       database: "medthread_dev",
       port: 3308,
     });
+    this.mysqlDB = connection;
     return connection;
   }
 }

@@ -8,12 +8,16 @@ export const getPatientTimelineDataForProvider = async (req: any, res: any) => {
   try {
     const { body, authUid } = req;
     // const userUid = user.user_id;
-    const { patientUuid, filter, userUuid } = body;
+    const { patientUuid, filter, providerUuid } = body;
+
+    console.log("CALLING TIMLINEE");
+
+    console.log(body);
 
     const careProvider =
       await careProviderController.getAuthorizedHealthcareProviderForPatientRecords(
         authUid,
-        userUuid,
+        providerUuid,
         patientUuid
       );
 

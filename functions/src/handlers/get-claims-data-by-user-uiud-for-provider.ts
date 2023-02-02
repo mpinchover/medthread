@@ -8,16 +8,16 @@ export const getClaimsDataByUserUuidForProvider = async (
 ) => {
   const logger = functions.logger;
   try {
-    const { body, userUuid, authUid } = req;
+    const { body, authUid } = req;
     // const userUuid = user.user_id;
-    const { patientUuid } = body;
+    const { patientUuid, providerUuid } = body;
     // check to see if authorized
     // const userUidToReadClaimsFor = req.params.userUid;
 
     const careProvider =
       await careProviderController.getAuthorizedHealthcareProviderForPatientRecords(
         authUid,
-        userUuid,
+        providerUuid,
         patientUuid
       );
 

@@ -13,6 +13,8 @@ export const getUserProfile = async (uuid: string): Promise<Profile> => {
   try {
     const conn = await Database.getDb();
 
+    console.log("SEARCHING UUID");
+    console.log(uuid);
     const query = `select * from ${profilesTable} where uuid = ?`;
     const params: any[] = [uuid];
     const [rows] = await conn.query<any>(query, params);
@@ -34,7 +36,7 @@ export const getUserProfilesByUuids = async (
     const conn = await Database.getDb();
 
     const query = `select * from ${profilesTable} where uuid in (?)`;
-    const params: any[] = [uuids];
+    const params: any[] = [...uuids];
     const [rows] = await conn.query<any>(query, params);
     for (const record of rows) {
       profiles.push(record);
@@ -70,7 +72,7 @@ export const hydrateUserProfile = async (
 
   const conn = await Database.getDb();
 
-  const query = `select * from ${profilesTable} where uuid = ?`;
+  const query = `select * from ${profilesTable} where authUid = ?`;
   const params: any[] = [userUuid];
   const [rows] = await conn.query<any>(query, params);
   if (rows.length === 0) return null;
@@ -87,69 +89,3 @@ export const createHydratedUserProfile = async (
   await conn.query<any>(query, params);
   return profile;
 };
-
-// export const getPatientsByProviderUid = async (providerUid: string) => {
-//   // // first get the provider auth profile to get the email
-
-//   // const providerAuthProfile: AuthProfile = await admin
-//   //   .auth()
-//   //   .getUser(providerUid);
-//   // // if (!providerAuthProfile.emailVerified) throw new Error("provider is not verified")
-//   // const providerEmail = providerAuthProfile.email;
-//   // // now query all the authorized healthcare docs that this provider has been authorized for
-//   // const healthcareProvidersRef = await admin
-//   //   .firestore()
-//   //   .collection("healthcareProviders");
-
-//   const db = admin.firestore();
-//   const healthcareProvidersRef = db.collection("healthcareProviders");
-
-//   let snapshot = await healthcareProvidersRef
-//     .where("providerUid", "==", providerEmail)
-//     .get();
-//   const patientUids: string[] = snapshot.docs.map(
-//     (doc: any) => doc.data().patientUid
-//   );
-
-//   if (patientUids.length == 0) {
-//     return [];
-//   }
-//   // now get patient names
-//   const profilesRef = await admin.firestore().collection("profiles");
-//   snapshot = await profilesRef.where("userUid", "in", patientUids).get();
-//   if (snapshot.empty) return null;
-
-//   // TODO sort by the time it was added
-//   const patients: Profile[] = snapshot.docs.map((doc: any) => {
-//     return doc.data();
-//   });
-//   return patients;
-// };
-
-// export const getPatientsForProvider = async (providerUid: string) => {
-//   try {
-//     const authProfile: AuthProfile = await getAuthProfile(providerUid);
-//     const { email } = authProfile;
-//     if (!email) {
-//       throw new Error("email is required for getting previous patients");
-//     }
-
-//     const profiles = await admin.firestore().collection("profiles");
-
-//     const snapshot = await profiles.where("userUid", "==", providerUid).get();
-
-//     if (!snapshot || snapshot.empty) return null;
-
-//     const profile: Profile = snapshot.docs[0].data();
-
-//     const profileId = snapshot.docs[0].id;
-//     profile.uid = profileId;
-
-//     return profile;
-//   } catch (e) {
-//     console.log(e);
-//     throw e;
-//   }
-// };
-
-// https://firebase.google.com/docs/firestore/manage-data/add-data

@@ -224,6 +224,7 @@ export interface Observation {
   fhirReference?: string;
   primaryDate?: Date;
   resourceType?: string;
+  insuranceProviderUuid?: string;
 }
 
 export interface Profile {
@@ -290,20 +291,15 @@ export interface ExplanationOfBenefit {
   use?: string;
   patientReference?: string;
   insurer?: string;
-  providerJSON?: string;
   provider?: EOBProvider;
   prescription?: EOBPrescription;
-  prescriptionJSON?: string;
   facilityDisplay?: string;
   outcome?: string;
   items?: EOBItem[];
-  itemsJSON?: string;
   billablePeriodStart?: Date;
   billablePeriodEnd?: Date;
   created?: Date;
-  diagnosisJSON?: string;
   diagnosis?: EOBDiagnosis[];
-  procedureJSON?: EOBProcedure;
   procedure?: EOBProcedure[];
   primaryDate?: Date;
   resourceType?: string;

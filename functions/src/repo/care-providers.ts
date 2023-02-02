@@ -11,35 +11,13 @@ import Database from "./mysql";
 
 const authorizedCareProviderLinkTable = "authorizedCareProviderLink";
 
-// deprecate?
-// export const getAuthorizedHealthcareProviders = async (patientUid: string) => {
-//   const healthcareProvidersRef = await admin
-//     .firestore()
-//     .collection("healthcareProviders");
-
-//   const snapshot = await healthcareProvidersRef
-//     .where("patientUid", "==", patientUid)
-//     .get();
-
-//   if (snapshot.empty) return [];
-
-//   return snapshot.docs.map((doc) => {
-//     const data: any = doc.data();
-
-//     const hcp: AuthorizedCareProviderLink = {
-//       ...data,
-//       uid: doc.id,
-//     };
-//     return hcp;
-//   });
-// };
-
 export const getAuthorizedHealthcareProviderForPatient = async (
   authUid: string,
   providerUuid: string,
   patientUuid: string
 ) => {
   const userProfile = await getUserProfile(providerUuid);
+
   if (userProfile.userRole !== "PROVIDER")
     throw new Error("must be a provider");
   // check verification
@@ -53,6 +31,9 @@ export const getAuthorizedHealthcareProviderForPatient = async (
     providerUuid,
     patientUuid
   );
+
+  console.log("EXISTING HEALTHCARE PROVIDER IS");
+  console.log(existingHealthcareProvider);
 
   if (existingHealthcareProvider) return existingHealthcareProvider;
   return null;
@@ -90,6 +71,7 @@ export const getPatientsByHealthcareProviderUuid = async (
       }
     });
   });
+
   return patientProfiles;
 
   // so you have patient profiles
@@ -151,7 +133,7 @@ export const getAuthorizedHealthcareProvider = async (
   patientUuid: string
 ): Promise<AuthorizedCareProviderLink> => {
   const conn = await Database.getDb();
-  const query = `select * from  ${authorizedCareProviderLinkTable} where providerUuid = ? and patientUuid = ?`;
+  const query = `select * from  ${authorizedCareProviderLinkTable} where careProviderUuid = ? and patientUuid = ?`;
   const params: any[] = [providerUuid, patientUuid];
 
   const [rows] = await conn.query<any>(query, params);

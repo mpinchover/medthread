@@ -11,8 +11,7 @@ const Home = () => {
   // const { getAuthUser } = useContext(FirebaseContext);
   // const authUser = getAuthUser();
   const authorizedProfile = useRecoilValue(authorizedProfileState);
-  console.log("AUTHORIZED PROFILE");
-  console.log(authorizedProfile);
+
   if (!authorizedProfile) return <LoggedOutHome />;
   const { role } = authorizedProfile;
   if (role === "PROVIDER") return <Settings />;

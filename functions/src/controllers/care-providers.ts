@@ -7,6 +7,7 @@ export const getAuthorizedHealthcareProviderForPatientRecords = async (
   providerUuid: string,
   patientUuid: string
 ) => {
+  console.log(patientUuid);
   return await careProviderRepo.getAuthorizedHealthcareProviderForPatient(
     authUid,
     providerUuid,

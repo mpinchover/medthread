@@ -17,7 +17,7 @@ import Fade from "@mui/material/Fade";
 
 const PatientItem = ({ patient, setActiveCareProviderPatient }) => {
   const navigate = useNavigate();
-  const link = `/records/${patient.userUuid}`;
+  const link = `/records/${patient.uuid}`;
 
   const handleClick = () => {
     setActiveCareProviderPatient(patient);
@@ -28,7 +28,7 @@ const PatientItem = ({ patient, setActiveCareProviderPatient }) => {
       onClick={handleClick}
       className="text-sm border-b last:border-b-0 py-8 w-full rounded-sm flex flex-row justify-between "
     >
-      <div>{patient?.account?.nameValue}</div>
+      <div>{patient?.nameValue}</div>
     </button>
   );
 };
@@ -75,7 +75,7 @@ const PatientListHeader = ({ onChange, authorizedProfile, searchQuery }) => {
     setShowCopyPopup(true);
     setTimeout(() => setShowCopyPopup(false), 1000);
     navigator.clipboard.writeText(
-      `${baseUrl}/patient-signup?providerUuid=${authorizedProfile.userUuid}`
+      `${baseUrl}/patient-signup?providerUuid=${authorizedProfile.uuid}`
     );
   };
 
@@ -158,8 +158,9 @@ const CareProviderPatientsContainer = () => {
 
   useEffect(() => {
     setActiveCareProviderPatient(null);
-    getPatientsByHealthcareProviderUuid();
-  }, []);
+
+    getPatientsByHealthcareProviderUuid(authorizedProfile?.uuid);
+  }, [authorizedProfile?.uuid]);
 
   if (isGettingHealthcareProviderPatients) {
     return <LoadingWindow display="Getting patients..." />;

@@ -84,14 +84,14 @@ export const hydrateUserProfileCallback =
         /* forceRefresh */ true
       );
 
-      const hydratedProfile = await hydrateUserProfile(idToken, uuid);
+      const hydratedProfile = await hydrateUserProfile(idToken);
 
       if (!idToken) {
         throw new Error("No auth token");
       }
 
       const authUser = {
-        uid: user.uid,
+        authUid: user.uid,
         email: user.email,
         emailVerified: user.emailVerified,
         providerData: user.providerData,
@@ -224,6 +224,7 @@ export const signInCallback =
       const idToken = await res.user.getIdToken(/* forceRefresh */ true);
 
       const hydratedUserProfile = await hydrateUserProfile(idToken);
+
       const authUser = {
         authUid: res.user.uid,
         email: res.user.email,
@@ -280,7 +281,7 @@ export const createProviderCallback =
 
       const newUser = {
         userRole: "PROVIDER",
-        userUid: res.user.uid,
+        authUid: res.user.uid,
         nameValue,
       };
 

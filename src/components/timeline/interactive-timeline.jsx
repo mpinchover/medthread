@@ -82,12 +82,13 @@ const InteractiveTimeline = ({ width, timelineData, height }) => {
     const timelineEvents = [];
     timelineData?.map((e, i) => {
       const code = e?.types?.[0];
-      let startISO = e?.billablePeriod?.start;
+
+      let startISO = e?.billablePeriodStart;
+
       if (code === "pharmacy") {
         startISO = e?.primaryDate;
       }
 
-      let endISO = e?.billablePeriod?.start;
       let startTimeMs;
       let endTimeMs;
       // if they are the same times, add one minute to it
@@ -100,16 +101,6 @@ const InteractiveTimeline = ({ width, timelineData, height }) => {
           startTimeMs = startDate.getTime();
         }
         timeSet.add(startTimeMs);
-      }
-
-      if (endISO) {
-        let endDate = new Date(endISO);
-
-        if (startISO === endISO) {
-          endDate.setHours(endDate.getHours() + 24);
-        }
-
-        endTimeMs = endDate.getTime();
       }
 
       const codeTitle = claimTypeEvent[code]?.title;

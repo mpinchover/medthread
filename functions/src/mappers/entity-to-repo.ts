@@ -29,6 +29,7 @@ export const fromEntityToRepoObservation = (
     userUuid: observation.userUuid,
     fhirReference: observation.fhirReference,
     resourceType: observation.resourceType,
+    insuranceProviderUuid: observation.insuranceProviderUuid,
   };
   return rObservation;
 };

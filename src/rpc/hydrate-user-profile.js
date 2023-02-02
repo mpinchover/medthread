@@ -1,6 +1,6 @@
 import axios from "axios";
 import { getServerConfig } from "../config/config";
-export const hydrateUserProfile = async (idToken, uuid) => {
+export const hydrateUserProfile = async (idToken) => {
   const config = getServerConfig();
 
   const res = await axios({
@@ -11,7 +11,7 @@ export const hydrateUserProfile = async (idToken, uuid) => {
       Authorization: `Bearer ${idToken}`,
     },
     data: {
-      userUuid: uuid,
+      // userUuid: uuid,
     },
   });
   return res?.data?.profile;

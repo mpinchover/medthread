@@ -15,11 +15,13 @@ import {
 } from "../mappers/entity-to-repo";
 import {
   fromRepoToEntityAllergyIntoleranceList,
+  fromRepoToEntityCareTeamList,
   fromRepoToEntityConditionList,
   fromRepoToEntityEncounterList,
   fromRepoToEntityExplanationOfBenefitList,
   fromRepoToEntityImmunizationList,
   fromRepoToEntityMedicationRequestList,
+  fromRepoToEntityObservationList,
   fromRepoToEntityProcedureList,
 } from "../mappers/repo-to-entity";
 import {
@@ -55,6 +57,7 @@ export const addInsuranceProviderForPatient = async (
 ) => {
   try {
     const conn = await Database.getDb();
+
     const query = `insert into ${insuranceProvidersTable} set ?`;
     const params: any[] = [insuranceProvider];
 
@@ -64,15 +67,6 @@ export const addInsuranceProviderForPatient = async (
   }
   return insuranceProvider;
 };
-
-// export const updateAccessTokenForInsuranceProvider = async (
-//   uid: string,
-//   accessToken: string
-// ) => {
-//   const db = admin.firestore();
-//   const docRef = db.collection(insuranceProvidersCollection).doc(uid);
-//   await docRef.update({ accessToken });
-// };
 
 export const getInsuranceProvidersByUserUuid = async (
   userUuid: string
@@ -100,13 +94,13 @@ export const getInsuranceProvidersByUserUuid = async (
 // };
 
 export const getInsuranceProviderByUserUuidAndName = async (
-  providerUuid: string, // i tthink is uuid for now?
+  insuranceProviderName: string, // i tthink is uuid for now?
   userUuid: string
 ): Promise<null | InsuranceProvider> => {
   const conn = await Database.getDb();
 
   const query = `select * from ${insuranceProvidersTable} where providerName = ? and userUuid = ?`;
-  const params: any[] = [providerUuid, userUuid];
+  const params: any[] = [insuranceProviderName, userUuid];
 
   const [rows] = await conn.query<any>(query, params);
   if (rows?.length === 0) return null;
@@ -119,7 +113,7 @@ export const batchWriteClaimsData = async (
   try {
     const conn = await Database.getDb();
 
-    await conn.query("START TRANSACTION");
+    await conn.beginTransaction();
 
     let query;
     let params;
@@ -127,9 +121,12 @@ export const batchWriteClaimsData = async (
       const r = fromEntityToRepoExplanationOfBenefitList(
         claimsDataToWrite.explanationOfBenefit
       );
-      query = `insert into ${explanationOfBenefitTable} set ?`;
-      params = [...r];
-      await conn.query(query, params);
+
+      await r?.forEach(async (doc) => {
+        query = `insert into ${explanationOfBenefitTable} set ?`;
+        params = [doc];
+        conn.query(query, params);
+      });
     }
 
     if (claimsDataToWrite.medicationRequest?.length > 0) {
@@ -137,75 +134,96 @@ export const batchWriteClaimsData = async (
         claimsDataToWrite.medicationRequest
       );
 
-      query = `insert into ${medicationRequestTable} set ?`;
-      params = [...r];
-      await conn.query(query, params);
+      await r?.forEach(async (doc) => {
+        query = `insert into ${medicationRequestTable} set ?`;
+        params = [doc];
+        conn.query(query, params);
+      });
     }
 
     if (claimsDataToWrite?.allergyIntolerance.length > 0) {
       const r = fromEntityToRepoAllergyIntoleranceList(
         claimsDataToWrite.allergyIntolerance
       );
-      query = `insert into ${allergyIntoleranceTable} set ?`;
-      params = [...r];
-      await conn.query(query, params);
+
+      await r?.forEach(async (doc) => {
+        query = `insert into ${allergyIntoleranceTable} set ?`;
+        params = [doc];
+        conn.query(query, params);
+      });
     }
 
     if (claimsDataToWrite?.medicationDispense.length > 0) {
       const r = fromEntityToRepoMedicationDispenseList(
         claimsDataToWrite.medicationDispense
       );
-      query = `insert into ${medicationDispenseTable} set ?`;
-      params = [...r];
-      await conn.query(query, params);
+
+      await r?.forEach(async (doc) => {
+        query = `insert into ${medicationDispenseTable} set ?`;
+        params = [doc];
+        conn.query(query, params);
+      });
     }
 
     if (claimsDataToWrite?.procedure.length > 0) {
       const r = fromEntityToRepoProcedureList(claimsDataToWrite.procedure);
 
-      query = `insert into ${procedureTable} set ?`;
-      params = [...r];
-      await conn.query(query, params);
+      await r?.forEach(async (doc) => {
+        query = `insert into ${procedureTable} set ?`;
+        params = [doc];
+        conn.query(query, params);
+      });
     }
 
     if (claimsDataToWrite?.immunization.length > 0) {
       const r = fromEntityToRepoImmunizationList(
         claimsDataToWrite.immunization
       );
-      query = `insert into ${immunizationTable} set ?`;
-      params = [...r];
-      await conn.query(query, params);
+      await r?.forEach(async (doc) => {
+        query = `insert into ${immunizationTable} set ?`;
+        params = [doc];
+        conn.query(query, params);
+      });
     }
 
     if (claimsDataToWrite?.condition.length > 0) {
       const r = fromEntityToRepoConditionList(claimsDataToWrite.condition);
-      query = `insert into ${conditionTable} set ?`;
-      params = [...r];
-      await conn.query(query, params);
+
+      await r?.forEach(async (doc) => {
+        query = `insert into ${conditionTable} set ?`;
+        params = [doc];
+        conn.query(query, params);
+      });
     }
 
     if (claimsDataToWrite?.encounter.length > 0) {
       const r = fromEntityToRepoEncounterList(claimsDataToWrite.encounter);
-      query = `insert into ${encounterTable} set ?`;
-      params = [...r];
-      await conn.query(query, params);
+      await r?.forEach(async (doc) => {
+        query = `insert into ${encounterTable} set ?`;
+        params = [doc];
+        conn.query(query, params);
+      });
     }
 
     if (claimsDataToWrite?.observation.length > 0) {
       const r = fromEntityToRepoObservationList(claimsDataToWrite.observation);
-      query = `insert into ${observationTable} set ?`;
-      params = [...r];
-      await conn.query(query, params);
+      await r?.forEach(async (doc) => {
+        query = `insert into ${observationTable} set ?`;
+        params = [doc];
+        conn.query(query, params);
+      });
     }
 
     if (claimsDataToWrite?.careTeam.length > 0) {
       const r = fromEntityToRepoCareTeamList(claimsDataToWrite.careTeam);
-      query = `insert into ${careTeamTable} set ?`;
-      params = [...r];
-      await conn.query(query, params);
+      await r?.forEach(async (doc) => {
+        query = `insert into ${careTeamTable} set ?`;
+        params = [doc];
+        conn.query(query, params);
+      });
     }
 
-    await conn.query("COMMIT");
+    await conn.commit();
     return claimsDataToWrite;
   } catch (e) {
     console.log(e);
@@ -216,15 +234,20 @@ export const batchWriteClaimsData = async (
 export const batchWriteMedicationRequest = async (
   medicationReqs: MedicationRequest[]
 ) => {
-  const conn = await Database.getDb();
-
   if (medicationReqs?.length === 0) return medicationReqs;
 
-  const r = fromEntityToRepoMedicationRequestList(medicationReqs);
-  const query = `select * from ${medicationRequestTable} where careProviderUuid = ?`;
-  const params: any[] = [...r];
+  const conn = await Database.getDb();
+  await conn.beginTransaction();
 
-  await conn.query<any>(query, params);
+  const r = fromEntityToRepoMedicationRequestList(medicationReqs);
+
+  await r.forEach(async (item) => {
+    const query = `insert into ${medicationRequestTable} set ?`;
+    const params: any[] = [item];
+    await conn.query<any>(query, params);
+  });
+
+  await conn.commit();
   return medicationReqs;
 };
 
@@ -234,12 +257,20 @@ export const batchWriteAllergyIntolerances = async (
   if (allergyIntolerances.length === 0) return allergyIntolerances;
 
   const r = fromEntityToRepoAllergyIntoleranceList(allergyIntolerances);
+
   const conn = await Database.getDb();
+  await conn.beginTransaction();
 
-  const query = `select * from ${allergyIntoleranceTable} where careProviderUuid = ?`;
-  const params: any[] = [...r];
+  await r.forEach(async (item) => {
+    const params: any[] = [item];
+    const query = conn.format(
+      `insert into ${allergyIntoleranceTable} set ?`,
+      params
+    );
+    await conn.query<any>(query, params);
+  });
 
-  await conn.query<any>(query, params);
+  await conn.commit();
   return allergyIntolerances;
 };
 
@@ -327,6 +358,7 @@ export const getClaimsAllergyIntoleranceByUserUuid = async (
     allergyIntoleranceTable,
     filter.userUuid
   );
+
   return fromRepoToEntityAllergyIntoleranceList(allergyIntolerance);
 };
 
@@ -393,7 +425,7 @@ export const getProceduresByFhirReferences = async (references: string[]) => {
       for (const record of rows) {
         items.push(record);
       }
-      return items;
+      // return items;
       res(items);
     } catch (e) {
       console.log(e);
@@ -410,4 +442,21 @@ export const getClaimsImmunizationByUserUuid = async (
     filter.userUuid
   );
   return fromRepoToEntityImmunizationList(immunizations);
+};
+
+export const getClaimsObservationByUserUuid = async (
+  filter: PatientRecordsQueryFilter
+): Promise<Observation[]> => {
+  const results = await getClaimsItemByUserUuid(
+    observationTable,
+    filter.userUuid
+  );
+  return fromRepoToEntityObservationList(results);
+};
+
+export const getClaimsCareTeamByUserUuid = async (
+  filter: PatientRecordsQueryFilter
+): Promise<CareTeam[]> => {
+  const results = await getClaimsItemByUserUuid(careTeamTable, filter.userUuid);
+  return fromRepoToEntityCareTeamList(results);
 };

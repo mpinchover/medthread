@@ -23,6 +23,8 @@ import { getPatientTimelineDataForProvider } from "./handlers/get-patient-timeli
 import { sendRequestForEMRDataForEOBEvent } from "./handlers/send-request-for-emr-data-for-eob-event";
 // import { getMedicationsByPatientUid } from "./get-medications-by-patient-uid";
 // import { publicIp, publicIpv4, publicIpv6 } from "public-ip";
+import { getPatientsByHealthcareProviderUuid } from "./handlers/get-patients-by-healthcare-provider-uuid";
+import { getClaimsDataByUserUuidForProvider } from "./handlers/get-claims-data-by-user-uiud-for-provider";
 const app = express();
 
 // https://firebase.google.com/docs/firestore/query-data/get-data#get_multiple_documents_from_a_collection
@@ -76,11 +78,11 @@ app.get("/test-fn", async (req, res) => {
   }
 });
 
-// app.post(
-//   "/get-patients-by-healthcare-provider-uid",
-//   validateFirebaseIdToken,
-//   getPatientsByHealthcareProviderUid
-// );
+app.post(
+  "/get-patients-by-healthcare-provider-uuid",
+  validateFirebaseIdToken,
+  getPatientsByHealthcareProviderUuid
+);
 
 app.post(
   "/add-health-insurance-provider",
@@ -108,11 +110,11 @@ app.post(
 
 app.post("/create-hydrated-profile", createHydratedUserProfile);
 
-// app.post(
-//   "/get-claims-data-by-user-uid-for-provider",
-//   validateFirebaseIdToken,
-//   getClaimsDataByUserUidForProvider
-// );
+app.post(
+  "/get-claims-data-by-user-uuid-for-provider",
+  validateFirebaseIdToken,
+  getClaimsDataByUserUuidForProvider
+);
 
 app.post("/hydrate-user-profile", validateFirebaseIdToken, hydrateUserProfile);
 // app.post(

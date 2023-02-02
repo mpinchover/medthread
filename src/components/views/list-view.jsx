@@ -96,7 +96,7 @@ const TimelineEventContent = ({
     });
   };
 
-  const isSelected = activeListViewEvents?.includes(event?.uid);
+  const isSelected = activeListViewEvents?.includes(event?.uuid);
   return (
     <div className={`${isSelected ? "block" : "hidden"} mt-8`}>
       <div className="font-bold text-xs">
@@ -337,6 +337,7 @@ const ListViewContainer = () => {
   const [timelineFilter, setTimelineFilter] = useRecoilState(
     timelineDataFiltersState
   );
+  const authProfile = useRecoilValue(authorizedProfileState);
 
   const { patientUuid } = useParams();
 
@@ -369,12 +370,12 @@ const ListViewContainer = () => {
 
   useEffect(() => {
     if (patientUuid) {
-      getPatientTimelineData(patientUuid, timelineFilter);
+      getPatientTimelineData(patientUuid, authProfile?.uuid);
     } else {
       getPatientTimelineData();
     }
-    console.log("RE_RENDER");
-  }, [timelineFilter]);
+
+  }, [timelineFilter, authProfile]);
 
   if (isLoadingTimelineData) {
     return <LoadingWindow display="Generating timeline..." />;

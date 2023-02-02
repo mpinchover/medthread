@@ -6,6 +6,6 @@ export const createHydratedUserProfile = async (profile: Profile) => {
   return await repo.createHydratedUserProfile(profile);
 };
 
-export const hydrateUserProfile = async (userUuid: string) => {
-  return await repo.hydrateUserProfile(userUuid);
+export const hydrateUserProfile = async (authUid: string) => {
+  return await repo.hydrateUserProfile(authUid);
 };

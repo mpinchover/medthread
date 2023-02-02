@@ -22,6 +22,7 @@ export interface Observation {
   userUuid?: string;
   fhirReference?: string;
   resourceType?: string;
+  insuranceProviderUuid?: string;
 }
 
 export interface ExplanationOfBenefit {
