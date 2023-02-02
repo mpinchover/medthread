@@ -4,7 +4,7 @@ import { getServerConfig } from "../config/config";
 export const addHealthInsuranceProvider = async (publicToken) => {
   const config = getServerConfig();
   const authUser = JSON.parse(localStorage.getItem("med_thread_auth_user"));
-  const { idToke, uuid } = authUser;
+  const { idToken, uuid } = authUser;
 
   const res = await axios({
     method: "post",

@@ -1,4 +1,4 @@
-import { Profile } from "../types";
+import { Profile } from "../types/types";
 import * as repo from "../repo/repo";
 import * as uuid from "uuid";
 export const createHydratedUserProfile = async (profile: Profile) => {

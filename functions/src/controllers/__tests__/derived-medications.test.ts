@@ -1,5 +1,5 @@
 import { expect } from "chai";
-import { MedicationRequest, MedicationDispense } from "../../types";
+import { MedicationRequest, MedicationDispense } from "../../types/types";
 import { deriveClaimsMedications } from "../insurance";
 describe("test run suite", () => {
   // the tests container

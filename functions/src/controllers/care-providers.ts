@@ -1,5 +1,5 @@
 import * as careProviderRepo from "../repo/care-providers";
-import { AuthorizedCareProviderLink, Profile } from "../types";
+import { AuthorizedCareProviderLink, Profile } from "../types/types";
 import * as uuid from "uuid";
 
 export const getAuthorizedHealthcareProviderForPatientRecords = async (

@@ -1,8 +1,11 @@
 import * as careProviderController from "../controllers/care-providers";
 import * as insuranceController from "../controllers/insurance";
-import { PatientRecordsQueryFilter } from "../types";
+import { PatientRecordsQueryFilter } from "../types/types";
 import * as functions from "firebase-functions";
-export const getClaimsDataByUserUuidForProvider = async (req: any, res: any) => {
+export const getClaimsDataByUserUuidForProvider = async (
+  req: any,
+  res: any
+) => {
   const logger = functions.logger;
   try {
     const { body, userUuid, authUid } = req;
@@ -25,7 +28,9 @@ export const getClaimsDataByUserUuidForProvider = async (req: any, res: any) => 
       userUuid: patientUuid,
     };
 
-    const claimsData = await insuranceController.getClaimsDataByUserUuid(filter);
+    const claimsData = await insuranceController.getClaimsDataByUserUuid(
+      filter
+    );
     res.send({ claimsData });
   } catch (e) {
     logger.error(e);

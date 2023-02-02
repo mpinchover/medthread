@@ -260,7 +260,7 @@ const PatientSettings = ({ authProfile, accountSettings }) => {
           </section>
         </section>
       </section>
-      {authProfile.role === "PATIENT" && renderInsuranceProviders()}
+      {authProfile.userRole === "PATIENT" && renderInsuranceProviders()}
     </div>
   );
 };

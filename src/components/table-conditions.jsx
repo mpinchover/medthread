@@ -31,7 +31,7 @@ const ConditionsTable = ({ conditions }) => {
       return;
     }
 
-    setActiveConditions([...activeConditions, conditionUiud]);
+    setActiveConditions([...activeConditions, conditionUuid]);
   };
 
   const renderConditionList = () => {

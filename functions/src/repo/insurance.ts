@@ -1,5 +1,28 @@
 import * as admin from "firebase-admin";
 import {
+  fromEntityToRepoAllergyIntoleranceList,
+  fromEntityToRepoCareTeamList,
+  fromEntityToRepoConditionList,
+  fromEntityToRepoEncounterList,
+  fromEntityToRepoExplanationOfBenefit,
+  fromEntityToRepoExplanationOfBenefitList,
+  fromEntityToRepoImmunization,
+  fromEntityToRepoImmunizationList,
+  fromEntityToRepoMedicationDispenseList,
+  fromEntityToRepoMedicationRequestList,
+  fromEntityToRepoObservationList,
+  fromEntityToRepoProcedureList,
+} from "../mappers/entity-to-repo";
+import {
+  fromRepoToEntityAllergyIntoleranceList,
+  fromRepoToEntityConditionList,
+  fromRepoToEntityEncounterList,
+  fromRepoToEntityExplanationOfBenefitList,
+  fromRepoToEntityImmunizationList,
+  fromRepoToEntityMedicationRequestList,
+  fromRepoToEntityProcedureList,
+} from "../mappers/repo-to-entity";
+import {
   AllergyIntolerance,
   InsuranceProvider,
   MedicationDispense,
@@ -13,7 +36,7 @@ import {
   CareTeam,
   PatientRecordsQueryFilter,
   ExplanationOfBenefit,
-} from "../types";
+} from "../types/types";
 import Database from "./mysql";
 const medicationRequestTable = "claimsMedicationRequest";
 const allergyIntoleranceTable = "claimsAllergyTolerance";
@@ -82,7 +105,7 @@ export const getInsuranceProviderByUserUuidAndName = async (
 ): Promise<null | InsuranceProvider> => {
   const conn = await Database.getDb();
 
-  const query = `select * from ${insuranceProvidersTable} where providerUuid = ? and userUuid = ?`;
+  const query = `select * from ${insuranceProvidersTable} where providerName = ? and userUuid = ?`;
   const params: any[] = [providerUuid, userUuid];
 
   const [rows] = await conn.query<any>(query, params);
@@ -98,45 +121,89 @@ export const batchWriteClaimsData = async (
 
     await conn.query("START TRANSACTION");
 
-    let query = `insert into ${explanationOfBenefitTable} set ?`;
-    let params: any[] = [claimsDataToWrite.explanationOfBenefit];
-    await conn.query(query, params);
+    let query;
+    let params;
+    if (claimsDataToWrite.explanationOfBenefit?.length > 0) {
+      const r = fromEntityToRepoExplanationOfBenefitList(
+        claimsDataToWrite.explanationOfBenefit
+      );
+      query = `insert into ${explanationOfBenefitTable} set ?`;
+      params = [...r];
+      await conn.query(query, params);
+    }
 
-    query = `insert into ${medicationRequestTable} set ?`;
-    params = [claimsDataToWrite.medicationRequest];
-    await conn.query(query, params);
+    if (claimsDataToWrite.medicationRequest?.length > 0) {
+      const r = fromEntityToRepoMedicationRequestList(
+        claimsDataToWrite.medicationRequest
+      );
 
-    query = `insert into ${allergyIntoleranceTable} set ?`;
-    params = [claimsDataToWrite.allergyIntolerance];
-    await conn.query(query, params);
+      query = `insert into ${medicationRequestTable} set ?`;
+      params = [...r];
+      await conn.query(query, params);
+    }
 
-    query = `insert into ${medicationDispenseTable} set ?`;
-    params = [claimsDataToWrite.medicationDispense];
-    await conn.query(query, params);
+    if (claimsDataToWrite?.allergyIntolerance.length > 0) {
+      const r = fromEntityToRepoAllergyIntoleranceList(
+        claimsDataToWrite.allergyIntolerance
+      );
+      query = `insert into ${allergyIntoleranceTable} set ?`;
+      params = [...r];
+      await conn.query(query, params);
+    }
 
-    query = `insert into ${procedureTable} set ?`;
-    params = [claimsDataToWrite.procedure];
-    await conn.query(query, params);
+    if (claimsDataToWrite?.medicationDispense.length > 0) {
+      const r = fromEntityToRepoMedicationDispenseList(
+        claimsDataToWrite.medicationDispense
+      );
+      query = `insert into ${medicationDispenseTable} set ?`;
+      params = [...r];
+      await conn.query(query, params);
+    }
 
-    query = `insert into ${immunizationTable} set ?`;
-    params = [claimsDataToWrite.immunization];
-    await conn.query(query, params);
+    if (claimsDataToWrite?.procedure.length > 0) {
+      const r = fromEntityToRepoProcedureList(claimsDataToWrite.procedure);
 
-    query = `insert into ${conditionTable} set ?`;
-    params = [claimsDataToWrite.condition];
-    await conn.query(query, params);
+      query = `insert into ${procedureTable} set ?`;
+      params = [...r];
+      await conn.query(query, params);
+    }
 
-    query = `insert into ${encounterTable} set ?`;
-    params = [claimsDataToWrite.encounter];
-    await conn.query(query, params);
+    if (claimsDataToWrite?.immunization.length > 0) {
+      const r = fromEntityToRepoImmunizationList(
+        claimsDataToWrite.immunization
+      );
+      query = `insert into ${immunizationTable} set ?`;
+      params = [...r];
+      await conn.query(query, params);
+    }
 
-    query = `insert into ${observationTable} set ?`;
-    params = [claimsDataToWrite.observation];
-    await conn.query(query, params);
+    if (claimsDataToWrite?.condition.length > 0) {
+      const r = fromEntityToRepoConditionList(claimsDataToWrite.condition);
+      query = `insert into ${conditionTable} set ?`;
+      params = [...r];
+      await conn.query(query, params);
+    }
 
-    query = `insert into ${careTeamTable} set ?`;
-    params = [claimsDataToWrite.careTeam];
-    await conn.query(query, params);
+    if (claimsDataToWrite?.encounter.length > 0) {
+      const r = fromEntityToRepoEncounterList(claimsDataToWrite.encounter);
+      query = `insert into ${encounterTable} set ?`;
+      params = [...r];
+      await conn.query(query, params);
+    }
+
+    if (claimsDataToWrite?.observation.length > 0) {
+      const r = fromEntityToRepoObservationList(claimsDataToWrite.observation);
+      query = `insert into ${observationTable} set ?`;
+      params = [...r];
+      await conn.query(query, params);
+    }
+
+    if (claimsDataToWrite?.careTeam.length > 0) {
+      const r = fromEntityToRepoCareTeamList(claimsDataToWrite.careTeam);
+      query = `insert into ${careTeamTable} set ?`;
+      params = [...r];
+      await conn.query(query, params);
+    }
 
     await conn.query("COMMIT");
     return claimsDataToWrite;
@@ -151,8 +218,11 @@ export const batchWriteMedicationRequest = async (
 ) => {
   const conn = await Database.getDb();
 
+  if (medicationReqs?.length === 0) return medicationReqs;
+
+  const r = fromEntityToRepoMedicationRequestList(medicationReqs);
   const query = `select * from ${medicationRequestTable} where careProviderUuid = ?`;
-  const params: any[] = [medicationReqs];
+  const params: any[] = [...r];
 
   await conn.query<any>(query, params);
   return medicationReqs;
@@ -161,10 +231,13 @@ export const batchWriteMedicationRequest = async (
 export const batchWriteAllergyIntolerances = async (
   allergyIntolerances: AllergyIntolerance[]
 ) => {
+  if (allergyIntolerances.length === 0) return allergyIntolerances;
+
+  const r = fromEntityToRepoAllergyIntoleranceList(allergyIntolerances);
   const conn = await Database.getDb();
 
   const query = `select * from ${allergyIntoleranceTable} where careProviderUuid = ?`;
-  const params: any[] = [allergyIntolerances];
+  const params: any[] = [...r];
 
   await conn.query<any>(query, params);
   return allergyIntolerances;
@@ -190,69 +263,71 @@ export const getClaimsItemByUserUuid = async (
 export const getExplanationOfBenefitByUserUuid = async (
   filter: PatientRecordsQueryFilter
 ): Promise<ExplanationOfBenefit[]> => {
-  const eobs: ExplanationOfBenefit[] = await getClaimsItemByUserUuid(
+  const eobs = await getClaimsItemByUserUuid(
     explanationOfBenefitTable,
     filter.userUuid
   );
-  return eobs;
+  return fromRepoToEntityExplanationOfBenefitList(eobs);
 };
 
 export const getClaimsMedicationRequestByUserUuid = async (
   filter: PatientRecordsQueryFilter
 ): Promise<MedicationRequest[]> => {
-  const medReq: MedicationRequest[] = await getClaimsItemByUserUuid(
+  const medReq = await getClaimsItemByUserUuid(
     medicationRequestTable,
     filter.userUuid
   );
-  return medReq;
+  return fromRepoToEntityMedicationRequestList(medReq);
 };
 
 export const getClaimsMedicationDispenseByUserUuid = async (
   filter: PatientRecordsQueryFilter
 ): Promise<MedicationDispense[]> => {
-  const medDis: MedicationDispense[] = await getClaimsItemByUserUuid(
+  const medDis = await getClaimsItemByUserUuid(
     medicationDispenseTable,
     filter.userUuid
   );
-  return medDis;
+  return fromEntityToRepoMedicationDispenseList(medDis);
 };
 
 export const getClaimsProcedureByUserUuid = async (
   filter: PatientRecordsQueryFilter
 ): Promise<Procedure[]> => {
-  const procedures: Procedure[] = await getClaimsItemByUserUuid(
+  const procedures = await getClaimsItemByUserUuid(
     procedureTable,
     filter.userUuid
   );
-  return procedures;
+  return fromRepoToEntityProcedureList(procedures);
 };
 
 export const getClaimsEncounterByUserUuid = async (
   filter: PatientRecordsQueryFilter
 ): Promise<Encounter[]> => {
-  const encounters: Encounter[] = await getClaimsItemByUserUuid(
+  const encounters = await getClaimsItemByUserUuid(
     encounterTable,
     filter.userUuid
   );
-  return encounters;
+  return fromRepoToEntityEncounterList(encounters);
 };
 
 export const getClaimsConditionByUserUuid = async (
   filter: PatientRecordsQueryFilter
 ): Promise<Condition[]> => {
-  const conditions: Condition[] = await getClaimsItemByUserUuid(
+  const conditions = await getClaimsItemByUserUuid(
     conditionTable,
     filter.userUuid
   );
-  return conditions;
+  return fromRepoToEntityConditionList(conditions);
 };
 
 export const getClaimsAllergyIntoleranceByUserUuid = async (
   filter: PatientRecordsQueryFilter
 ): Promise<AllergyIntolerance[]> => {
-  const allergyIntolerance: AllergyIntolerance[] =
-    await getClaimsItemByUserUuid(allergyIntoleranceTable, filter.userUuid);
-  return allergyIntolerance;
+  const allergyIntolerance = await getClaimsItemByUserUuid(
+    allergyIntoleranceTable,
+    filter.userUuid
+  );
+  return fromRepoToEntityAllergyIntoleranceList(allergyIntolerance);
 };
 
 // need make this in batches
@@ -296,11 +371,11 @@ export const getProceduresByFhirReferencesInBatch = async (
   for (let i = 0; i < promiseResults.length; i++) {
     if (promiseResults[i].status === "rejected") continue;
 
-    const procedure: Procedure = promiseResults[i].value;
+    const procedure = promiseResults[i].value;
     procedures.push(procedure);
   }
 
-  return procedures;
+  return fromRepoToEntityProcedureList(procedures);
 };
 
 export const getProceduresByFhirReferences = async (references: string[]) => {
@@ -330,9 +405,9 @@ export const getProceduresByFhirReferences = async (references: string[]) => {
 export const getClaimsImmunizationByUserUuid = async (
   filter: PatientRecordsQueryFilter
 ): Promise<Immunization[]> => {
-  const immunizations: Immunization[] = await getClaimsItemByUserUuid(
+  const immunizations = await getClaimsItemByUserUuid(
     immunizationTable,
     filter.userUuid
   );
-  return immunizations;
+  return fromRepoToEntityImmunizationList(immunizations);
 };

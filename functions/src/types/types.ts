@@ -12,7 +12,7 @@ export interface Medication {
   medicationName?: string;
   source?: string;
   fhirReference?: string;
-  insuranceProviderUid?: string;
+  insuranceProviderUuid?: string;
 }
 
 // TODO - move to types
@@ -114,7 +114,7 @@ export interface AllergyIntolerance {
 export interface Condition {
   uuid?: string;
   fhirReference?: string;
-  insuranceProviderUid?: string;
+  insuranceProviderUuid?: string;
   source?: string;
   clinicalStatus?: string;
   verificationStatus?: string;
@@ -182,7 +182,7 @@ export interface CareTeamParticipant {
 export interface CareTeam {
   uuid?: string;
   fhirReference?: string;
-  insuranceProviderUid?: string;
+  insuranceProviderUuid?: string;
   source?: string;
   userUuid?: string;
   status?: string;
@@ -219,7 +219,7 @@ export interface Observation {
   code?: string;
   codeDisplay?: string;
   effectiveDateTime?: Date;
-  issued?: string;
+  issued?: Date;
   userUuid?: string;
   fhirReference?: string;
   primaryDate?: Date;
@@ -229,7 +229,7 @@ export interface Observation {
 export interface Profile {
   authUid?: string; // firebase auth link
   uuid?: string;
-  role?: string;
+  userRole?: string;
   nameValue?: string;
 }
 

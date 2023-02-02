@@ -38,7 +38,7 @@ export const activeCareProviderPatientState = atom({
 //   },
 // });
 
-export const getPatientsByHealthcareProviderUidCallback =
+export const getPatientsByHealthcareProviderUuidCallback =
   ({ set, snapshot }) =>
   async () => {
     try {

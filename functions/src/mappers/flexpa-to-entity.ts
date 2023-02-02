@@ -20,7 +20,7 @@ import {
   EOBDiagnosis,
   EOBProcedure,
   // EOBBillablePeriod,
-} from "../types";
+} from "../types/types";
 
 import * as constants from "../config/constants";
 
@@ -69,6 +69,10 @@ export const fromFlexpaToEntityEOB = (params: any) => {
   if (billablePeriodEnd) {
     billablePeriodEnd = new Date(billablePeriodEnd);
   }
+
+  let created = params.resource?.created;
+  if (created) created = new Date(created);
+
   const eob: ExplanationOfBenefit = {
     resourceType: constants.EXPLANATION_OF_BENEFIT,
     source: constants.CLAIMS,
@@ -77,7 +81,7 @@ export const fromFlexpaToEntityEOB = (params: any) => {
     status: params.resource?.status,
     types: fromFlexpaToEntityEOBType(params.resource?.type?.coding),
     use: params.resource?.use,
-    created: params.resource?.created,
+    created,
     insurer: params.resource?.insurer?.display,
     provider: fromFlexpaToEntityEOBProvider(params.resource?.provider),
     prescription: fromFlexpaToEntityEOBPrescription(
@@ -467,12 +471,16 @@ export const fromFlexpaToEntityProcedure = (params: any): Procedure => {
 export const fromFlexpaReferenceProcedureToEntityProcedure = (
   params: any
 ): Procedure => {
+  let performedDateTime = params.performedPeriod?.start;
+  if (performedDateTime) {
+    performedDateTime = new Date(performedDateTime);
+  }
   const procedure: Procedure = {
     source: constants.CLAIMS,
     resourceType: constants.PROCEDURE,
     fhirReference: params.id,
     code: params.code?.coding?.[0].code,
-    performedDateTime: params.performedPeriod?.start,
+    performedDateTime,
     performerIdentifier: params.performer?.[0]?.actor?.identifier?.value,
     performer: params.performer?.[0]?.actor?.display,
   };
@@ -529,7 +537,7 @@ export const fromFlexpaToEntityImmunization = (
   const status = params.status;
   if (status) immunization.status = status;
 
-  const occurenceDateTime = params.occurenceDateTime;
+  const occurenceDateTime = params?.occurenceDateTime;
   if (occurenceDateTime)
     immunization.occurenceDateTime = new Date(occurenceDateTime);
   if (occurenceDateTime) immunization.primaryDate = new Date(occurenceDateTime);
@@ -726,10 +734,12 @@ export const fromFlexpaToEntityObservation = (params: any) => {
   };
 
   if (params.resource?.effectiveDateTime) {
-    observation.effectiveDateTime = params.resource?.effectiveDateTime;
+    observation.effectiveDateTime = new Date(
+      params.resource?.effectiveDateTime
+    );
   }
   if (params.resource?.issued) {
-    observation.issued = params.resource?.issued;
+    observation.issued = new Date(params.resource?.issued);
   }
 
   if (observation.effectiveDateTime) {

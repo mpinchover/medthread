@@ -1,6 +1,6 @@
 import {
   isGettingHealthcareProviderPatientsState,
-  getPatientsByHealthcareProviderUidCallback,
+  getPatientsByHealthcareProviderUuidCallback,
   healthcareProviderPatientsState,
 } from "../recoil/provider/provider";
 import { useRecoilValue, useRecoilCallback, useRecoilState } from "recoil";

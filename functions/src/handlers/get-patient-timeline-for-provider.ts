@@ -1,5 +1,5 @@
 import * as insuranceController from "../controllers/insurance";
-import { PatientRecordsQueryFilter } from "../types";
+import { PatientRecordsQueryFilter } from "../types/types";
 import * as careProviderController from "../controllers/care-providers";
 import * as functions from "firebase-functions";
 // TODO – make another one for the provider

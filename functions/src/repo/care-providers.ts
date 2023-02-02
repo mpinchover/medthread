@@ -1,5 +1,9 @@
 import * as admin from "firebase-admin";
-import { AuthorizedCareProviderLink, AuthProfile, Profile } from "../types";
+import {
+  AuthorizedCareProviderLink,
+  AuthProfile,
+  Profile,
+} from "../types/types";
 import { getUserProfile, getUserProfilesByUuids } from "./repo";
 import { AUTHORIZED_CARE_PROVIDER_LINKS_COLLECTION } from "../config/constants";
 import { stringSplitIntoBatches } from "../utils/utils";
@@ -36,7 +40,8 @@ export const getAuthorizedHealthcareProviderForPatient = async (
   patientUuid: string
 ) => {
   const userProfile = await getUserProfile(providerUuid);
-  if (userProfile.role !== "PROVIDER") throw new Error("must be a provider");
+  if (userProfile.userRole !== "PROVIDER")
+    throw new Error("must be a provider");
   // check verification
   const providerAuthProfile: AuthProfile = await admin.auth().getUser(authUid);
 

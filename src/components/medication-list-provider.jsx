@@ -10,7 +10,7 @@ import {
 } from "../recoil/medications/medications";
 import { accountSettingsState } from "../recoil/account/account";
 import {
-  getClaimsDataByUserUidCallback,
+  getClaimsDataByUserUuidCallback,
   filteredClaimsDerivedMedicationsState,
   filteredClaimsImmunizationsState,
   claimsMedicationDispenseState,

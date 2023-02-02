@@ -20,7 +20,7 @@ import {
   Encounter,
   PatientRecordsQueryFilter,
   ExplanationOfBenefit,
-} from "../types";
+} from "../types/types";
 import {
   fromFlexpaToEntityAllergyIntoleranceList,
   fromFlexpaToEntityMedicationRequestList,
@@ -318,7 +318,7 @@ export const addHealthInsuranceProvider = async (
       const res: AddHealthInsuranceProviderResponse = {
         insuranceProvider: existingInsuranceprovider,
       };
-      return res;
+      // return res;
     }
     // TODO – add a condition here to solve this.
     // if we are adding a health insurance provider now, we still want to get new details
@@ -328,7 +328,7 @@ export const addHealthInsuranceProvider = async (
 
     // TODO – batch the insurance provider creation with the claims data creation
     // create the new health insurance provider
-    const newProviderParams: InsuranceProvider = {
+    const newProvider: InsuranceProvider = {
       userUuid,
       accessToken,
       providerName: metadata.publisher,
@@ -336,14 +336,17 @@ export const addHealthInsuranceProvider = async (
       uuid: uuid.v4(),
     };
 
-    const newProvider = await insuranceRepo.addInsuranceProviderForPatient(
-      newProviderParams
-    );
+    const repoProviderParams = JSON.parse(JSON.stringify(newProvider));
+    repoProviderParams.capabilities = JSON.stringify(metadata.capabilities);
+
+    await insuranceRepo.addInsuranceProviderForPatient(repoProviderParams);
 
     // TODO – test this
     const claimsData = await getClaimsFromInsuranceProvider(newProvider);
 
     appendInsuranceAndUserUuidToClaims(claimsData, newProvider);
+
+    console.log("BATCH WRITING");
     // TODO – make sure not to save duplicates
     await insuranceRepo.batchWriteClaimsData(claimsData);
 
@@ -439,6 +442,7 @@ export const _appendInsuranceAndUserUuidToClaims = (
   for (let i = 0; i < values.length; i++) {
     values[i].insuranceProviderUuid = providerUuid;
     values[i].userUuid = userUuid;
+    values[i].uuid = uuid.v4();
   }
 };
 
@@ -690,11 +694,11 @@ export const getClaimsFromInsuranceProvider = async (
       fn(insuranceProvider.accessToken, insuranceProvider.uuid)
     )
   );
-  logger.info({
-    message: "CLAIMS RESULTS FROM ADDING PROVIDER",
-    userUuid: insuranceProvider?.userUuid,
-    data: claimsResults,
-  });
+  // logger.info({
+  //   message: "CLAIMS RESULTS FROM ADDING PROVIDER",
+  //   userUuid: insuranceProvider?.userUuid,
+  //   data: claimsResults,
+  // });
 
   const claimsData = extractClaimsResultsFromPromises(claimsResults);
 

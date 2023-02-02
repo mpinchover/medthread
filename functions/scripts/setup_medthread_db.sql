@@ -8,27 +8,26 @@ CREATE TABLE authorizedCareProviderLink (
     uuid VARCHAR(36) NOT NULL UNIQUE PRIMARY KEY
 );
 
-CREATE TABLE profile (
+CREATE TABLE profiles (
     uuid VARCHAR(36) NOT NULL UNIQUE PRIMARY KEY,
     authUid VARCHAR(36) NOT NULL UNIQUE,
     userUuid VARCHAR(36),
     userRole VARCHAR(36),
-    firstName TEXT,
-    lastName TEXT
+    nameValue TEXT
 );
 
-CREATE TABLE insuranceProvider (
+CREATE TABLE insuranceProviders (
     uuid VARCHAR(36) NOT NULL UNIQUE PRIMARY KEY,
     userUuid VARCHAR(36) NOT NULL,
     accessToken TEXT,
     providerName TEXT,
-    capabilitiesJSON TEXT
+    capabilities TEXT
 );
 
 CREATE TABLE claimsMedicationRequest (
     uuid VARCHAR(36) NOT NULL UNIQUE PRIMARY KEY,
     authoredOn DATETIME,
-    code VARCHAR(36),
+    code TEXT,
     codeDisplay TEXT,
     source VARCHAR(36),
     medStatus VARCHAR(36),
@@ -39,9 +38,9 @@ CREATE TABLE claimsMedicationRequest (
     dosageInstructionRoute TEXT,
     doseAndRateQuantityValue INT,
     doseAndRateQuantityUnit VARCHAR(36),
-    fhirReference VARCHAR(36),
+    fhirReference TEXT,
     insuranceProviderUuid VARCHAR(36),
-    userUid VARCHAR(36),
+    userUuid VARCHAR(36),
     resourceType TINYTEXT,
     createdAt DATETIME,
     updatedAt DATETIME,
@@ -50,11 +49,12 @@ CREATE TABLE claimsMedicationRequest (
 
 CREATE TABLE claimsMedicationDispense (
     uuid VARCHAR(36) NOT NULL UNIQUE PRIMARY KEY,
-    fhirReference VARCHAR(36),
+    fhirReference TEXT,
     insuranceProviderUuid VARCHAR(36),
     medStatus VARCHAR(36),
     codeDisplay TEXT,
-    medType TEXT,
+    code TEXT,
+    dispenseType TEXT,
     quantityValue INT,
     quantityUnit VARCHAR(36),
     daysSupply INT,
@@ -70,25 +70,25 @@ CREATE TABLE claimsMedicationDispense (
 
 CREATE TABLE claimsImmunization (
     uuid VARCHAR(36) NOT NULL UNIQUE PRIMARY KEY, 
-    fhirReference VARCHAR(36),
+    fhirReference TEXT,
     insuranceProviderUuid VARCHAR(36),
     source VARCHAR(36),
     immunizationStatus TEXT,
-    code VARCHAR(36),
+    code TEXT,
     codeDisplay TEXT,
     occurenceDateTime DATETIME,
-    userUid VARCHAR(36),
+    userUuid VARCHAR(36),
     resourceType VARCHAR(36)
 );
 
 CREATE TABLE claimsAllergyTolerance (
     uuid VARCHAR(36) NOT NULL UNIQUE PRIMARY KEY, 
-    fhirReference VARCHAR(36),
+    fhirReference TEXT,
     insuranceProviderUuid VARCHAR(36),
     source VARCHAR(36),
     clinicalStatus TEXT,
     verificationStatus TEXT,
-    code VARCHAR(36),
+    code TEXT,
     codeDisplay TEXT,
     onsetDateTime DATETIME,
     recordedDate DATETIME,
@@ -97,51 +97,51 @@ CREATE TABLE claimsAllergyTolerance (
     reactionManifestation TEXT,
     recorderIdentifier VARCHAR(36),
     asserterIdentifier VARCHAR(36),
-    userUid VARCHAR(36),
+    userUuid VARCHAR(36),
     resourceType VARCHAR(36)
 );
 
 CREATE TABLE claimsCondition (
     uuid VARCHAR(36) NOT NULL UNIQUE PRIMARY KEY,
-    fhirReference VARCHAR(36),
+    fhirReference TEXT,
     insuranceProviderUuid VARCHAR(36),
     source VARCHAR(36),
     clinicalStatus TEXT,
     verificationStatus TEXT,
     category TEXT,
-    code VARCHAR(36),
+    code TEXT,
     codeDisplay TEXT,
-    userUid VARCHAR(36),
+    userUuid VARCHAR(36),
     resourceType VARCHAR(36)
 );
 
 CREATE TABLE claimsProcedure (
     uuid VARCHAR(36) NOT NULL UNIQUE PRIMARY KEY,
-    fhirReference VARCHAR(36),
+    fhirReference TEXT,
     insuranceProviderUuid VARCHAR(36),
     source VARCHAR(36),
     procedureStatus VARCHAR(36),
-    code VARCHAR(36),
+    code TEXT,
     codeDisplay TEXT,
     performedDateTime DATETIME,
     recorder TEXT,
     recorderIdentifier VARCHAR(36),
     performer TEXT,
     performerIdentifier VARCHAR(36),
-    userUid VARCHAR(36),
+    userUuid VARCHAR(36),
     resourceType VARCHAR(36)
 );
 
 CREATE TABLE claimsEncounter (
     uuid VARCHAR(36) NOT NULL UNIQUE PRIMARY KEY,
-    fhirReference VARCHAR(36),
+    fhirReference TEXT,
     insuranceProviderUuid VARCHAR(36),
     source VARCHAR(36),
-    userUid VARCHAR(36),
+    userUuid VARCHAR(36),
     encounterStatus VARCHAR(36),
     startTime DATETIME,
     endTime DATETIME,
-    code VARCHAR(36),
+    code TEXT,
     resourceType VARCHAR(36)
 );
 
@@ -156,26 +156,27 @@ CREATE TABLE claimsEncounter (
 
 CREATE TABLE claimsCareTeam (
     uuid VARCHAR(36) NOT NULL UNIQUE PRIMARY KEY,
-    fhirReference VARCHAR(36),
+    fhirReference TEXT,
     insuranceProviderUuid VARCHAR(36),
     source VARCHAR(36),
-    userUid VARCHAR(36),
+    userUuid VARCHAR(36),
     careTeamStatus VARCHAR(36),
     resourceType VARCHAR(36),
-    participantsJSON TEXT
+    participants TEXT
 );
 
 
 CREATE TABLE claimsObesrvation (
     uuid VARCHAR(36) NOT NULL UNIQUE PRIMARY KEY,
-    fhirReference VARCHAR(36),
+    fhirReference TEXT,
     observationStatus TEXT,
+    observationSource TEXT, 
     category TEXT,
-    code VARCHAR(36),
+    code TEXT,
     codeDisplay TEXT,
     effectiveDateTime DATETIME,
     issued DATETIME,
-    userUid VARCHAR(36),
+    userUuid VARCHAR(36),
     insuranceProviderUuid VARCHAR(36),
     resourceType VARCHAR(36)
 );
@@ -185,20 +186,21 @@ CREATE TABLE claimsExplanationOfBenefit (
     userUuid VARCHAR(36) NOT NULL,
     source VARCHAR(36),
     jsonResponse TEXT,
-    fhirReference VARCHAR(36),
+    fhirReference TEXT,
     eobStatus TEXT,
-    typesJSON TEXT, -- just stringify
+    types TEXT, -- just stringify
     eobUse TEXT,
     patientReference VARCHAR(36),
     insurer TEXT,
-    prescriptionJSON TEXT, -- just stringify
+    prescription TEXT, -- just stringify
     facilityDisplay TEXT,
     outcome TEXT,
-    itemsJSON TEXT, -- just stringify
+    eobItems TEXT, -- just stringify
     billablePeriodStart DATETIME,
-    billablePeriodEND DATETIME,
+    billablePeriodEnd DATETIME,
     claimCreated DATETIME,
-    diagnosisJSON TEXT, -- just stringify
-    eobProcedures TEXT, -- justify stringify
-    resourceTypeJSON VARCHAR(36)
+    eobDiagnosis TEXT, -- just stringify
+    eobProvider TEXT,
+    eobProcedure TEXT, -- justify stringify
+    resourceType VARCHAR(36)
 );

@@ -157,7 +157,7 @@ export const createPatientCallback =
       if (!nameValue) nameValue = "";
 
       const newUserParams = {
-        role: "PATIENT",
+        userRole: "PATIENT",
         authUid: res.user.uid,
         nameValue,
       };
@@ -279,7 +279,7 @@ export const createProviderCallback =
       if (!nameValue) nameValue = "";
 
       const newUser = {
-        role: "PROVIDER",
+        userRole: "PROVIDER",
         userUid: res.user.uid,
         nameValue,
       };

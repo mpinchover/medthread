@@ -1,6 +1,6 @@
 import * as insuranceRepo from "./repo/insurance";
 import * as careProviderRepo from "./repo/care-providers";
-import { Account } from "./types";
+import { Account } from "./types/types";
 import * as functions from "firebase-functions";
 export const getUserAccount = async (req: any, res: any) => {
   const logger = functions.logger;

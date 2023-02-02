@@ -4,7 +4,7 @@ import {
   Medication,
   Profile,
   AuthProfile,
-} from "../types";
+} from "../types/types";
 import Database from "./mysql";
 
 const profilesTable = "profiles";

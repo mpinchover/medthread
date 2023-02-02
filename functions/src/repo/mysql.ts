@@ -28,11 +28,15 @@ class Database {
 
     const port: number = parseInt(process.env.MYSQL_PORT);
     const connection = await mysql2.createConnection({
-      host: process.env.MYSQL_HOST,
-      user: process.env.MYSQL_USER,
-      password: process.env.MYSQL_PASSWORD,
-      database: process.env.MYSQL_DATABASE,
-      port,
+      //   host: process.env.MYSQL_HOST,
+      host: "localhost",
+      //   user: process.env.MYSQL_USER,
+      user: "root",
+      //   password: process.env.MYSQL_PASSWORD,
+      password: "root",
+      // database: process.env.MYSQL_DATABASE,
+      database: "medthread_dev",
+      port: 3308,
     });
     return connection;
   }
