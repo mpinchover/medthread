@@ -1,9 +1,10 @@
 #!/bin/sh
 export DEV_ENV=DEV
-export PORT=3308
-export HOST=localhost
-export USER=root 
-export PASSWORD=root
+export MEDTHREAD_PORT=3308
+export MEDTHREAD_HOST=localhost
+export MEDTHREAD_USER=root 
+export MEDTHREAD_PASSWORD=root
+export MEDTHREAD_DATABASE=medthread
 
 # check to see if the container with the name exists.
 existingMySQLContainer=$(docker ps -a -q -f name="local-medthread-mysql-db")

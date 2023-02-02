@@ -1,6 +1,6 @@
-DROP DATABASE IF EXISTS medthread_dev;
-CREATE DATABASE medthread_dev;
-USE medthread_dev;
+DROP DATABASE IF EXISTS medthread;
+CREATE DATABASE medthread;
+USE medthread;
 
 CREATE TABLE authorizedCareProviderLink (
     careProviderUuid VARCHAR(36),
@@ -30,14 +30,14 @@ CREATE TABLE claimsMedicationRequest (
     code TEXT,
     codeDisplay TEXT,
     source VARCHAR(36),
-    medStatus VARCHAR(36),
-    intent VARCHAR(36),
-    requesterIdentifier VARCHAR(36),
+    medStatus TEXT,
+    intent TEXT,
+    requesterIdentifier TEXT,
     requester TEXT,
     dosageInstructionText TEXT,
     dosageInstructionRoute TEXT,
     doseAndRateQuantityValue INT,
-    doseAndRateQuantityUnit VARCHAR(36),
+    doseAndRateQuantityUnit TEXT,
     fhirReference TEXT,
     insuranceProviderUuid VARCHAR(36),
     userUuid VARCHAR(36),
@@ -56,10 +56,10 @@ CREATE TABLE claimsMedicationDispense (
     code TEXT,
     dispenseType TEXT,
     quantityValue INT,
-    quantityUnit VARCHAR(36),
+    quantityUnit TEXT,
     daysSupply INT,
     whenHandedOver DATETIME,
-    intent VARCHAR(36),
+    intent TEXT,
     source VARCHAR(36),
     userUuid VARCHAR(36),
     resourceType TINYTEXT,
@@ -95,8 +95,8 @@ CREATE TABLE claimsAllergyTolerance (
     recorder TEXT,
     asserter TEXT,
     reactionManifestation TEXT,
-    recorderIdentifier VARCHAR(36),
-    asserterIdentifier VARCHAR(36),
+    recorderIdentifier TEXT,
+    asserterIdentifier TEXT,
     userUuid VARCHAR(36),
     resourceType VARCHAR(36)
 );
@@ -120,14 +120,14 @@ CREATE TABLE claimsProcedure (
     fhirReference TEXT,
     insuranceProviderUuid VARCHAR(36),
     source VARCHAR(36),
-    procedureStatus VARCHAR(36),
+    procedureStatus TEXT,
     code TEXT,
     codeDisplay TEXT,
     performedDateTime DATETIME,
     recorder TEXT,
-    recorderIdentifier VARCHAR(36),
+    recorderIdentifier TEXT,
     performer TEXT,
-    performerIdentifier VARCHAR(36),
+    performerIdentifier TEXT,
     userUuid VARCHAR(36),
     resourceType VARCHAR(36)
 );
@@ -138,7 +138,7 @@ CREATE TABLE claimsEncounter (
     insuranceProviderUuid VARCHAR(36),
     source VARCHAR(36),
     userUuid VARCHAR(36),
-    encounterStatus VARCHAR(36),
+    encounterStatus TEXT,
     startTime DATETIME,
     endTime DATETIME,
     code TEXT,
@@ -160,8 +160,8 @@ CREATE TABLE claimsCareTeam (
     insuranceProviderUuid VARCHAR(36),
     source VARCHAR(36),
     userUuid VARCHAR(36),
-    careTeamStatus VARCHAR(36),
-    resourceType VARCHAR(36),
+    careTeamStatus TEXT,
+    resourceType TEXT,
     participants TEXT
 );
 
@@ -190,7 +190,7 @@ CREATE TABLE claimsExplanationOfBenefit (
     eobStatus TEXT,
     types TEXT, -- just stringify
     eobUse TEXT,
-    patientReference VARCHAR(36),
+    patientReference TEXT,
     insurer TEXT,
     prescription TEXT, -- just stringify
     facilityDisplay TEXT,
@@ -202,5 +202,6 @@ CREATE TABLE claimsExplanationOfBenefit (
     eobDiagnosis TEXT, -- just stringify
     eobProvider TEXT,
     eobProcedure TEXT, -- justify stringify
-    resourceType VARCHAR(36)
+    resourceType VARCHAR(36),
+    insuranceProviderUuid VARCHAR(36)
 );

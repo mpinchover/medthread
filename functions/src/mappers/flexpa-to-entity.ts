@@ -94,6 +94,7 @@ export const fromFlexpaToEntityEOB = (params: any) => {
     procedure: fromFlexpaToEntityEOBProcedure(params.resource?.procedure),
     billablePeriodStart,
     billablePeriodEnd,
+    patientReference: params.resource?.patient?.reference,
   };
 
   return eob;

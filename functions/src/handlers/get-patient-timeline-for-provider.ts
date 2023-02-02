@@ -10,10 +10,6 @@ export const getPatientTimelineDataForProvider = async (req: any, res: any) => {
     // const userUid = user.user_id;
     const { patientUuid, filter, providerUuid } = body;
 
-    console.log("CALLING TIMLINEE");
-
-    console.log(body);
-
     const careProvider =
       await careProviderController.getAuthorizedHealthcareProviderForPatientRecords(
         authUid,
@@ -30,7 +26,7 @@ export const getPatientTimelineDataForProvider = async (req: any, res: any) => {
     res.send({ timeline });
   } catch (e) {
     logger.error(e);
-    console.log(e);
+
     res.status(501).send({ error: e });
   }
 };

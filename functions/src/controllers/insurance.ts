@@ -693,11 +693,11 @@ export const getClaimsFromInsuranceProvider = async (
       fn(insuranceProvider.accessToken, insuranceProvider.uuid)
     )
   );
-  // logger.info({
-  //   message: "CLAIMS RESULTS FROM ADDING PROVIDER",
-  //   userUuid: insuranceProvider?.userUuid,
-  //   data: claimsResults,
-  // });
+  logger.info({
+    message: "CLAIMS RESULTS FROM ADDING PROVIDER",
+    userUuid: insuranceProvider?.userUuid,
+    data: claimsResults,
+  });
 
   const claimsData = extractClaimsResultsFromPromises(claimsResults);
 

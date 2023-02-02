@@ -13,8 +13,6 @@ export const getUserProfile = async (uuid: string): Promise<Profile> => {
   try {
     const conn = await Database.getDb();
 
-    console.log("SEARCHING UUID");
-    console.log(uuid);
     const query = `select * from ${profilesTable} where uuid = ?`;
     const params: any[] = [uuid];
     const [rows] = await conn.query<any>(query, params);
@@ -33,11 +31,13 @@ export const getUserProfilesByUuids = async (
     const profiles: Profile[] = [];
     if (uuids.length === 0) return profiles;
 
+    console.log(uuids);
     const conn = await Database.getDb();
 
     const query = `select * from ${profilesTable} where uuid in (?)`;
-    const params: any[] = [...uuids];
+    const params: any[] = [uuids];
     const [rows] = await conn.query<any>(query, params);
+
     for (const record of rows) {
       profiles.push(record);
     }

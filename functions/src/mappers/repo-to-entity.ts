@@ -100,6 +100,7 @@ export const fromRepoToEntityExplanationOfBenefit = (
     diagnosis: eobDiagnosis,
     procedure: eobProcedure,
     resourceType: explanationOfBenefit.resourceType,
+    insuranceProviderUuid: explanationOfBenefit.insuranceProviderUuid,
   };
   return eob;
 };

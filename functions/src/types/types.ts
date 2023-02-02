@@ -303,6 +303,7 @@ export interface ExplanationOfBenefit {
   procedure?: EOBProcedure[];
   primaryDate?: Date;
   resourceType?: string;
+  insuranceProviderUuid?: string;
 }
 
 export interface EOBItem {

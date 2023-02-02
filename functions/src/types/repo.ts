@@ -46,6 +46,7 @@ export interface ExplanationOfBenefit {
   eobDiagnosis?: string;
   eobProcedure?: string;
   resourceType?: string;
+  insuranceProviderUuid?: string;
 }
 
 export interface MedicationRequest {

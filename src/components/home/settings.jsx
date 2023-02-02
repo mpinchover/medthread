@@ -41,7 +41,7 @@ const Settings = () => {
   //   return <WelcomePage />;
   // }
 
-  if (authProfile.role === "PATIENT") {
+  if (authProfile.userRole === "PATIENT") {
     return (
       <WelcomePage
         authProfile={authProfile}

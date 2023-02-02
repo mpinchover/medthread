@@ -56,6 +56,11 @@ export const getPatientsByHealthcareProviderUuid = async (
     return [];
   }
 
+  console.log("PATIENT UUIDS");
+  console.log(patientUuids);
+
+  return await getUserProfilesByUuids(patientUuids);
+
   // split patient Uids into batches of 10
   const patientUuidBatches = stringSplitIntoBatches(patientUuids, 10);
   let patientProfiles: Profile[] = [];

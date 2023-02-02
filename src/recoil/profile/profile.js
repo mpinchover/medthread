@@ -78,7 +78,7 @@ export const hydrateUserProfileCallback =
       // const { idToken } = authUser;
       set(isLoadingSettingsState, true);
 
-      const { uuid } = JSON.parse(localStorage.get("med_thread_auth_user"));
+      const { uuid } = JSON.parse(localStorage.getItem("med_thread_auth_user"));
 
       const idToken = await auth.currentUser.getIdToken(
         /* forceRefresh */ true

@@ -67,7 +67,6 @@ export const FirebaseProvider = ({ children }) => {
 
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
       if (!user) {
-        console.log("NO USER FOUND");
         // could be this issue here.
         // console.log("NO USER FOUND");
         // localStorage.clear();
@@ -77,7 +76,8 @@ export const FirebaseProvider = ({ children }) => {
 
       const auth = getAuth();
       const authUser = getAuthUser();
-      if (authUser?.role) {
+
+      if (authUser?.userRole) {
         hydrateUserProfile(auth, user);
       }
     });

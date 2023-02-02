@@ -13,7 +13,7 @@ export const addHealthInsuranceProvider = async (req: any, res: any) => {
       );
     res.send({ insuranceProvider, claimsData });
   } catch (e) {
-    // logger.error(e);
+    logger.error(e);
     console.log(e);
     res.status(501).send({ error: e });
   }

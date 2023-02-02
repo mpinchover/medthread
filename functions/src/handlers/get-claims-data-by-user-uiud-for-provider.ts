@@ -34,7 +34,7 @@ export const getClaimsDataByUserUuidForProvider = async (
     res.send({ claimsData });
   } catch (e) {
     logger.error(e);
-    console.log(e);
+    // console.log(e);
     res.status(501).send({ error: e });
   }
 };

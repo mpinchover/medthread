@@ -23,7 +23,7 @@ export const getUserAccount = async (req: any, res: any) => {
     res.send({ account });
   } catch (e) {
     logger.error(e);
-    console.log("THE PROBLEM IS");
+
     console.log(e);
     res.status(501).send({ error: e });
   }

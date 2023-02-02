@@ -74,14 +74,14 @@ export const runCareProviderTestSuite = () => {
       const patient2Uuid = "patient-2-uuid-10";
 
       const profile1: Profile = {
-        authUid: "some-auth-uid",
+        authUid: patient1Uuid,
         uuid: patient1Uuid,
         userRole: "PATIENT",
         nameValue: "ALEX",
       };
 
       const profile2: Profile = {
-        authUid: "some-auth-uid-2",
+        authUid: patient2Uuid,
         uuid: patient2Uuid,
         userRole: "PATIENT",
         nameValue: "JOHN",

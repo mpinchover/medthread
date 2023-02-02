@@ -1,6 +1,7 @@
 import axios from "axios";
 import { InsuranceMetadata } from "../types/types";
 import * as functions from "firebase-functions";
+import { ResultStorage } from "firebase-functions/v1/testLab";
 export const getAccessToken = async (publicToken: string) => {
   const res = await axios({
     method: "post",
@@ -89,7 +90,7 @@ export const getExplanationOfBenefit = async (accessToken: string) => {
       break;
     }
 
-    // logger.info({ message: "explanation_of_benefit_result", result: res.data });
+    logger.info({ message: "explanation_of_benefit_result", result: res.data });
     entries.push(...res.data.entry);
     link = null;
     res.data.link.forEach((linkItem: any) => {
@@ -132,7 +133,7 @@ export const getAllergyIntolerance = async (accessToken: string) => {
     if (!res?.data?.entry) {
       break;
     }
-    // logger.info({ message: "explanation_of_benefit_result", result: res.data });
+    logger.info({ message: "explanation_of_benefit_result", result: res.data });
     entries.push(...res.data.entry);
     link = null;
     res.data.link.forEach((linkItem: any) => {
@@ -162,7 +163,7 @@ export const getConditions = async (accessToken: string) => {
     if (!res?.data?.entry) {
       break;
     }
-    // logger.info({ message: "conditions_result", result: res.data });
+    logger.info({ message: "conditions_result", result: res.data });
     entries.push(...res.data.entry);
     link = null;
     res.data.link.forEach((linkItem: any) => {
@@ -192,7 +193,7 @@ export const getDiagnosticReport = async (accessToken: string) => {
     if (!res?.data?.entry) {
       break;
     }
-    // logger.info({ message: "diagnostic_report_result", result: res.data });
+    logger.info({ message: "diagnostic_report_result", result: res.data });
     entries.push(...res.data.entry);
     link = null;
     res.data.link.forEach((linkItem: any) => {
@@ -222,7 +223,7 @@ export const getImmunizations = async (accessToken: string) => {
     if (!res?.data?.entry) {
       break;
     }
-    // logger.info({ message: "immunizations_result", result: res.data });
+    logger.info({ message: "immunizations_result", result: res.data });
     entries.push(...res.data.entry);
     link = null;
     res.data.link.forEach((linkItem: any) => {
@@ -251,7 +252,7 @@ export const getProcedures = async (accessToken: string) => {
     if (!res?.data?.entry) {
       break;
     }
-    // logger.info({ message: "procedures_result", result: res.data });
+    logger.info({ message: "procedures_result", result: res.data });
 
     entries.push(...res.data.entry);
     link = null;
@@ -283,7 +284,7 @@ export const getMedicationRequest = async (accessToken: string) => {
     if (!res?.data?.entry) {
       break;
     }
-    // logger.info({ message: "medications_request_result", result: res.data });
+    logger.info({ message: "medications_request_result", result: res.data });
     entries.push(...res.data.entry);
     link = null;
     res.data.link.forEach((linkItem: any) => {
@@ -313,7 +314,7 @@ export const getMedicationDispense = async (accessToken: string) => {
     if (!res?.data?.entry) {
       break;
     }
-    // logger.info({ message: "medication_dispense_result", result: res.data });
+    logger.info({ message: "medication_dispense_result", result: res.data });
     entries.push(...res.data.entry);
     link = null;
     res.data.link.forEach((linkItem: any) => {
@@ -342,7 +343,7 @@ export const getEncounter = async (accessToken: string) => {
     if (!res?.data?.entry) {
       break;
     }
-    // logger.info({ message: "encounter_result", result: res.data });
+    logger.info({ message: "encounter_result", result: res.data });
     entries.push(...res.data.entry);
     link = null;
     res.data.link.forEach((linkItem: any) => {
@@ -372,7 +373,7 @@ export const getCareTeam = async (accessToken: string) => {
     if (!res?.data?.entry) {
       break;
     }
-    // logger.info({ message: "care_team_result", result: res.data });
+    logger.info({ message: "care_team_result", result: res.data });
     entries.push(...res.data.entry);
     link = null;
     res.data.link.forEach((linkItem: any) => {
@@ -402,7 +403,7 @@ export const getCarePlan = async (accessToken: string) => {
     if (!res?.data?.entry) {
       break;
     }
-    // logger.info({ message: "care_plan_result", result: res.data });
+    logger.info({ message: "care_plan_result", result: res.data });
     entries.push(...res.data.entry);
     link = null;
     res.data.link.forEach((linkItem: any) => {
@@ -433,7 +434,7 @@ export const getDocumentReference = async (accessToken: string) => {
     if (!res?.data?.entry) {
       break;
     }
-    // logger.info({ message: "document_reference_result", result: res.data });
+    logger.info({ message: "document_reference_result", result: res.data });
     entries.push(...res.data.entry);
     link = null;
     res.data.link.forEach((linkItem: any) => {
@@ -463,7 +464,7 @@ export const getPractitioner = async (accessToken: string) => {
     if (!res?.data?.entry) {
       break;
     }
-    // logger.info({ message: "practitioner_result", result: res.data });
+    logger.info({ message: "practitioner_result", result: res.data });
     entries.push(...res.data.entry);
     link = null;
     res.data.link.forEach((linkItem: any) => {
@@ -493,7 +494,7 @@ export const getPractitionerRole = async (accessToken: string) => {
     if (!res?.data?.entry) {
       break;
     }
-    // logger.info({ message: "practitioner_role_result", result: res.data });
+    logger.info({ message: "practitioner_role_result", result: res.data });
     entries.push(...res.data.entry);
     link = null;
     res.data.link.forEach((linkItem: any) => {
@@ -524,7 +525,7 @@ export const getObservation = async (accessToken: string) => {
       break;
     }
 
-    // logger.info({ message: "observation_result", result: res.data });
+    logger.info({ message: "observation_result", result: res.data });
     entries.push(...res.data.entry);
     link = null;
     res.data.link.forEach((linkItem: any) => {

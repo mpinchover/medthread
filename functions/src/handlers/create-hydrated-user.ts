@@ -7,9 +7,6 @@ export const createHydratedUserProfile = async (req: any, res: any) => {
     const { body } = req;
     const { profile, providerUuid } = body;
 
-    console.log("CREATING PROFILE");
-    console.log(body);
-
     const createdProfile = await userController.createHydratedUserProfile(
       profile
     );
