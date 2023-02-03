@@ -28,15 +28,22 @@ import { useParams } from "react-router-dom";
 import { isLoadingClaimsDataState } from "../recoil/utils/utils";
 import { getAuth } from "firebase/auth";
 import { authorizedProfileState } from "../recoil/auth/auth";
+import { getPatientTimelineDataCallback } from "../recoil/timeline/timeline";
+import { isLoadingTimelineDataState } from "../recoil/timeline/timeline";
 
 const MedicationListProvider = () => {
   const { getAuthUser } = useContext(FirebaseContext);
   const isLoadingClaimsData = useRecoilValue(isLoadingClaimsDataState);
+  const isLoadingTimelineData = useRecoilValue(isLoadingTimelineDataState);
   const authUser = getAuthUser();
   // const getMedications = useRecoilCallback(getMedicationsByUserUidCallback);
   const getClaimsDatabyUserUuid = useRecoilCallback(
     getClaimsDataByUserUuidCallback
   );
+  const getPatientTimelineData = useRecoilCallback(
+    getPatientTimelineDataCallback
+  );
+
   const [activeCareProviderPatient, setActiveCareProviderPatient] =
     useRecoilState(activeCareProviderPatientState);
   const claimsAllergyIntolerance = useRecoilValue(
@@ -70,6 +77,7 @@ const MedicationListProvider = () => {
   useEffect(() => {
     if (auth?.currentUser) {
       getClaimsDatabyUserUuid(auth, patientUuid, authProfile?.uuid);
+      getPatientTimelineData(auth, patientUuid, authProfile?.uuid);
     }
   }, [authProfile]);
 
@@ -77,7 +85,7 @@ const MedicationListProvider = () => {
   const isSendingMedications = useRecoilValue(isSendingMedicationsState);
   const isAddingMedication = useRecoilValue(isAddingMedicationState);
 
-  if (isLoadingClaimsData) {
+  if (isLoadingClaimsData || isLoadingTimelineData) {
     return <LoadingMedicationData />;
   }
   if (isSendingMedications) {

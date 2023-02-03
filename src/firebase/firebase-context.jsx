@@ -66,6 +66,8 @@ export const FirebaseProvider = ({ children }) => {
     const auth = getAuth();
 
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
+      console.log("AUTH CHANGED");
+      console.log(user);
       if (!user) {
         // could be this issue here.
         // console.log("NO USER FOUND");
@@ -74,15 +76,17 @@ export const FirebaseProvider = ({ children }) => {
         return;
       }
 
-      const auth = getAuth();
-      const authUser = getAuthUser();
+      // const auth = getAuth();
+      // const authUser = getAuthUser();
 
-      if (authUser?.userRole) {
-        hydrateUserProfile(auth, user);
-      }
+      // if (authUser?.userRole) {
+      //   hydrateUserProfile(auth, user);
+      // }
     });
 
     const removeIdTokenListener = onIdTokenChanged(auth, async (user) => {
+      console.log("TOKEN CHANGED");
+      console.log(user);
       if (!user) {
         // console.log("NO USER FOUND");
         return;
@@ -93,6 +97,12 @@ export const FirebaseProvider = ({ children }) => {
       // if (authUser?.role) {
       //   hydrateUserProfile(auth, user);
       // }
+      const auth = getAuth();
+      const authUser = getAuthUser();
+
+      if (authUser?.userRole) {
+        hydrateUserProfile(auth, user);
+      }
     });
 
     return () => {

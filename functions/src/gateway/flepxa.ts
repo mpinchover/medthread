@@ -133,6 +133,7 @@ export const getAllergyIntolerance = async (accessToken: string) => {
     if (!res?.data?.entry) {
       break;
     }
+
     logger.info({ message: "explanation_of_benefit_result", result: res.data });
     entries.push(...res.data.entry);
     link = null;

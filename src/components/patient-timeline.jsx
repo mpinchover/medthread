@@ -240,17 +240,17 @@ const PatientTimeline = () => {
     document.addEventListener("keydown", handleKeyDown, false);
     window.addEventListener("resize", onResize);
 
-    if (patientUuid && authProfile?.uuid) {
-      getPatientTimelineData(auth, patientUuid, authProfile?.uuid);
-    } else {
-      getPatientTimelineData(auth);
-    }
+    // if (patientUuid && authProfile?.uuid) {
+    //   getPatientTimelineData(auth, patientUuid, authProfile?.uuid);
+    // } else {
+    //   getPatientTimelineData(auth);
+    // }
 
     return () => {
       document.removeEventListener("keydown", handleKeyDown, false);
       window.removeEventListener("resize", onResize);
     };
-  }, [authProfile]);
+  }, [timelineData]);
 
   let height = 400;
   if (activeTimelineEvent) {

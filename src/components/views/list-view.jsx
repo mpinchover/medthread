@@ -371,16 +371,16 @@ const ListViewContainer = () => {
 
   const auth = getAuth();
   useEffect(() => {
-    if (patientUuid && auth?.currentUser) {
-      getPatientTimelineData(auth, patientUuid, authProfile?.uuid);
-    } else if (!patientUuid && auth?.currentUser) {
-      getPatientTimelineData(auth);
-    }
-  }, [timelineFilter, authProfile]);
+    // if (patientUuid && auth?.currentUser) {
+    //   getPatientTimelineData(auth, patientUuid, authProfile?.uuid);
+    // } else if (!patientUuid && auth?.currentUser) {
+    //   getPatientTimelineData(auth);
+    // }
+  }, [timelineData]);
 
-  if (isLoadingTimelineData) {
-    return <LoadingWindow display="Generating timeline..." />;
-  }
+  // if (isLoadingTimelineData) {
+  //   return <LoadingWindow display="Generating timeline..." />;
+  // }
 
   return (
     <ListView

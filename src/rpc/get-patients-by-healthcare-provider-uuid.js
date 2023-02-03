@@ -1,6 +1,6 @@
 import axios from "axios";
 import { getServerConfig } from "../config/config";
-export const getPatientsByHealthcareProviderUuid = async (uuid) => {
+export const getPatientsByHealthcareProviderUuid = async (idToken, uuid) => {
   try {
     // const authUser = JSON.parse(localStorage.getItem("med_thread_auth_user"));
 

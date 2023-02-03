@@ -5,7 +5,7 @@ export MEDTHREAD_PORT=3310
 export MEDTHREAD_HOST=localhost
 export MEDTHREAD_USER=root 
 export MEDTHREAD_PASSWORD=root
-export MEDTHREAD_DATABASE=medthread_dev
+export MEDTHREAD_DATABASE=test
 # check to see if the container with the name exists.
 existingMySQLContainer=$(docker ps -a -q -f name="test-medthread-mysql-db")
 if [ -z "$existingMySQLContainer" ]
