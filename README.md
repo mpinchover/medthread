@@ -38,3 +38,11 @@ mysql -h [host] -P [port] -u[user] -p < setup_medthread_db.sql
 If you want to make a change to an existing column, make sure to add the column first, migrate over all the data, and then delete the column.
 
 Always try on staging first.
+
+## Dump schema
+
+Dump the schema from the database (even if its running in docker)
+
+```
+mysqldump -h localhost -P 3308 -u [user] -p --no-data [db name] --protocol=tcp > schema.sql
+```
